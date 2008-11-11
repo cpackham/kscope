@@ -42,10 +42,11 @@ public:
 	Crossref(QObject* parent = 0);
 	~Crossref();
 
+	void open(const QString&);
+
 public slots:
-	bool open(const QString&);
-	bool query(Core::Engine::Connection&, const Core::Query&) const;
-	bool build(Core::Engine::Connection&) const;
+	void query(Core::Engine::Connection&, const Core::Query&) const;
+	void build(Core::Engine::Connection&) const;
 
 	const QString& path() { return path_; }
 

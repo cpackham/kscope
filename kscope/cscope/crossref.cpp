@@ -29,10 +29,17 @@ namespace KScope
 namespace Cscope
 {
 
+/**
+ * Class constructor.
+ * @param  parent  Parent object
+ */
 Crossref::Crossref(QObject* parent) : Core::Engine(parent)
 {
 }
 
+/**
+ * Class destructor.
+ */
 Crossref::~Crossref()
 {
 }
@@ -42,9 +49,9 @@ Crossref::~Crossref()
  * The method expects to find a 'cscope.out' file under the given path.
  * The path is stored and used for all database operations.
  * @param  path  The path under which to find the cross-reference file
- * @return true if successful, false otherwise
+ * @throw  Exception
  */
-bool Crossref::open(const QString& path)
+void Crossref::open(const QString& path)
 {
 	QDir dir(path);
 	if (!dir.exists())
@@ -56,13 +63,18 @@ bool Crossref::open(const QString& path)
 		throw new Core::Exception("Cannot read the 'cscope.out' file");
 
 	path_ = path;
-	return true;
 }
 
-bool Crossref::query(Core::Engine::Connection& conn,
+/**
+ * Starts a Cscope query.
+ * Creates a new Cscope process to handle the query.
+ * @param  conn  Connection object to attach to the new process
+ * @param  query Query information
+ * @throw  Exception
+ */
+void Crossref::query(Core::Engine::Connection& conn,
                      const Core::Query& query) const
 {
-	Cscope* cscope;
 	Cscope::QueryType type;
 
 	// Translate the requested type into a Cscope query number.
@@ -100,23 +112,26 @@ bool Crossref::query(Core::Engine::Connection& conn,
 
 	default:
 		// Query type is not supported.
-		return false;
+		// TODO: What happens if an exception is thrown from within a slot?
+		throw new Core::Exception(QString("Unsupported query type '%1")
+		                          .arg(query.type_));
 	}
 
-	cscope = new Cscope(conn);
+	// Create a new Cscope process object, and start the query.
+	Cscope* cscope = new Cscope(conn);
 	cscope->setDeleteOnExit();
 	cscope->query(path_, type, query.pattern_);
-	return true;
 }
 
-bool Crossref::build(Core::Engine::Connection& conn) const
+/**
+ * Starts a Cscope build process.
+ * @param  conn  Connection object to attach to the new process
+ */
+void Crossref::build(Core::Engine::Connection& conn) const
 {
-	Cscope* cscope;
-
-	cscope = new Cscope(conn);
+	Cscope* cscope = new Cscope(conn);
 	cscope->setDeleteOnExit();
 	cscope->build(path_);
-	return true;
 }
 
 }
