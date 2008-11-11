@@ -46,6 +46,8 @@ public:
 	QString path() { return projectPathEdit_->text(); }
 
 protected slots:
+	void browseRootPath();
+	void browseProjectPath();
 	void setUseHiddenProjectDir(bool);
 	void updateProjectPath(const QString&);
 };

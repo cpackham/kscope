@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QFileDialog>
 #include "projectdialog.h"
 #include "application.h"
 
@@ -46,6 +47,22 @@ ProjectDialog::ProjectDialog(QWidget* parent) : QDialog(parent),
 
 ProjectDialog::~ProjectDialog()
 {
+}
+
+void ProjectDialog::browseRootPath()
+{
+	QString dir = QFileDialog::getExistingDirectory(this,
+	                                                tr("Select Directory"));
+	if (!dir.isEmpty())
+		rootPathEdit_->setText(dir);
+}
+
+void ProjectDialog::browseProjectPath()
+{
+	QString dir = QFileDialog::getExistingDirectory(this,
+	                                                tr("Select Directory"));
+	if (!dir.isEmpty())
+		projectPathEdit_->setText(dir);
 }
 
 void ProjectDialog::setUseHiddenProjectDir(bool enable)
