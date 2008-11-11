@@ -1,0 +1,88 @@
+/***************************************************************************
+ *   Copyright (C) 2007-2008 by Elad Lahav
+ *   elad_lahav@users.sourceforge.net
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ***************************************************************************/
+
+#include <QDir>
+#include <QFileInfo>
+#include <QTextStream>
+#include "files.h"
+#include "exception.h"
+
+namespace KScope
+{
+
+namespace Cscope
+{
+
+Files::Files(QObject* parent) : Core::Codebase(parent), writable_(false)
+{
+}
+
+Files::~Files()
+{
+}
+
+void Files::load(const QString& path)
+{
+	QDir dir(path);
+	if (!dir.exists())
+		throw new Core::Exception("File list directory does not exist");
+
+	QFileInfo fi(dir, "cscope.files");
+	if (!fi.exists() || !fi.isReadable())
+		throw new Core::Exception("Cannot open 'cscope.files' for reading");
+
+	path_ = dir.filePath("cscope.files");
+	writable_ = fi.isWritable();
+	emit loaded();
+}
+
+void Files::store(const QString& path)
+{
+	(void)path;
+}
+
+void Files::getFiles(Callback& cb) const
+{
+	QFile file(path_);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return;
+
+	QTextStream strm(&file);
+	while (!strm.atEnd())
+		cb(strm.readLine());
+}
+
+void Files::setFiles(const QStringList& fileList)
+{
+	QFile file(path_);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		return;
+
+	QTextStream strm(&file);
+	QStringList::ConstIterator itr;
+	for (itr = fileList.begin(); itr != fileList.end(); ++itr)
+		strm << *itr << endl;
+
+	emit modified();
+}
+
+}
+
+}
