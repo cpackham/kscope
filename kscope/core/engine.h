@@ -31,7 +31,7 @@ namespace Core
 {
 
 /**
- * Abstract base class for symbol databases.
+ * Abstract base class for cross-reference databases.
  * @author Elad Lahav
  */
 class Engine : public QObject
@@ -42,7 +42,31 @@ public:
 	Engine(QObject* parent = 0) : QObject(parent) {}
 	virtual ~Engine() {}
 
-	struct Controlled {
+	/**
+	 * Makes the database available for querying.
+	 * @param  openString  Implementation-specific string
+	 */
+	virtual void open(const QString& openString) = 0;
+
+	/**
+	 * Enables implementations to create a configuration widget for the engine.
+	 * This widget can be included in project configuration dialogues.
+	 * The default implementation returns NULL.
+	 * @param  parent  A parent to use when creating the configuration widget
+	 * @return A new configuration widget for the engine, NULL if not
+	 *         implemented
+	 */
+	virtual QWidget* configWidget(QWidget* parent) {
+		(void)parent;
+		return NULL;
+	}
+
+	/**
+	 * Abstract base class for a controllable object.
+	 * This allows an engine operation to be stopped.
+	 */
+	struct Controlled
+	{
 		virtual void stop() = 0;
 	};
 
@@ -57,41 +81,71 @@ public:
 	 * operation.
 	 * @author  Elad Lahav
 	 */
-	struct Connection {
-		void setCtrlObject(Controlled* ctrlObject) { ctrlObject_ = ctrlObject; }
-		void stop() { ctrlObject_->stop(); }
+	struct Connection
+	{
+		/**
+		 * Struct constructor.
+		 */
+		Connection() : ctrlObject_(NULL) {}
 
+		/**
+		 * @param  ctrlObject  A controlled object that allows the operation to
+		 *                     be stopped
+		 */
+		void setCtrlObject(Controlled* ctrlObject) { ctrlObject_ = ctrlObject; }
+
+		/**
+		 * Stops the current operation.
+		 */
+		void stop() {
+			if (ctrlObject_)
+				ctrlObject_->stop();
+		}
+
+		/**
+		 * Called when query data is produced by the engine.
+		 * @param  locList  A location list, holding query results
+		 */
 		virtual void onDataReady(const Core::LocationList& locList) = 0;
+
+		/**
+		 * Called when an engine operation terminates successfully.
+		 */
 		virtual void onFinished() = 0;
+
+		/**
+		 * Called when an engine operation terminates abnormally.
+		 */
 		virtual void onAborted() = 0;
+
+		/**
+		 * Called when an engine operation makes progress.
+		 * @param  text  A message describing the kind of progress made
+		 * @param  cur   The current value
+		 * @param  total The expected final value
+		 */
 		virtual void onProgress(const QString& text, uint cur, uint total) = 0;
 
 	protected:
+		/**
+		 * An object which can be used to stop the current operation.
+		 */
 		Controlled* ctrlObject_;
 	};
 
 public slots:
 	/**
-	 * Makes the database available for querying.
-	 * @param  openString  Implementation-specific string
-	 * @return true if successful, false otherwise
-	 */
-	virtual bool open(const QString& openString) = 0;
-
-	/**
 	 * Starts a query.
 	 * @param  conn    Used for communication with the ongoing operation
 	 * @param  query   The query to execute
-	 * @return true if the query was started successfully, false otherwise
 	 */
-	virtual bool query(Connection& conn, const Query& query) const = 0;
+	virtual void query(Connection& conn, const Query& query) const = 0;
 
 	/**
 	 * (Re)builds the symbols database.
 	 * @param  conn    Used for communication with the ongoing operation
-	 * @return true if the operation was started successfully, false otherwise
 	 */
-	virtual bool build(Connection&) const = 0;
+	virtual void build(Connection&) const = 0;
 };
 
 }
