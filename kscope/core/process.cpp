@@ -52,13 +52,19 @@ void Process::readStandardOutput()
 	QStringList lines;
 	QStringList::Iterator itr;
 
+	// Read from standard output.
 	stdOut_ += readAllStandardOutput();
-	lines = stdOut_.split('\n', QString::SkipEmptyParts);
-	if (!stdOut_.endsWith('\n')) {
-		stdOut_ = lines.last();
-		lines.removeLast();
-	}
 
+	// Split the standard output into lines.
+	// If the last line dos not end with a newline character, do not parse it.
+	// Instead, keep it in the stored buffer and wait for more input.
+	lines = stdOut_.split('\n', QString::SkipEmptyParts);
+	if (stdOut_.endsWith('\n'))
+		stdOut_ = "";
+	else
+		stdOut_ = lines.takeLast();
+
+	// Parse each of the complete lines received.
 	for(itr = lines.begin(); itr != lines.end(); ++itr) {
 		if (!step(*itr)) {
 			qDebug() << "Parse error!";
