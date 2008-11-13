@@ -18,12 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __MAINWINDOW_H
-#define __MAINWINDOW_H
+#ifndef __APP_MAINWINDOW_H
+#define __APP_MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTreeView>
-#include "engine.h"
+#include "actions.h"
+#include "globals.h"
+#include "buildprogress.h"
 
 class QCloseEvent;
 
@@ -33,11 +34,14 @@ namespace KScope
 namespace App
 {
 
-class Actions;
 class EditorContainer;
 class QueryResultDock;
 
 /**
+ * KScope's main window.
+ * This is an MDI-style main window. The central area is used for viewing and
+ * editing source files, while docks are used for browsing information (e.g.,
+ * engine query results).
  * @author Elad Lahav
  */
 class MainWindow : public QMainWindow
@@ -45,21 +49,35 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainWindow(QWidget* parent = 0);
+	MainWindow();
 	~MainWindow();
 
 public slots:
 	void promptQuery(Core::Query::Type type = Core::Query::References);
-	void promptCallGraph();
+	void buildProject();
 
 protected:
 	virtual void closeEvent(QCloseEvent*);
 
 private:
 	friend class Actions;
-	Actions* actions_;
+
+	/**
+	 * Main menu commands.
+	 */
+	Actions actions_;
+
+	/**
+	 * Manages the editor widgets.
+	 */
 	EditorContainer* editCont_;
+
+	/**
+	 * Holds query result views in a docked widget.
+	 */
 	QueryResultDock* queryDock_;
+
+	BuildProgress buildProgress_;
 
 	void readSettings();
 	void writeSettings();
@@ -68,8 +86,8 @@ private slots:
 	void setProjectTitle(bool);
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif // __MAINWINDOW_H
+#endif // __APP_MAINWINDOW_H

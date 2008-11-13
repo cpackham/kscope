@@ -22,6 +22,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "actions.h"
+#include "mainwindow.h"
 #include "application.h"
 #include "editorcontainer.h"
 #include "projectdialog.h"
@@ -111,6 +112,14 @@ void Actions::setup()
 	action = new QAction(tr("&Properties..."), this);
 	action->setStatusTip(tr("View/edit project parameters"));
 	connect(action, SIGNAL(triggered()), this, SLOT(projectProperties()));
+	menu->addAction(action);
+	group->addAction(action);
+
+	// Build the project's database.
+	action = new QAction(tr("&Build Database"), this);
+	action->setShortcut(tr("Ctrl+B"));
+	action->setStatusTip(tr("Build the project database"));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(buildProject()));
 	menu->addAction(action);
 	group->addAction(action);
 
@@ -274,6 +283,11 @@ void Actions::showWindowMenu()
 	mainWnd()->editCont_->populateWindowMenu(wndMenu_);
 }
 
+MainWindow* Actions::mainWnd()
+{
+	return static_cast<MainWindow*>(parent());
 }
 
-}
+} // namespace App
+
+} // namespace KScope

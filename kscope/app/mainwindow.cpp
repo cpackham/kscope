@@ -23,7 +23,6 @@
 #include <QCloseEvent>
 #include "application.h"
 #include "mainwindow.h"
-#include "actions.h"
 #include "editorcontainer.h"
 #include "querydialog.h"
 #include "queryresultdock.h"
@@ -35,57 +34,78 @@ namespace KScope
 namespace App
 {
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
+/**
+ * Class constructor.
+ */
+MainWindow::MainWindow() : QMainWindow(), actions_(this)
 {
-	actions_ = new Actions(this);
+	// Set the window title.
+	// This changes whenever a project is opened/closed.
+	setProjectTitle(false);
+	connect(theApp(), SIGNAL(hasProject(bool)), this,
+	        SLOT(setProjectTitle(bool)));
 
+	// Create the central widget (the editor manager).
 	editCont_ = new EditorContainer(this);
 	setCentralWidget(editCont_);
 
+	// Create the query result dock.
 	queryDock_ = new QueryResultDock(tr("Query Results"), this);
 	addDockWidget(Qt::RightDockWidgetArea, queryDock_);
 	connect(queryDock_, SIGNAL(locationRequested(const Core::Location&)),
 	        editCont_, SLOT(gotoLocation(const Core::Location&)));
-	connect(theApp(), SIGNAL(hasProject(bool)), this,
-	        SLOT(setProjectTitle(bool)));
 
+	// Create a status bar.
 	statusBar();
 
-	actions_->setup();
+	// Initialise actions.
+	// The order is important: make sure the child widgets are created BEFORE
+	// calling setup().
+	actions_.setup();
 
+	// Apply saved window settings.
 	readSettings();
 }
 
+/**
+ * Class destrutor.
+ */
 MainWindow::~MainWindow()
 {
 }
 
+/**
+ * Prompts the user for query information, and starts a query with the entered
+ * parameters.
+ * @param  type  The default query type to use
+ */
 void MainWindow::promptQuery(Core::Query::Type type)
 {
 	QueryDialog dlg(type);
-	Editor* editor;
 
-	editor = editCont_->currentEditor();
+	// Get the default pattern from the text under the cursor on the active
+	// editor (if any).
+	Editor* editor = editCont_->currentEditor();
 	if (editor)
 		dlg.setPattern(editor->currentText());
 
+	// Prompt the user.
 	if (dlg.exec() != QDialog::Accepted)
 		return;
 
+	// Start a query with results shown in a view inside the query dock.
 	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()));
 }
 
-void MainWindow::promptCallGraph()
+void MainWindow::buildProject()
 {
-	QueryDialog dlg;
-	Editor* editor;
-
-	editor = editCont_->currentEditor();
-	if (editor)
-		dlg.setPattern(editor->currentText());
-
-	if (dlg.exec() != QDialog::Accepted)
+	// Get the current project.
+	Core::ProjectBase* project = currentProject();
+	if (!project)
 		return;
+
+	buildProgress_.init(true, this);
+	project->engine()->build(buildProgress_);
 }
 
 /**
@@ -94,6 +114,8 @@ void MainWindow::promptCallGraph()
  */
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+	// TODO: Check all editors for unsaved changes.
+
 	writeSettings();
 	event->accept();
 }
@@ -133,6 +155,10 @@ void MainWindow::readSettings()
 	settings.endGroup();
 }
 
+/**
+ * Changes the window title to reflect the availability of a project.
+ * @param  hasProject  true if a project is currently open, false otherwise
+ */
 void MainWindow::setProjectTitle(bool hasProject)
 {
 	QString title = theApp()->applicationName();
@@ -143,6 +169,6 @@ void MainWindow::setProjectTitle(bool hasProject)
 	setWindowTitle(title);
 }
 
-}
+} // namespace App
 
-}
+} // namespace KScope

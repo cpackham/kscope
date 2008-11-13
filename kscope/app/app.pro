@@ -36,7 +36,8 @@ HEADERS += editorconfigdialog.h \
     queryresultdock.h \
     queryresultdialog.h \
     addfilesdialog.h \
-    projectdialog.h
+    projectdialog.h \
+    buildprogress.h
 FORMS += querydialog.ui \
     queryresultdialog.ui \
     stackpage.ui \

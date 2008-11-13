@@ -23,13 +23,14 @@
 
 #include <QObject>
 #include <QMenu>
-#include "mainwindow.h"
 
 namespace KScope
 {
 
 namespace App
 {
+
+class MainWindow;
 
 /**
  * Handles all main window actions.
@@ -50,9 +51,7 @@ public:
 private:
 	QMenu* wndMenu_;
 
-	inline MainWindow* mainWnd() {
-		return static_cast<MainWindow*>(parent());
-	}
+	inline MainWindow* mainWnd();
 
 private slots:
 	void newProject();
@@ -63,8 +62,8 @@ private slots:
 	void showWindowMenu();
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
 #endif // __KSCOPE_ACTIONS_H
