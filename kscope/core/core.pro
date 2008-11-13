@@ -21,7 +21,6 @@ HEADERS += projectconfig.h \
     codebasemodel.h \
     globals.h \
     process.h \
-    progressdialog.h \
     statemachine.h \
     treeitem.h \
     progressbar.h \
