@@ -9,11 +9,11 @@ CONFIG += debug_and_release \
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 # Input
-HEADERS += filescanner.h \
+HEADERS += projectconfig.h \
+    filescanner.h \
     filefilter.h \
     queryview.h \
     locationlistmodel.h \
-    parser.h \
     parser.h \
     exception.h \
     project.h \
