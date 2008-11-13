@@ -34,14 +34,25 @@ namespace KScope
 namespace App
 {
 
+/**
+ * Class constructor.
+ * @param  Pointer to the main window
+ */
 Actions::Actions(MainWindow* parent) : QObject(parent)
 {
 }
 
+/**
+ * Class destructor.
+ */
 Actions::~Actions()
 {
 }
 
+/**
+ * Creates the actions.
+ * Must be called after the main window's child widgets have been created.
+ */
 void Actions::setup()
 {
 	QMenu* menu;
@@ -191,13 +202,16 @@ void Actions::setup()
 
 	menu->addSeparator();
 
+#if 0
 	// Call graph.
+	// TODO: Implement.
 	action = new QAction(tr("Call &Graph"), this);
 	action->setShortcut(tr("Ctrl+\\"));
 	action->setStatusTip(tr("Show a call graph"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(promptCallGraph()));
 	connect(theApp(), SIGNAL(hasProject(bool)), action, SLOT(setEnabled(bool)));
 	menu->addAction(action);
+#endif
 
 	// Settings menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Settings"));
