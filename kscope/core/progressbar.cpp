@@ -27,28 +27,47 @@ namespace KScope
 namespace Core
 {
 
+/**
+ * Class constructor.
+ * @param  parent  Parent widget
+ */
 ProgressBar::ProgressBar(QWidget* parent) : QFrame(parent)
 {
+	// Setup user interface.
 	setFrameShape(QFrame::StyledPanel);
 	setupUi(this);
+
+	// Emit the cancelled() signal when the cancel button is clicked.
 	connect(cancelButton_, SIGNAL(clicked()), this, SIGNAL(cancelled()));
 }
 
+/**
+ * Class destructor.
+ */
 ProgressBar::~ProgressBar()
 {
 }
 
+/**
+ * Updates the progress values.
+ * @param  cur   New current value
+ * @param  total Expected final value
+ */
 void ProgressBar::setProgress(uint cur, uint total)
 {
 	progBar_->setRange(0, total);
 	progBar_->setValue(cur);
 }
 
+/**
+ * Changes the text inside the progress-bar.
+ * @param  text  The new text to show
+ */
 void ProgressBar::setLabel(const QString& text)
 {
 	progBar_->setFormat(text + " %p%");
 }
 
-}
+} // namespace Core
 
-}
+} // namespace KScope

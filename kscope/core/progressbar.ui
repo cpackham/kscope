@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>27</height>
+    <height>29</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -25,27 +25,30 @@
    <property name="spacing" >
     <number>0</number>
    </property>
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
    <item>
     <widget class="QProgressBar" name="progBar_" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="value" >
-      <number>24</number>
+      <number>0</number>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="cancelButton_" >
+    <widget class="QToolButton" name="cancelButton_" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Fixed" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text" >
       <string>Cancel</string>
      </property>

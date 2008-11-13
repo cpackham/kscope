@@ -50,8 +50,8 @@ signals:
 	void cancelled();
 };
 
-}
+} // namespace Core
 
-}
+} // namespace KScope
 
 #endif  // COREPROGRESSBAR_H
