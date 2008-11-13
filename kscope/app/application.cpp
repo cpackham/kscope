@@ -104,6 +104,12 @@ void Application::loadProject(const QString& projPath)
 
 	// Signal the availability of a project.
 	emit hasProject(true);
+
+	// Does the database need to be rebuilt?
+	if ((proj_->engine()->status() == Core::Engine::Build)
+	    || (proj_->engine()->status() == Core::Engine::Rebuild)) {
+		mainWnd_->buildProject();
+	}
 }
 
 /**

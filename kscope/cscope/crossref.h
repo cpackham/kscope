@@ -49,6 +49,11 @@ public:
 
 	void open(const QString&);
 
+	/**
+	 * @return The current status of the database.
+	 */
+	Status status() { return status_; }
+
 public slots:
 	void query(Core::Engine::Connection&, const Core::Query&) const;
 	void build(Core::Engine::Connection&) const;
@@ -65,6 +70,14 @@ private:
 	 * Command-line arguments to Cscope.
 	 */
 	QStringList args_;
+
+	/**
+	 * The current status of the database.
+	 */
+	Status status_;
+
+private slots:
+	void buildProcessFinished(int, QProcess::ExitStatus);
 };
 
 }

@@ -43,6 +43,35 @@ class Engine : public QObject
 
 public:
 	/**
+	 * Engine's database status.
+	 */
+	enum Status {
+		/**
+		 * Default status.
+		 * Do not build or query.
+		 */
+		Unknown,
+
+		/**
+		 * Requires initial build.
+		 * No queries can be issued.
+		 */
+		Build,
+
+		/**
+		 * Requires rebuilding.
+		 * Queries can be issued in the meantime.
+		 */
+		Rebuild,
+
+		/**
+		 * Up-to-date.
+		 * Ready for querying
+		 */
+		Ready
+	};
+
+	/**
 	 * Class constructor.
 	 * @param  parent  Parent object
 	 * @return
@@ -59,6 +88,12 @@ public:
 	 * @param  initString  Implementation-specific string
 	 */
 	virtual void open(const QString& initString) = 0;
+
+	/**
+	 * Determines the status of the database: whether a build is required and
+	 * whether queries can be issued.
+	 */
+	virtual Status status() = 0;
 
 	/**
 	 * Abstract base class for a controllable object.
@@ -96,7 +131,7 @@ public:
 		/**
 		 * Stops the current operation.
 		 */
-		void stop() {
+		virtual void stop() {
 			if (ctrlObject_)
 				ctrlObject_->stop();
 		}

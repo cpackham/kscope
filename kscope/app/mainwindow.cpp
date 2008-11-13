@@ -21,6 +21,7 @@
 #include <QDockWidget>
 #include <QSettings>
 #include <QCloseEvent>
+#include <QStatusBar>
 #include "application.h"
 #include "mainwindow.h"
 #include "editorcontainer.h"
@@ -104,7 +105,18 @@ void MainWindow::buildProject()
 	if (!project)
 		return;
 
-	buildProgress_.init(true, this);
+	// Create a build progress widget.
+	// This will be a modal dialogue if building from scratch, or a progress-bar
+	// widget in the status bar if rebuilding an existing project.
+	if (project->engine()->status() == Core::Engine::Build) {
+		buildProgress_.init(true, this);
+	}
+	else {
+		QWidget* widget = buildProgress_.init(false, this);
+		statusBar()->addWidget(widget);
+	}
+
+	// Start the build process.
 	project->engine()->build(buildProgress_);
 }
 

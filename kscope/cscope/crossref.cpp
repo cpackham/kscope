@@ -33,7 +33,7 @@ namespace Cscope
  * Class constructor.
  * @param  parent  Parent object
  */
-Crossref::Crossref(QObject* parent) : Core::Engine(parent)
+Crossref::Crossref(QObject* parent) : Core::Engine(parent), status_(Unknown)
 {
 }
 
@@ -57,20 +57,30 @@ Crossref::~Crossref()
  */
 void Crossref::open(const QString& initString)
 {
+	// Parse the initialisation string.
 	QStringList args = initString.split(":", QString::SkipEmptyParts);
 	QString path = args.takeFirst();
 
 	qDebug() << __func__ << initString << path;
 
+	// Make sure the path exists.
 	QDir dir(path);
 	if (!dir.exists())
 		throw new Core::Exception("Database directory does not exist");
 
+	// Check if the cross-reference file exists.
+	// If not, the databsae needs to be built. Otherwise, it is ready for
+	// querying, but needs to be rebuilt.
+	// We also ensure that if it exists it is readable.
 	QFileInfo fi(dir, "cscope.out");
-
-	if (!fi.exists() || !fi.isReadable())
+	if (!fi.exists())
+		status_ = Build;
+	else if (!fi.isReadable())
 		throw new Core::Exception("Cannot read the 'cscope.out' file");
+	else
+		status_ = Rebuild;
 
+	// Store arguments for running Cscope.
 	path_ = path;
 	args_ = args;
 }
@@ -139,11 +149,24 @@ void Crossref::query(Core::Engine::Connection& conn,
  */
 void Crossref::build(Core::Engine::Connection& conn) const
 {
+	// Create the Cscope process object.
 	Cscope* cscope = new Cscope(args_);
 	cscope->setDeleteOnExit();
+
+	// Need to update the status upon successful termination.
+	connect(cscope, SIGNAL(finished(int, QProcess::ExitStatus)), this,
+	        SLOT(buildProcessFinished(int, QProcess::ExitStatus)));
+
+	// Start the build process.
 	cscope->build(&conn, path_);
 }
 
+void Crossref::buildProcessFinished(int code, QProcess::ExitStatus status)
+{
+	if ((code == 0) && (status == QProcess::NormalExit))
+		status_ = Ready;
 }
 
-}
+} // namespace Cscope
+
+} // namespace KScope
