@@ -50,6 +50,14 @@ public:
 	 */
 	struct Params {
 		/**
+		 * The main project path.
+		 * The interpretation of this value is implementation-specific, but it
+		 * is expected that projects will store configuration and data files
+		 * in a directory corresponding to this path.
+		 */
+		QString projPath_;
+
+		/**
 		 * The name of the project (to be displayed to the user).
 		 */
 		QString name_;
@@ -99,7 +107,7 @@ public:
 	/**
 	 * @return Pointer to the engine
 	 */
-	virtual const Engine* engine() = 0;
+	virtual Engine* engine() = 0;
 
 	/**
 	 * @return Pointer to the code base
@@ -123,13 +131,13 @@ public:
 	 * file.
 	 * This given file may not exist (e.g., if this object is used to create a
 	 * new project). The constructor will still succeed, but open() will fail.
-	 * @param  configPath  The path to the configuration file
-	 * @return
+	 * @param  confFileName  The name of the configuration file
+	 * @param  projPath      The path of the directory holding the configuration
+	 *                       file (may be empty for new projects)
 	 */
-	Project(const QString& configPath) : configPath_(configPath) {
-		QSettings projConfig(configPath_, QSettings::IniFormat);
-		name_ = projConfig.value("Project/Name", "").toString();
-		qDebug() << "Project loaded (name='" << name_ << "')";
+	Project(const QString& configFileName, const QString& projPath = QString())
+		: configFileName_(configFileName), loaded_(false), open_(false) {
+		load(projPath);
 	}
 
 	/**
@@ -139,44 +147,34 @@ public:
 
 	/**
 	 * Opens the project.
-	 * Loads project parameters from the configuration file, and initialises the
-	 * code base and engine.
-	 * The configuration file must have been successfully opened in the
-	 * costructor, or by a call to create(), for this method to succeed.
+	 * Initialises the code base and engine.
+	 * The configuration file must have been successfully loaded in the
+	 * constructor, or by a call to create(), for this method to succeed.
 	 * @throw Exception
 	 */
 	virtual void open() {
-		if (name_.isEmpty())
-			throw new Exception("The project file does not exist");
+		// Nothing to do if the project is already open.
+		if (open_)
+			return;
 
-		QSettings projConfig(configPath_, QSettings::IniFormat);
-		QString cbString, engString;
-
-		// Get the code base and engine initialisation strings from the
-		// project's configuration file.
-		projConfig.beginGroup("Project");
-		rootPath_ = projConfig.value("RootPath", "/").toString();
-		engString = projConfig.value("EngineString").toString();
-		cbString = projConfig.value("CodebaseString").toString();
-		projConfig.endGroup();
-
-		qDebug() << "Project opened (EngineString='" << engString
-		         << "' CodebaseString='" << cbString << "')";
-
-		// Handle initialisation strings given as paths relative to the
-		// configuration file's directory.
-		QDir::setCurrent(QFileInfo(configPath_).dir().path());
+		// Make sure the configuration parameters were loaded.
+		if (!loaded_)
+			throw new Exception("Project parameters were not loaded");
 
 		try {
-			// Prepare the symbol engine.
-			engine_.open(engString);
+			// Prepare the engine.
+			engine_.open(params_.engineString_);
 
 			// Load the code base.
-			codebase_.load(cbString);
+			codebase_.load(params_.codebaseString_);
 		}
 		catch (Exception* e) {
 			throw e;
 		}
+
+		open_ = true;
+		qDebug() << "Project opened (EngineString='" << params_.engineString_
+		         << "' CodebaseString='" << params_.codebaseString_ << "')";
 	}
 
 	/**
@@ -186,58 +184,95 @@ public:
 	 * @throw  Exception
 	 */
 	virtual void create(const Params& params) {
-		// Do not write over an existing configuration file.
-		QFileInfo fi(configPath_);
-		if (fi.exists()) {
-			throw new Exception(QString("The file '%1' already exists")
-			                    .arg(configPath_));
-		}
+		if (open_ || loaded_)
+			throw new Exception("Cannot overwrite an existing project");
 
 		// Make sure the directory to contain the new configuration file
 		// exists. Create it if necessary.
-		QDir dir(fi.dir());
-		if (!dir.exists() && !dir.mkpath(fi.path())) {
+		QDir dir(params.projPath_);
+		if (!dir.exists() && !dir.mkpath(params.projPath_)) {
 			throw new Exception(QString("Failed to create the directory '%1'")
-			                    .arg(fi.path()));
+			                    .arg(params.projPath_));
 		}
 
+		// Do not overwrite an existing project file.
+		if (dir.exists(configFileName_)) {
+			throw new Exception(QString("Cannot overwrite an existing "
+			                            "project file '%1'")
+			                    .arg(dir.filePath(configFileName_)));
+		}
+
+		// Copy the given parameters.
+		params_ = params;
+
 		// Write the configuration file.
-		QSettings projConfig(configPath_, QSettings::IniFormat);
+		QSettings projConfig(configPath(), QSettings::IniFormat);
 		projConfig.beginGroup("Project");
-		projConfig.setValue("Name", params.name_);
-		projConfig.setValue("RootPath", params.rootPath_);
-		projConfig.setValue("EngineString", params.engineString_);
-		projConfig.setValue("CodebaseString", params.codebaseString_);
+		projConfig.setValue("Name", params_.name_);
+		projConfig.setValue("RootPath", params_.rootPath_);
+		projConfig.setValue("EngineString", params_.engineString_);
+		projConfig.setValue("CodebaseString", params_.codebaseString_);
 		projConfig.endGroup();
-
-		name_ = params.name_;
 	}
 
+	/**
+	 * Marks the project as closed.
+	 * Note, however, that the configuration parameters are still loaded.
+	 */
 	virtual void close() {
-		name_ = QString();
+		open_ = false;
 	}
 
-	virtual QString name() { return name_; }
-	virtual QString rootPath() { return rootPath_; }
+	/**
+	 * @return The name of the project
+	 */
+	virtual QString name() { return params_.name_; }
 
-	virtual const Engine* engine() { return &engine_; }
+	/**
+	 * @return The root path for the project's code base
+	 */
+	virtual QString rootPath() { return params_.rootPath_; }
+
+	/**
+	 * @return A pointer to the engine object
+	 */
+	virtual Engine* engine() { return &engine_; }
+
+	/**
+	 * @return A pointer to the code base object
+	 */
 	virtual Codebase* codebase() { return &codebase_; }
+
+	/**
+	 * Retrieves a copy of the current configuration parameters.
+	 * @param  params  An object into which current values are copied
+	 */
+	void getCurrentParams(Params& params) {
+		params = params_;
+	}
 
 protected:
 	/**
-	 * The path to the project's configuration file.
+	 * The name of the project's configuration file.
+	 * The configuration file resides under the project path stored in the
+	 * configuration parameters.
 	 */
-	QString configPath_;
+	QString configFileName_;
 
 	/**
-	 * The name of the project.
+	 * Configuration parameters.
 	 */
-	QString name_;
+	Params params_;
 
 	/**
-	 * An optional common root-path for all source files in the code base.
+	 * Whether the project parameters were loaded from the configuration file.
 	 */
-	QString rootPath_;
+	bool loaded_;
+
+	/**
+	 * Whether the project is open.
+	 */
+	bool open_;
 
 	/**
 	 * The indexing engine.
@@ -248,6 +283,40 @@ protected:
 	 * The code base.
 	 */
 	CodebaseT codebase_;
+
+	/**
+	 * Reads project settings from the configuration file.
+	 */
+	virtual void load(const QString& projPath) {
+		qDebug() << __func__ << projPath << configFileName_;
+
+		// Do nothing if the project file does not exist (needs to be created).
+		QFileInfo fi(QDir(projPath).filePath(configFileName_));
+		if (!fi.exists() || !fi.isReadable())
+			return;
+
+		// Store the project path.
+		// This is the directory holding the configuration file.
+		params_.projPath_ = projPath;
+		if (!params_.projPath_.endsWith("/"))
+			params_.projPath_ += "/";
+
+		// Load parameters.
+		QSettings projConfig(configPath(), QSettings::IniFormat);
+		projConfig.beginGroup("Project");
+		params_.name_ = projConfig.value("Name", "").toString();
+		params_.rootPath_ = projConfig.value("RootPath", "/").toString();
+		params_.engineString_ = projConfig.value("EngineString").toString();
+		params_.codebaseString_ = projConfig.value("CodebaseString").toString();
+		projConfig.endGroup();
+
+		loaded_ = true;
+		qDebug() << "Project loaded (name='" << params_.name_ << "')";
+	}
+
+	inline QString configPath() {
+		return params_.projPath_ + configFileName_;
+	}
 };
 
 }
