@@ -22,6 +22,7 @@
 #define __CORE_ENGINE_H
 
 #include <QObject>
+#include <QWidget>
 #include "globals.h"
 
 namespace KScope
@@ -31,7 +32,9 @@ namespace Core
 {
 
 /**
- * Abstract base class for cross-reference databases.
+ * Abstract base-class for cross-reference databases.
+ * This class is the at the heart of KScope's implementation. Its derivations
+ * define methods for retrieving information used to analyse the code base.
  * @author Elad Lahav
  */
 class Engine : public QObject
@@ -39,27 +42,23 @@ class Engine : public QObject
 	Q_OBJECT
 
 public:
-	Engine(QObject* parent = 0) : QObject(parent) {}
+	/**
+	 * Class constructor.
+	 * @param  parent  Parent object
+	 * @return
+	 */
+	Engine(QObject* parent = NULL) : QObject(parent) {}
+
+	/**
+	 * Class destructor.
+	 */
 	virtual ~Engine() {}
 
 	/**
 	 * Makes the database available for querying.
-	 * @param  openString  Implementation-specific string
+	 * @param  initString  Implementation-specific string
 	 */
-	virtual void open(const QString& openString) = 0;
-
-	/**
-	 * Enables implementations to create a configuration widget for the engine.
-	 * This widget can be included in project configuration dialogues.
-	 * The default implementation returns NULL.
-	 * @param  parent  A parent to use when creating the configuration widget
-	 * @return A new configuration widget for the engine, NULL if not
-	 *         implemented
-	 */
-	virtual QWidget* configWidget(QWidget* parent) {
-		(void)parent;
-		return NULL;
-	}
+	virtual void open(const QString& initString) = 0;
 
 	/**
 	 * Abstract base class for a controllable object.
@@ -148,8 +147,8 @@ public slots:
 	virtual void build(Connection&) const = 0;
 };
 
-}
+} // namespace Core
 
-}
+} // namespace KScope
 
 #endif // __CORE_ENGINE_H
