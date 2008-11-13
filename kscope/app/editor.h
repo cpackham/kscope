@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_EDITOR_H
-#define __KSCOPE_EDITOR_H
+#ifndef __APP_EDITOR_H
+#define __APP_EDITOR_H
 
 #include <qsciscintilla.h>
 #include <QSettings>
@@ -61,6 +61,7 @@ public:
 	QString currentText() const;
 	void setFocus();
 	void applyConfig(const Config&);
+	void getConfig(Config&);
 
 public slots:
 	void loadDone(const QString&);
@@ -72,8 +73,8 @@ private:
 	bool onLoadFocus_;
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif  // __KSCOPE_EDITOR_H
+#endif  // __APP_EDITOR_H

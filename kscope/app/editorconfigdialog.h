@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_EDITORCONFIGDIALOG_H__
-#define __KSCOPE_EDITORCONFIGDIALOG_H__
+#ifndef __APP_EDITORCONFIGDIALOG_H__
+#define __APP_EDITORCONFIGDIALOG_H__
 
 #include <QDialog>
 #include "ui_editorconfigdialog.h"
@@ -31,6 +31,11 @@ namespace KScope
 namespace App
 {
 
+/**
+ * A dialogue for configuring a QScintilla editor.
+ * Unfortunately, QScintilla does not provide such a dialogue
+ * @author Elad Lahav
+ */
 class EditorConfigDialog : public QDialog, public Ui::EditorConfigDialog
 {
 	Q_OBJECT
@@ -42,8 +47,8 @@ public:
 	void getConfig(Editor::Config&);
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif // __KSCOPE_EDITORCONFIGDIALOG_H__
+#endif // __APP_EDITORCONFIGDIALOG_H__

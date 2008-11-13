@@ -167,9 +167,7 @@ void Editor::setFocus()
  */
 void Editor::applyConfig(const Config& config)
 {
-	QsciLexer* lex;
-
-	lex = lexer();
+	QsciLexer* lex = lexer();
 	if (lex)
 		lex->setFont(config.font_);
 	else
@@ -178,6 +176,24 @@ void Editor::applyConfig(const Config& config)
 	setIndentationsUseTabs(config.indentTabs_);
 	setTabWidth(config.tabWidth_);
 	setCaretLineVisible(config.hlCurLine_);
+}
+
+/**
+ * Fills a Config structure with the current configuration options.
+ * Used to get QScintilla's default values.
+ * @param config
+ */
+void Editor::getConfig(Config& config)
+{
+	QsciLexer* lex = lexer();
+	if (lex)
+		config.font_ = lex->defaultFont();
+	else
+		config.font_ = font();
+
+	config.indentTabs_ = indentationsUseTabs();
+	config.tabWidth_ = tabWidth();
+	config.hlCurLine_ = false;
 }
 
 /**
@@ -204,10 +220,14 @@ void Editor::loadDone(const QString& text)
  */
 void Editor::Config::load(QSettings& settings)
 {
-	font_ = settings.value("Font").value<QFont>();
-	hlCurLine_ = settings.value("HighlightCurrentLine").toBool();
-	indentTabs_ = settings.value("IndentWithTabs").toBool();
-	tabWidth_ = settings.value("TabWidth").toInt();
+	Editor::Config config;
+
+	Editor().getConfig(config);
+	font_ = settings.value("Font", config.font_).value<QFont>();
+	hlCurLine_
+		= settings.value("HighlightCurrentLine", config.hlCurLine_).toBool();
+	indentTabs_ = settings.value("IndentWithTabs", config.indentTabs_).toBool();
+	tabWidth_ = settings.value("TabWidth", config.tabWidth_).toInt();
 }
 
 /**
@@ -222,6 +242,6 @@ void Editor::Config::store(QSettings& settings)
 	settings.setValue("TabWidth", tabWidth_);
 }
 
-}
+} // namespace App
 
-}
+} // namespace KScope
