@@ -26,8 +26,8 @@ namespace KScope
 namespace Cscope
 {
 
-ManagedProject::ManagedProject(const QString& configPath)
-	: Core::Project<Crossref, Files>(configPath)
+ManagedProject::ManagedProject(const QString& projPath)
+	: Core::Project<Crossref, Files>("cscope.proj", projPath)
 {
 }
 

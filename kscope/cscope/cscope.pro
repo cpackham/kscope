@@ -7,16 +7,17 @@ DEPENDPATH += ". ../core"
 CONFIG += debug_and_release \
     warn_all \
     dll
-CONFIG(release, debug|release) {
-   DEFINES += QT_NO_DEBUG_OUTPUT
-}
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 # Input
-HEADERS += managedproject.h \
+HEADERS += configwidget.h \
+    managedproject.h \
     crossref.h \
     cscope.h \
     files.h
-SOURCES += managedproject.cpp \
+FORMS += configwidget.ui
+SOURCES += configwidget.cpp \
+    managedproject.cpp \
     crossref.cpp \
     cscope.cpp \
     files.cpp

@@ -20,6 +20,7 @@
 
 #include <QtDebug>
 #include "cscope.h"
+#include "exception.h"
 
 namespace KScope
 {
@@ -27,11 +28,19 @@ namespace KScope
 namespace Cscope
 {
 
-Cscope::Cscope(Core::Engine::Connection& conn) : Process(), conn_(&conn),
-	buildInitState_("buildInitState"),
-	buildProgState_("buildProgState"),
-	queryProgState_("queryProgState"),
-	queryResultState_("queryResultState")
+/**
+ * Class constructor.
+ * Creates the parser objects used for parsing Cscope output.
+ * @param  baseArgs Command-line arguments for Cscope
+ */
+Cscope::Cscope(const QStringList& baseArgs)
+	: Process(),
+	  baseArgs_(baseArgs),
+	  conn_(NULL),
+	  buildInitState_("buildInitState"),
+	  buildProgState_("buildProgState"),
+	  queryProgState_("queryProgState"),
+	  queryResultState_("queryResultState")
 {
 	addRule(buildInitState_, Parser::Literal("Building cross-reference..."),
 	        buildProgState_);
@@ -65,76 +74,106 @@ Cscope::Cscope(Core::Engine::Connection& conn) : Process(), conn_(&conn),
 	                           << Parser::Number()
 	                           << Parser::String(),
 	        queryResultState_, QueryResultAction(*this));
-
-	conn_->setCtrlObject(this);
 }
 
+/**
+ * Class destructor.
+ */
 Cscope::~Cscope()
 {
 }
 
-void Cscope::query(const QString& path, QueryType type,
-                   const QString& pattern)
+/**
+ * Starts a Cscope query process.
+ * The process performs a one-time, line-oriented query on the database, without
+ * rebuilding it.
+ * @param  conn     A connection object used for reporting progress and data
+ * @param  path     The directory to execute under
+ * @param  type     The type of query to run
+ * @param  pattern  The pattern to query
+ * @throw  Exception
+ */
+void Cscope::query(Core::Engine::Connection* conn, const QString& path,
+                   QueryType type, const QString& pattern)
 {
+	// Abort if a process is already running.
+	if (state() != QProcess::NotRunning || conn_ != NULL)
+		throw Core::Exception("Process already running");
+
+	// TODO: Make the Cscope path configurable.
 	QString prog = "/usr/bin/cscope";
-	QStringList argList;
 
 	// Prepare the argument list.
-	prepareArgList(argList);
-	argList << "-d";
-	argList << QString("-L%1").arg(type);
-	argList << pattern;
+	QStringList args = baseArgs_;
+	args << "-d";
+	args << "-v";
+	args << QString("-L%1").arg(type);
+	args << pattern;
 	setWorkingDirectory(path);
 
-	// Prepare the object for accepting query results.
+	// Initialise parsing.
+	conn_ = conn;
+	conn_->setCtrlObject(this);
 	setState(queryProgState_);
 	locList_.clear();
 
-#ifndef QT_NO_DEBUG
-	qDebug() << "Running cscope:" << argList << "in" << path;
-#endif
-
-	start(prog, argList);
+	// Start the process.
+	qDebug() << "Running cscope:" << args << "in" << path;
+	start(prog, args);
 }
 
-void Cscope::build(const QString& path)
+/**
+ * Starts a Cscope build process.
+ * @param  conn     A connection object used for reporting progress and data
+ * @param  path     The directory to execute under
+ * @throw  Exception
+ */
+void Cscope::build(Core::Engine::Connection* conn, const QString& path)
 {
+	// Abort if a process is already running.
+	if (state() != QProcess::NotRunning || conn_ != NULL)
+		throw Core::Exception("Process already running");
+
+	// TODO: Make the Cscope path configurable.
 	QString prog = "/usr/bin/cscope";
-	QStringList argList;
 
-	prepareArgList(argList);
-	argList << "-b";
-
+	// Prepare the argument list.
+	QStringList args = baseArgs_;
+	args << "-b";
+	args << "-v";
 	setWorkingDirectory(path);
+
+	// Initialise parsing.
+	conn_ = conn;
+	conn_->setCtrlObject(this);
 	setState(buildInitState_);
 
-#ifndef QT_NO_DEBUG
-	qDebug() << "Running cscope:" << argList << "in" << path;
-#endif
-
-	start(prog, argList);
+	// Start the process.
+	qDebug() << "Running cscope:" << args << "in" << path;
+	start(prog, args);
 }
 
+/**
+ * Called when the process terminates.
+ * @param  code    The exit code of the process
+ * @param  status  Used to indicate process crashes
+ */
 void Cscope::handleFinished(int code, QProcess::ExitStatus status)
 {
 	Process::handleFinished(code, status);
+
+	// Hand over data to the other side of the connection.
 	if (!locList_.isEmpty())
 		conn_->onDataReady(locList_);
 
+	// Signal normal termination.
 	conn_->onFinished();
+
+	// Detach from the connection object.
+	conn_->setCtrlObject(NULL);
+	conn_ = NULL;
 }
 
-void Cscope::prepareArgList(QStringList& argList)
-{
-	if (optKernel_)
-		argList << "-k";
+} // namespace Cscope
 
-	if (optInvIndex_)
-		argList << "-q";
-
-	argList << "-v";
-}
-
-}
-
-}
+}  // namespace KScope

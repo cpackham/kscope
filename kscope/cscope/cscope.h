@@ -32,12 +32,15 @@ namespace Cscope
 {
 
 /**
- * @author Elad Lahav <elad_lahav@users.sourceforge.net>
+ * Front-end to a Cscope process.
+ * This object can be used for both querying and building the Cscope
+ * cross-reference file.
+ * @author Elad Lahav
  */
 class Cscope : public Core::Process, public Core::Engine::Controlled
 {
 public:
-	Cscope(Core::Engine::Connection&);
+	Cscope(const QStringList&);
 	~Cscope();
 
 	enum QueryType {
@@ -51,12 +54,10 @@ public:
 		IncludingFiles = 8
 	};
 
-	void query(const QString&, QueryType, const QString&);
-	void build(const QString&);
+	void query(Core::Engine::Connection*, const QString&, QueryType,
+	           const QString&);
+	void build(Core::Engine::Connection*, const QString&);
 	virtual void stop() { kill(); }
-
-	void setIsKernel(bool opt) { optKernel_ = opt; }
-	void setUseInvIndex(bool opt) { optInvIndex_ = opt; }
 
 signals:
 	void dataReady(const Core::Location& loc);
@@ -67,6 +68,15 @@ protected slots:
 	virtual void handleFinished(int, QProcess::ExitStatus);
 
 private:
+	/**
+	 * Command-line arguments common to both querying and building the database.
+	 */
+	QStringList baseArgs_;
+
+	/**
+	 * The current connection object, used to communicate progress and result
+	 * information.
+	 */
 	Core::Engine::Connection* conn_;
 	uint resNum_;
 	uint resParsed_;
@@ -74,8 +84,6 @@ private:
 	State buildProgState_;
 	State queryProgState_;
 	State queryResultState_;
-	bool optKernel_;
-	bool optInvIndex_;
 	Core::LocationList locList_;
 
 	struct ProgAction
@@ -129,8 +137,6 @@ private:
 
 		Cscope& self_;
 	};
-
-	void prepareArgList(QStringList&);
 };
 
 }

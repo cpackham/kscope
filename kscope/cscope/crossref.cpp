@@ -48,11 +48,20 @@ Crossref::~Crossref()
  * Opens a cscope cross-reference database.
  * The method expects to find a 'cscope.out' file under the given path.
  * The path is stored and used for all database operations.
- * @param  path  The path under which to find the cross-reference file
+ * The initialisation string should be colon-delimited, where the first section
+ * is the project path (includes the cscope.out and cscope.files files),
+ * followed by command-line arguments to Cscope (only the ones that apply to
+ * both querying and building).
+ * @param  initString  The initialisation string
  * @throw  Exception
  */
-void Crossref::open(const QString& path)
+void Crossref::open(const QString& initString)
 {
+	QStringList args = initString.split(":", QString::SkipEmptyParts);
+	QString path = args.takeFirst();
+
+	qDebug() << __func__ << initString << path;
+
 	QDir dir(path);
 	if (!dir.exists())
 		throw new Core::Exception("Database directory does not exist");
@@ -63,6 +72,7 @@ void Crossref::open(const QString& path)
 		throw new Core::Exception("Cannot read the 'cscope.out' file");
 
 	path_ = path;
+	args_ = args;
 }
 
 /**
@@ -118,9 +128,9 @@ void Crossref::query(Core::Engine::Connection& conn,
 	}
 
 	// Create a new Cscope process object, and start the query.
-	Cscope* cscope = new Cscope(conn);
+	Cscope* cscope = new Cscope(args_);
 	cscope->setDeleteOnExit();
-	cscope->query(path_, type, query.pattern_);
+	cscope->query(&conn, path_, type, query.pattern_);
 }
 
 /**
@@ -129,9 +139,9 @@ void Crossref::query(Core::Engine::Connection& conn,
  */
 void Crossref::build(Core::Engine::Connection& conn) const
 {
-	Cscope* cscope = new Cscope(conn);
+	Cscope* cscope = new Cscope(args_);
 	cscope->setDeleteOnExit();
-	cscope->build(path_);
+	cscope->build(&conn, path_);
 }
 
 }

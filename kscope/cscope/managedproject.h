@@ -22,8 +22,10 @@
 #define __CSCOPE_MANAGEDPROJECT_H
 
 #include "project.h"
+#include "projectconfig.h"
 #include "crossref.h"
 #include "files.h"
+#include "configwidget.h"
 
 namespace KScope
 {
@@ -46,6 +48,53 @@ public:
 
 }
 
+namespace Core
+{
+
+template<>
+struct ProjectConfig<Cscope::ManagedProject>
+{
+	static QWidget* createConfigWidget(Cscope::ManagedProject* project,
+	                                   QWidget* parent) {
+		Cscope::ConfigWidget* widget = new Cscope::ConfigWidget(parent);
+
+		if (project) {
+			ProjectBase::Params params;
+			project->getCurrentParams(params);
+
+			QStringList args = params.engineString_.split(":");
+			widget->kernelCheck_->setChecked(args.contains("-k"));
+			widget->invIndexCheck_->setChecked(args.contains("-q"));
+			widget->compressCheck_->setChecked(!args.contains("-c"));
+		}
+		else {
+			widget->kernelCheck_->setChecked(false);
+			widget->invIndexCheck_->setChecked(true);
+			widget->compressCheck_->setChecked(true);
+		}
+
+		return widget;
+	}
+
+	static void paramsFromWidget(QWidget* widget, ProjectBase::Params& params) {
+		params.engineString_ = params.projPath_;
+		params.codebaseString_ = params.projPath_;
+
+		Cscope::ConfigWidget* confWidget
+			= dynamic_cast<Cscope::ConfigWidget*>(widget);
+		if (confWidget) {
+			if (confWidget->kernelCheck_->isChecked())
+				params.engineString_ += ":-k";
+			if (confWidget->invIndexCheck_->isChecked())
+				params.engineString_ += ":-q";
+			if (!confWidget->compressCheck_->isChecked())
+				params.engineString_ += ":-c";
+		}
+	}
+};
+
 }
 
-#endif /* __CSCOPE_MANAGEDPROJECT_H */
+}
+
+#endif // __CSCOPE_MANAGEDPROJECT_H
