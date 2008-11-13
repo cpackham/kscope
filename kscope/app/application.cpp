@@ -30,6 +30,11 @@ namespace KScope
 namespace App
 {
 
+/**
+ * Class constructor.
+ * @param  argc  The number of command-line arguments
+ * @param  argv  Command-line argument list
+ */
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv), proj_(NULL)
 {
@@ -37,28 +42,49 @@ Application::Application(int& argc, char** argv)
 	QCoreApplication::setApplicationName("KScope");
 }
 
+/**
+ * Class destructor.
+ */
 Application::~Application()
 {
 }
 
+/**
+ * Starts the application.
+ * Note that this method only returns when the application terminates.
+ * @return The return code of the application.
+ */
 int Application::run()
 {
+	// Create the main window.
+	// We can do it on the stack, as the method does not return as long as the
+	// application is running.
 	MainWindow mainWnd;
-
 	mainWnd_ = &mainWnd;
 	mainWnd_->show();
 
-	postEvent(this, new QEvent(static_cast<QEvent::Type>(LoadLastProject)));
+	// Do application initialisation.
+	// The reason for posting an event is to have a running application (event
+	// loop) before starting the initialisation process. This way, the process
+	// can take full advantage of the event mechanism.
+	postEvent(this, new QEvent(static_cast<QEvent::Type>(AppInitEvent)));
+
 	return exec();
 }
 
-bool Application::loadProject(const QString& projString)
+/**
+ * Loads the given project.
+ * @param  projPath  The project path
+ */
+void Application::loadProject(const QString& projPath)
 {
+	// Do not load if another project is currently loaded.
 	if (proj_)
-		return false;
+		return;
 
+	// Create and open a project.
 	try {
-		proj_ = new Cscope::ManagedProject(projString);
+		proj_ = new Cscope::ManagedProject(projPath);
 		proj_->open();
 	}
 	catch (Core::Exception* e) {
@@ -70,42 +96,60 @@ bool Application::loadProject(const QString& projString)
 			proj_ = NULL;
 		}
 
-		return false;
+		return;
 	}
 
-	QSettings().setValue("Session/LastProject", projString);
+	// Save the project path.
+	QSettings().setValue("Session/LastProject", projPath);
 
+	// Signal the availability of a project.
 	emit hasProject(true);
-	return true;
 }
 
+/**
+ * Closes the active project.
+ */
 void Application::closeProject()
 {
+	// Nothing to do if there is no active project.
 	if (!proj_)
 		return;
 
+	// Close the project and delete the object.
 	proj_->close();
 	delete proj_;
 	proj_ = NULL;
 
+	// Signal that there is no active project.
 	emit hasProject(false);
 }
 
+/**
+ * Handles custom events.
+ * @param  event  The event to handle.
+ */
 void Application::customEvent(QEvent* event)
 {
-	if (event->type() != static_cast<QEvent::Type>(LoadLastProject))
-		return;
+	if (event->type() == static_cast<QEvent::Type>(AppInitEvent))
+		init();
+}
 
-	QSettings settings;
-	QString lastProj, name;
-
-	lastProj = settings.value("Session/LastProject", "").toString();
+/**
+ * Performs application initialisation, after the event loop was started.
+ */
+void Application::init()
+{
+	// Get the path of the last active project.
+	QString lastProj = QSettings().value("Session/LastProject", "").toString();
 	if (lastProj.isEmpty())
 		return;
 
-	Cscope::ManagedProject proj(lastProj);
-	name = proj.name();
+	// Get the project's name.
+	QString name = Cscope::ManagedProject(lastProj).name();
 
+	// Prompt the user for opening the last project.
+	// TODO: Want more options on start-up (list of last projects, create new,
+	// do nothing).
 	if (QMessageBox::question(NULL, tr("Open Last Project"),
 	                          tr("Would you like to reload '%1'?").arg(name),
 	                          QMessageBox::Yes | QMessageBox::No)
@@ -114,6 +158,6 @@ void Application::customEvent(QEvent* event)
 	}
 }
 
-}
+} // namespace App
 
-}
+} // namespace KScope

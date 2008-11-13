@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_APPLICATION_H
-#define __KSCOPE_APPLICATION_H
+#ifndef __APP_APPLICATION_H
+#define __APP_APPLICATION_H
 
 #include <QApplication>
 #include "project.h"
@@ -35,6 +35,8 @@ namespace App
 class MainWindow;
 
 /**
+ * The KScope application.
+ * Runs the event loop and maintains the active project.
  * @author Elad Lahav
  */
 class Application : public QApplication
@@ -45,10 +47,10 @@ public:
 	Application(int&, char**);
 	~Application();
 
-	enum Event { LoadLastProject = QEvent::User };
+	enum Event { AppInitEvent = QEvent::User };
 
 	int run();
-	bool loadProject(const QString&);
+	void loadProject(const QString&);
 
 	Core::ProjectBase* currentProject() { return proj_; }
 
@@ -62,8 +64,21 @@ protected:
 	void customEvent(QEvent*);
 
 private:
+	/**
+	 * The main window.
+	 */
 	MainWindow* mainWnd_;
+
+	/**
+	 * The active project.
+	 * NULL if no project is currently loaded
+	 * @note This is a bit dangerous, as currentProject() is being used without
+	 * checking for NULL pointers in several places. A better solution may be
+	 * required.
+	 */
 	Core::ProjectBase* proj_;
+
+	void init();
 };
 
 inline Application* theApp() { return static_cast<Application*>(qApp); }
@@ -71,8 +86,8 @@ inline Core::ProjectBase* currentProject() {
 	return theApp()->currentProject();
 }
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif // __KSCOPE_APPLICATION_H
+#endif // __APP_APPLICATION_H
