@@ -22,6 +22,7 @@
 #define __APP_BUILDPROGRESS_H__
 
 #include <QProgressDialog>
+#include <QDebug>
 #include "engine.h"
 #include "progressbar.h"
 
@@ -62,6 +63,7 @@ public:
 		if (!useDialog) {
 			bar_ = new Core::ProgressBar(parent);
 			connect(bar_, SIGNAL(cancelled()), this, SLOT(stopBuild()));
+			bar_->setFrameShape(QFrame::NoFrame);
 			bar_->setProgress(0, 0);
 			bar_->setLabel(tr("Initialising..."));
 			bar_->show();
@@ -89,6 +91,7 @@ public:
 	 * Deletes the widget when the build process ends.
 	 */
 	void onFinished() {
+		qDebug() << __func__;
 		if (dlg_)
 			delete dlg_;
 		if (bar_)
@@ -102,6 +105,7 @@ public:
 	 * Deletes the widget when the build process ends.
 	 */
 	void onAborted() {
+		qDebug() << __func__;
 		if (dlg_)
 			delete dlg_;
 		if (bar_)
@@ -118,6 +122,7 @@ public:
 	 * @param  total Expected final value
 	 */
 	void onProgress(const QString& text, uint cur, uint total) {
+		qDebug() << __func__ << text << cur << total;
 		if (dlg_) {
 			dlg_->setRange(0, total);
 			dlg_->setValue(cur);
