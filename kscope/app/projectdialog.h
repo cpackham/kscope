@@ -23,9 +23,17 @@
 
 #include <QDialog>
 #include "ui_projectdialog.h"
+#include "project.h"
 
 namespace KScope
 {
+
+namespace Cscope
+{
+
+class ManagedProject;
+
+}
 
 namespace App
 {
@@ -45,11 +53,18 @@ public:
 
 	QString path() { return projectPathEdit_->text(); }
 
+public slots:
+	void accept();
+
 protected slots:
 	void browseRootPath();
 	void browseProjectPath();
 	void setUseHiddenProjectDir(bool);
 	void updateProjectPath(const QString&);
+
+private:
+	Cscope::ManagedProject* project_;
+	QWidget* projConfigWidget_;
 };
 
 }

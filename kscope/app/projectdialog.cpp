@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include "projectdialog.h"
 #include "application.h"
+#include "managedproject.h"
 
 namespace KScope
 {
@@ -33,20 +34,44 @@ ProjectDialog::ProjectDialog(QWidget* parent) : QDialog(parent),
 {
 	setupUi(this);
 
-	Core::ProjectBase* project = theApp()->currentProject();
-	if (project) {
+	project_ = static_cast<Cscope::ManagedProject*>(theApp()->currentProject());
+	if (project_) {
 		setWindowTitle(tr("Project Properties"));
-		nameEdit_->setText(project->name());
-		rootPathWidget_->setEnabled(false);
 		projectPathWidget_->setEnabled(false);
+
+		Core::ProjectBase::Params params;
+		project_->getCurrentParams(params);
+		nameEdit_->setText(params.name_);
+		rootPathEdit_->setText(params.rootPath_);
+		projectPathEdit_->setText(params.projPath_);
 	}
 	else {
 		setWindowTitle(tr("New Project"));
+	}
+
+	projConfigWidget_
+		= Core::ProjectConfig<Cscope::ManagedProject>
+			::createConfigWidget(project_, this);
+	if (projConfigWidget_) {
+		configTabs_->addTab(projConfigWidget_,
+		                    projConfigWidget_->windowTitle());
 	}
 }
 
 ProjectDialog::~ProjectDialog()
 {
+}
+
+void ProjectDialog::accept()
+{
+	Core::ProjectBase::Params params;
+
+	params.projPath_ = projectPathEdit_->text();
+	params.name_ = nameEdit_->text();
+	params.rootPath_ = rootPathEdit_->text();
+
+	Core::ProjectConfig<Cscope::ManagedProject>
+		::paramsFromWidget(projConfigWidget_, params);
 }
 
 void ProjectDialog::browseRootPath()
@@ -82,9 +107,9 @@ void ProjectDialog::updateProjectPath(const QString& rootPath)
 {
 	QString path;
 	if (!rootPath.endsWith("/"))
-		path = rootPath + "/" + ".kscope";
+		path = rootPath + "/" + ".cscope";
 	else
-		path = rootPath + ".kscope";
+		path = rootPath + ".cscope";
 
 	projectPathEdit_->setText(path);
 }
