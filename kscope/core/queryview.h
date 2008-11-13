@@ -34,6 +34,12 @@ namespace Core
 {
 
 /**
+ * A view for displaying query results.
+ * Since the class implements Engine::Connection, an object of this type it can
+ * be passed to an engine's query method. Progress will be displayed in the
+ * form of a progress-bar at the top of the view.
+ * @todo: This class only supports LocationListModel at the moment. A location
+ * tree-model needs to be implemented and be supported by this view.
  * @author Elad Lahav
  */
 class QueryView : public QTreeView, public Engine::Connection
@@ -45,10 +51,17 @@ public:
 	~QueryView();
 
 	void initQuery(const Query&);
+
+	/**
+	 * In the case the query returns only a single location, determines whether
+	 * this location should be selected automatically.
+	 * @param  select  true to select a single result, false otherwise
+	 */
 	void setAutoSelectSingleResult(bool select) {
 		autoSelectSingleResult_ = select;
 	}
 
+	// Engine::Connection implementation.
 	virtual void onDataReady(const LocationList&);
 	virtual void onFinished();
 	virtual void onAborted();
@@ -58,8 +71,24 @@ signals:
 	void locationRequested(const Core::Location& loc);
 
 private:
+	/**
+	 * The query associated with this view.
+	 * This can be used, e.g., for re-running the querty from within the view.
+	 */
 	Query query_;
+
+	/**
+	 * A progress-bar for displaying query progress information.
+	 * This widget is created upon the first reception of progress information,
+	 * and destroyed when the query terminates.
+	 */
 	ProgressBar* progBar_;
+
+	/**
+	 * In the case the query returns only a single location, determines whether
+	 * this location should be selected automatically.
+	 * @param  select  true to select a single result, false otherwise
+	 */
 	bool autoSelectSingleResult_;
 
 	inline LocationListModel* model() {
@@ -68,10 +97,11 @@ private:
 
 private slots:
 	void handleDoubleClick(const QModelIndex&);
+	void stopQuery();
 };
 
-}
+} // namespace Core
 
-}
+} // namespace KScope
 
 #endif  // __CORE_QUERYVIEW_H

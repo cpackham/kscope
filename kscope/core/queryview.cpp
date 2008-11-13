@@ -27,80 +27,131 @@ namespace KScope
 namespace Core
 {
 
+/**
+ * Class constructor.
+ * @param  parent  The parent widget
+ */
 QueryView::QueryView(QWidget* parent) : QTreeView(parent),
 	                                    progBar_(NULL),
 	                                    autoSelectSingleResult_(false)
 {
+	// Set tree view properties.
 	setRootIsDecorated(false);
 	setUniformRowHeights(true);
 
+	// Create an ordered list of columns.
 	QList<LocationListModel::Columns> colList;
-
 	colList << Core::LocationListModel::Scope
 			<< Core::LocationListModel::File
 			<< Core::LocationListModel::Line
 			<< Core::LocationListModel::Text;
 
+	// Create a location model.
 	setModel(new LocationListModel(colList, this));
 
+	// Emit requests for locations when an item is double-clicked.
 	connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this,
 	        SLOT(handleDoubleClick(const QModelIndex&)));
 }
 
+/**
+ * Class destructor.
+ */
 QueryView::~QueryView()
 {
 }
 
+/**
+ * Associates a query with this view.
+ * Clears the model in preparation of new results.
+ * @param  query  The query to associate with this view
+ */
 void QueryView::initQuery(const Query& query)
 {
 	query_ = query;
 	model()->clear();
 }
 
+/**
+ * Called by the engine when results are available.
+ * Adds the list of locations to the model.
+ * @param  locList  Query results
+ */
 void QueryView::onDataReady(const LocationList& locList)
 {
 	model()->add(locList);
 }
 
+/**
+ * Displays progress information in a progress-bar at the top of the view.
+ * @param  text  Progress message
+ * @param  cur   Current value
+ * @param  total Expected final value
+ */
 void QueryView::onProgress(const QString& text, uint cur, uint total)
 {
+	// Create the progress-bar widget, if it does not exist.
 	if (!progBar_) {
 		progBar_ = new ProgressBar(this);
+		connect(progBar_, SIGNAL(cancelled()), this, SLOT(stopQuery()));
 		progBar_->show();
 	}
 
+	// Update progress information in the progres bar.
 	progBar_->setLabel(text);
 	progBar_->setProgress(cur, total);
 }
 
+/**
+ * Called by the engine when a query terminates normally.
+ */
 void QueryView::onFinished()
 {
+	// Destroy the progress-bar, if it exists.
 	if (progBar_) {
 		delete progBar_;
 		progBar_ = NULL;
 	}
 
+	// Auto-select a single result, if required.
 	Location loc;
 	if (autoSelectSingleResult_ && model()->firstLocation(loc))
 		emit locationRequested(loc);
 }
 
+/**
+ * Called by the engine when a query terminates abnormally.
+ */
 void QueryView::onAborted()
 {
+	// Destroy the progress-bar, if it exists.
 	if (progBar_) {
 		delete progBar_;
 		progBar_ = NULL;
 	}
 }
 
+/**
+ * Called when the user double-clicks a location item in the list.
+ * Emits the locationRequested() signal for this location.
+ * @param  index  Identifies the clicked item
+ */
 void QueryView::handleDoubleClick(const QModelIndex& index)
 {
 	Location loc;
-
 	if (model()->locationFromIndex(index, loc))
 		emit locationRequested(loc);
 }
 
+/**
+ * Called when the "Cancel" button is clicked in the progress-bar.
+ * Informs the engine that the query process should be stopped.
+ */
+void QueryView::stopQuery()
+{
+	stop();
 }
 
-}
+} // namespace Core
+
+} // namespace KScope
