@@ -62,14 +62,16 @@ public:
 		if (!useDialog) {
 			bar_ = new Core::ProgressBar(parent);
 			connect(bar_, SIGNAL(cancelled()), this, SLOT(stopBuild()));
+			bar_->setProgress(0, 0);
+			bar_->setLabel(tr("Initialising..."));
 			bar_->show();
 			return bar_;
 		}
 
 		dlg_ = new QProgressDialog(parent);
 		connect(dlg_, SIGNAL(canceled()), this, SLOT(stopBuild()));
-		dlg_->setWindowTitle(QObject::tr("Building Project"));
-		dlg_->setLabelText(QObject::tr("Initialising..."));
+		dlg_->setWindowTitle(tr("Building Project"));
+		dlg_->setLabelText(tr("Initialising..."));
 		dlg_->setModal(true);
 		dlg_->show();
 		return dlg_;
