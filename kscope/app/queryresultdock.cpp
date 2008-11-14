@@ -33,13 +33,15 @@ QueryResultDock::QueryResultDock(const QString& title, QWidget* parent) :
 	setObjectName("QueryResultDock");
 	setWidget(new StackWidget(this));
 
-	titleMap_[Core::Query::Text] = tr("Text search \"%1\"");
+	titleMap_[Core::Query::Text] = tr("Text search '%1'");
 	titleMap_[Core::Query::References] = tr("References to '%1'");
 	titleMap_[Core::Query::Definition] = tr("Definition of '%1'");
 	titleMap_[Core::Query::CalledFunctions]
 		= tr("Functions called by '%1'");
 	titleMap_[Core::Query::CallingFunctions]
 		= tr("Functions calling '%1'");
+	titleMap_[Core::Query::FindFile] = tr("Find file '%1'");
+	titleMap_[Core::Query::IncludingFiles] = tr("Files including '%1'");
 }
 
 QueryResultDock::~QueryResultDock()
