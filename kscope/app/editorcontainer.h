@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_EDITORCONTAINER_H
-#define __KSCOPE_EDITORCONTAINER_H
+#ifndef __APP_EDITORCONTAINER_H
+#define __APP_EDITORCONTAINER_H
 
 #include <QMdiArea>
 #include <QMap>
@@ -55,6 +55,10 @@ public slots:
 	void openFile();
 	void configEditor();
 	void gotoLocation(const Core::Location&);
+	void findText();
+
+signals:
+	void hasActiveEditor(bool has);
 
 private:
 	QMap<QString, QMdiSubWindow*> fileMap_;
@@ -66,10 +70,11 @@ private:
 
 private slots:
 	void handleWindowAction(QAction*);
+	void windowActivated(QMdiSubWindow*);
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif // __KSCOPE_EDITORCONTAINER_H
+#endif // __APP_EDITORCONTAINER_H

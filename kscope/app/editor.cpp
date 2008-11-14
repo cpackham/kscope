@@ -22,6 +22,7 @@
 #include <qscilexercpp.h>
 #include "editor.h"
 #include "fileiothread.h"
+#include "findtextdialog.h"
 
 namespace KScope
 {
@@ -211,6 +212,20 @@ void Editor::loadDone(const QString& text)
 	if (onLoadFocus_) {
 		setFocus();
 		onLoadFocus_ = false;
+	}
+}
+
+/**
+ * Searches for text inside the document.
+ * Prompts the user for the text to find.
+ */
+void Editor::findText()
+{
+	FindTextDialog dlg(this);
+	if (dlg.exec() == QDialog::Accepted) {
+		qDebug() << __func__ << dlg.pattern();
+		findFirst(dlg.pattern(), dlg.useRegExp(), dlg.caseSensitive(),
+		          dlg.wholeWordsOnly(), dlg.wrapSearch(), dlg.searchForward());
 	}
 }
 

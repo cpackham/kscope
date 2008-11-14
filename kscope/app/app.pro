@@ -9,7 +9,8 @@ CONFIG += debug_and_release \
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 # Input
-SOURCES += projectmanager.cpp \
+SOURCES += findtextdialog.cpp \
+    projectmanager.cpp \
     editorconfigdialog.cpp \
     projectdialog.cpp \
     projectfilesdialog.cpp \
@@ -24,7 +25,8 @@ SOURCES += projectmanager.cpp \
     queryresultdock.cpp \
     queryresultdialog.cpp \
     addfilesdialog.cpp
-HEADERS += projectmanager.h \
+HEADERS += findtextdialog.h \
+    projectmanager.h \
     editorconfigdialog.h \
     projectfilesdialog.h \
     stackwidget.h \
@@ -46,7 +48,8 @@ FORMS += querydialog.ui \
     projectfilesdialog.ui \
     addfilesdialog.ui \
     projectdialog.ui \
-    editorconfigdialog.ui
+    editorconfigdialog.ui \
+    findtextdialog.ui
 INCLUDEPATH += ../cscope \
     ../core \
     /usr/include/Qsci \

@@ -88,6 +88,25 @@ void Actions::setup()
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(close()));
 	menu->addAction(action);
 
+	// Edit menu.
+	menu = mainWnd()->menuBar()->addMenu(tr("&Edit"));
+
+	// A group for file editing actions.
+	// Only enabled when there is an active editor.
+	group = new QActionGroup(this);
+	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), group,
+	        SLOT(setEnabled(bool)));
+	group->setEnabled(false);
+
+	// Find text in file.
+	action = new QAction(tr("&Find..."), this);
+	action->setShortcut(tr("Ctrl+F"));
+	action->setStatusTip(tr("Find text in this file"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+	        SLOT(findText()));
+	menu->addAction(action);
+	group->addAction(action);
+
 	// Project menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Project"));
 

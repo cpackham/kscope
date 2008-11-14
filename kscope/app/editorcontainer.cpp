@@ -37,31 +37,14 @@ EditorContainer::EditorContainer(QWidget* parent) : QMdiArea(parent),
 	settings.beginGroup("Editor");
 	config_.load(settings);
 	settings.endGroup();
+
+	// Notify when an active editor is available.
+	connect(this, SIGNAL(subWindowActivated(QMdiSubWindow*)), this,
+	        SLOT(windowActivated(QMdiSubWindow*)));
 }
 
 EditorContainer::~EditorContainer()
 {
-}
-
-/**
- * Activates an editor window showing the given location.
- * The file, line and column values of the Location structure are used to open
- * an editor for the given file (or activate an existing one), and to set the
- * cursor to the requested coordinates.
- * @param  loc  The requested location
- */
-void EditorContainer::gotoLocation(const Core::Location& loc)
-{
-	QMdiSubWindow* window;
-	Editor* editor;
-
-	// Open/activate an editor window for the requested file.
-	window = getEditor(loc.file_, true);
-	if (window) {
-		// Set the cursor to the given line and column.
-		editor = static_cast<Editor*>(window->widget());
-		editor->setCursorPosition(loc.line_, loc.column_);
-	}
 }
 
 /**
@@ -134,6 +117,41 @@ void EditorContainer::configEditor()
 	}
 }
 
+/**
+ * Activates an editor window showing the given location.
+ * The file, line and column values of the Location structure are used to open
+ * an editor for the given file (or activate an existing one), and to set the
+ * cursor to the requested coordinates.
+ * @param  loc  The requested location
+ */
+void EditorContainer::gotoLocation(const Core::Location& loc)
+{
+	QMdiSubWindow* window;
+	Editor* editor;
+
+	// Open/activate an editor window for the requested file.
+	window = getEditor(loc.file_, true);
+	if (window) {
+		// Set the cursor to the given line and column.
+		editor = static_cast<Editor*>(window->widget());
+		editor->setCursorPosition(loc.line_, loc.column_);
+	}
+}
+
+/**
+ */
+void EditorContainer::findText()
+{
+	Editor* editor = currentEditor();
+	if (editor != NULL)
+		editor->findText();
+}
+
+/**
+ * @param  path
+ * @param  activate
+ * @return
+ */
 QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 {
 	QMap<QString, QMdiSubWindow*>::Iterator itr;
@@ -190,6 +208,15 @@ void EditorContainer::handleWindowAction(QAction* action)
 	(void)getEditor(action->text(), true);
 }
 
+/**
+ * Emits the hasActiveEditor() signal whenever the active window changes.
+ * @param  window  The new active window, or NULL if there is no such window
+ */
+void EditorContainer::windowActivated(QMdiSubWindow* window)
+{
+	emit hasActiveEditor(window != NULL);
 }
 
-}
+} // namespace App
+
+} // namespace KScope

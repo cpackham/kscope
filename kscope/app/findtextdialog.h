@@ -18,11 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_EDITOR_H
-#define __APP_EDITOR_H
+#ifndef __APP_FINDTEXTDIALOG_H__
+#define __APP_FINDTEXTDIALOG_H__
 
-#include <qsciscintilla.h>
-#include <QSettings>
+#include <QDialog>
+#include <QLineEdit>
+#include "ui_findtextdialog.h"
 
 namespace KScope
 {
@@ -31,51 +32,27 @@ namespace App
 {
 
 /**
- * An QScintilla editor widget used to view/edit files.
- * @author Elad Lahav
+ * A simple dialogue for searching text within an editor window.
+ * @author  Elad Lahav
  */
-class Editor : public QsciScintilla
+class FindTextDialog : public QDialog, public Ui::FindTextDialog
 {
 	Q_OBJECT
 
 public:
-	Editor(QWidget* parent = 0);
-	~Editor();
+	FindTextDialog(QWidget* parent = 0);
+	~FindTextDialog();
 
-	/**
-	 * Provides editor configuration parameters.
-	 */
-	struct Config
-	{
-		void load(QSettings& settings);
-		void store(QSettings& settings);
-
-		QFont font_;
-		bool hlCurLine_;
-		bool indentTabs_;
-		int tabWidth_;
-	};
-
-	bool load(const QString&);
-	void setCursorPosition(uint, uint);
-	QString currentText() const;
-	void setFocus();
-	void applyConfig(const Config&);
-	void getConfig(Config&);
-
-public slots:
-	void loadDone(const QString&);
-	void findText();
-
-private:
-	bool isLoading_;
-	uint onLoadLine_;
-	uint onLoadColumn_;
-	bool onLoadFocus_;
+	QString pattern() { return patternCombo_->lineEdit()->text(); }
+	bool useRegExp() { return regExpCheck_->isChecked(); }
+	bool caseSensitive() { return caseSensitiveCheck_->isChecked(); }
+	bool wholeWordsOnly() { return wholeWordsCheck_->isChecked(); }
+	bool wrapSearch() { return wrapCheck_->isChecked(); }
+	bool searchForward() { return !backwardsCheck_->isChecked(); }
 };
 
 } // namespace App
 
 } // namespace KScope
 
-#endif  // __APP_EDITOR_H
+#endif // __APP_FINDTEXTDIALOG_H__

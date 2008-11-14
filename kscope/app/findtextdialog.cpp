@@ -18,11 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_EDITOR_H
-#define __APP_EDITOR_H
-
-#include <qsciscintilla.h>
-#include <QSettings>
+#include "findtextdialog.h"
 
 namespace KScope
 {
@@ -30,52 +26,16 @@ namespace KScope
 namespace App
 {
 
-/**
- * An QScintilla editor widget used to view/edit files.
- * @author Elad Lahav
- */
-class Editor : public QsciScintilla
+FindTextDialog::FindTextDialog(QWidget* parent)
+	: QDialog(parent), Ui::FindTextDialog()
 {
-	Q_OBJECT
+	setupUi(this);
+}
 
-public:
-	Editor(QWidget* parent = 0);
-	~Editor();
-
-	/**
-	 * Provides editor configuration parameters.
-	 */
-	struct Config
-	{
-		void load(QSettings& settings);
-		void store(QSettings& settings);
-
-		QFont font_;
-		bool hlCurLine_;
-		bool indentTabs_;
-		int tabWidth_;
-	};
-
-	bool load(const QString&);
-	void setCursorPosition(uint, uint);
-	QString currentText() const;
-	void setFocus();
-	void applyConfig(const Config&);
-	void getConfig(Config&);
-
-public slots:
-	void loadDone(const QString&);
-	void findText();
-
-private:
-	bool isLoading_;
-	uint onLoadLine_;
-	uint onLoadColumn_;
-	bool onLoadFocus_;
-};
+FindTextDialog::~FindTextDialog()
+{
+}
 
 } // namespace App
 
 } // namespace KScope
-
-#endif  // __APP_EDITOR_H
