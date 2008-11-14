@@ -46,7 +46,9 @@ struct ProjectConfig
 	 * @param  parent   A parent for the new widget
 	 * @return The created widget (NULL by default)
 	 */
-	static QWidget* createConfigWidget(ProjectT* project, QWidget* parent) {
+	static QWidget* createConfigWidget(const ProjectT* project,
+	                                   QWidget* parent) {
+		(void)project;
 		(void)parent;
 		return NULL;
 	}

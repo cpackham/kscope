@@ -23,11 +23,11 @@
 #include <QMessageBox>
 #include "actions.h"
 #include "mainwindow.h"
-#include "application.h"
 #include "editorcontainer.h"
 #include "projectdialog.h"
 #include "projectfilesdialog.h"
 #include "managedproject.h"
+#include "projectmanager.h"
 
 namespace KScope
 {
@@ -107,7 +107,8 @@ void Actions::setup()
 	// A group for project actions requiring an open project.
 	// Only enabled when there is an active project.
 	group = new QActionGroup(this);
-	connect(theApp(), SIGNAL(hasProject(bool)), group, SLOT(setEnabled(bool)));
+	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), group,
+	        SLOT(setEnabled(bool)));
 	group->setEnabled(false);
 
 	menu->addSeparator();
@@ -142,7 +143,8 @@ void Actions::setup()
 	// This group is enabled only when there is an active project.
 	group = new QActionGroup(this);
 	connect(group, SIGNAL(triggered(QAction*)), this, SLOT(query(QAction*)));
-	connect(theApp(), SIGNAL(hasProject(bool)), group, SLOT(setEnabled(bool)));
+	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), group,
+	        SLOT(setEnabled(bool)));
 	group->setEnabled(false);
 
 	// Query references.
@@ -210,8 +212,8 @@ void Actions::setup()
 	action->setShortcut(tr("Ctrl+\\"));
 	action->setStatusTip(tr("Show a call graph"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(promptCallGraph()));
-	connect(theApp(), SIGNAL(hasProject(bool)), action, SLOT(setEnabled(bool)));
 	menu->addAction(action);
+	group->addAction(action);
 #endif
 
 	// Settings menu.
@@ -230,7 +232,7 @@ void Actions::setup()
 void Actions::newProject()
 {
 	// If an active project exists, it needs to be closed first.
-	if (theApp()->currentProject()) {
+	if (ProjectManager::project()) {
 		QString msg = tr("The active project needs to be closed.\n"
                          "Would you like to close it now?");
 		int result = QMessageBox::question(mainWnd(),
@@ -240,7 +242,7 @@ void Actions::newProject()
 		if (result == QMessageBox::No)
 			return;
 
-		theApp()->closeProject();
+		ProjectManager::close();
 	}
 
 	// Show the "New Project" dialogue.
@@ -259,19 +261,19 @@ void Actions::newProject()
 		proj.create(params);
 	}
 	catch (Core::Exception* e) {
-		QMessageBox::critical(mainWnd(), tr("Failed to Create Project"),
-		                      e->reason());
+		e->showMessage();
 		delete e;
 		return;
 	}
 
-	theApp()->loadProject(params.projPath_);
+	// Load the new project.
+	ProjectManager::load<Cscope::ManagedProject>(params.projPath_);
 }
 
 void Actions::openProject()
 {
 	// If an active project exists, it needs to be closed first.
-	if (theApp()->currentProject()) {
+	if (ProjectManager::project()) {
 		QString msg = tr("The active project needs to be closed.\n"
                          "Would you like to close it now?");
 		int result = QMessageBox::question(mainWnd(),
@@ -281,14 +283,14 @@ void Actions::openProject()
 		if (result == QMessageBox::No)
 			return;
 
-		theApp()->closeProject();
+		ProjectManager::close();
 	}
 
 	// Show the "Open Project" dialogue.
 	QString path = QFileDialog::getOpenFileName(mainWnd(), tr("Open Project"),
 	                                            QString(), "cscope.proj");
 	if (!path.isEmpty())
-		theApp()->loadProject(path);
+		ProjectManager::load<Cscope::ManagedProject>(path);
 }
 
 void Actions::projectFiles()
@@ -300,8 +302,9 @@ void Actions::projectFiles()
 void Actions::projectProperties()
 {
 	// Get the active project.
-	Cscope::ManagedProject* project
-		= dynamic_cast<Cscope::ManagedProject*>(currentProject());
+	const Cscope::ManagedProject* project
+		= dynamic_cast<const Cscope::ManagedProject*>
+			(ProjectManager::project());
 	if (project == NULL)
 		return;
 

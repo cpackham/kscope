@@ -22,7 +22,7 @@
 #include "application.h"
 #include "mainwindow.h"
 #include "managedproject.h"
-#include "exception.h"
+#include "projectmanager.h"
 
 namespace KScope
 {
@@ -36,7 +36,7 @@ namespace App
  * @param  argv  Command-line argument list
  */
 Application::Application(int& argc, char** argv)
-	: QApplication(argc, argv), proj_(NULL)
+	: QApplication(argc, argv)
 {
 	QCoreApplication::setOrganizationName("elad_lahav@users.sourceforge.net");
 	QCoreApplication::setApplicationName("KScope");
@@ -73,64 +73,6 @@ int Application::run()
 }
 
 /**
- * Loads the given project.
- * @param  projPath  The project path
- */
-void Application::loadProject(const QString& projPath)
-{
-	// Do not load if another project is currently loaded.
-	if (proj_)
-		return;
-
-	// Create and open a project.
-	try {
-		proj_ = new Cscope::ManagedProject(projPath);
-		proj_->open();
-	}
-	catch (Core::Exception* e) {
-		QMessageBox::warning(mainWnd_, tr("Failed to load project"),
-		                     e->reason());
-		delete e;
-		if (proj_) {
-			delete proj_;
-			proj_ = NULL;
-		}
-
-		return;
-	}
-
-	// Save the project path.
-	QSettings().setValue("Session/LastProject", projPath);
-
-	// Signal the availability of a project.
-	emit hasProject(true);
-
-	// Does the database need to be rebuilt?
-	if ((proj_->engine()->status() == Core::Engine::Build)
-	    || (proj_->engine()->status() == Core::Engine::Rebuild)) {
-		mainWnd_->buildProject();
-	}
-}
-
-/**
- * Closes the active project.
- */
-void Application::closeProject()
-{
-	// Nothing to do if there is no active project.
-	if (!proj_)
-		return;
-
-	// Close the project and delete the object.
-	proj_->close();
-	delete proj_;
-	proj_ = NULL;
-
-	// Signal that there is no active project.
-	emit hasProject(false);
-}
-
-/**
  * Handles custom events.
  * @param  event  The event to handle.
  */
@@ -160,7 +102,7 @@ void Application::init()
 	                          tr("Would you like to reload '%1'?").arg(name),
 	                          QMessageBox::Yes | QMessageBox::No)
 	    == QMessageBox::Yes) {
-		loadProject(lastProj);
+		ProjectManager::load<Cscope::ManagedProject>(lastProj);
 	}
 }
 

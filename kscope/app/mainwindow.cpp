@@ -22,12 +22,12 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include <QStatusBar>
-#include "application.h"
 #include "mainwindow.h"
 #include "editorcontainer.h"
 #include "querydialog.h"
 #include "queryresultdock.h"
 #include "editor.h"
+#include "projectmanager.h"
 
 namespace KScope
 {
@@ -43,7 +43,7 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 	// Set the window title.
 	// This changes whenever a project is opened/closed.
 	setProjectTitle(false);
-	connect(theApp(), SIGNAL(hasProject(bool)), this,
+	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), this,
 	        SLOT(setProjectTitle(bool)));
 
 	// Create the central widget (the editor manager).
@@ -66,6 +66,10 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 
 	// Apply saved window settings.
 	readSettings();
+
+	// Rebuild the project when signalled by the project manager.
+	connect(ProjectManager::signalProxy(), SIGNAL(buildProject()), this,
+	        SLOT(buildProject()));
 }
 
 /**
@@ -98,26 +102,31 @@ void MainWindow::promptQuery(Core::Query::Type type)
 	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()));
 }
 
+/**
+ * Starts a build process for the current project's engine.
+ * Provides progress information in either a modal dialogue or a progress-bar
+ * in the window's status bar. The modal dialogue is used for initial builds,
+ * while the progress-bar is used for rebuilds.
+ */
 void MainWindow::buildProject()
 {
-	// Get the current project.
-	Core::ProjectBase* project = currentProject();
-	if (!project)
-		return;
+	try {
+		// Create a build progress widget.
+		if (ProjectManager::engine().status() == Core::Engine::Build) {
+			buildProgress_.init(true, this);
+		}
+		else {
+			QWidget* widget = buildProgress_.init(false, this);
+			statusBar()->addWidget(widget);
+		}
 
-	// Create a build progress widget.
-	// This will be a modal dialogue if building from scratch, or a progress-bar
-	// widget in the status bar if rebuilding an existing project.
-	if (project->engine()->status() == Core::Engine::Build) {
-		buildProgress_.init(true, this);
+		// Start the build process.
+		ProjectManager::engine().build(buildProgress_);
 	}
-	else {
-		QWidget* widget = buildProgress_.init(false, this);
-		statusBar()->addWidget(widget);
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
 	}
-
-	// Start the build process.
-	project->engine()->build(buildProgress_);
 }
 
 /**
@@ -173,10 +182,11 @@ void MainWindow::readSettings()
  */
 void MainWindow::setProjectTitle(bool hasProject)
 {
-	QString title = theApp()->applicationName();
+	(void)hasProject;
 
-	if (hasProject)
-		title += " - " + currentProject()->name();
+	QString title = qApp->applicationName();
+	if (ProjectManager::project())
+		title += " - " + ProjectManager::project()->name();
 
 	setWindowTitle(title);
 }

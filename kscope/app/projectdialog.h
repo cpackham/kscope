@@ -50,7 +50,7 @@ public:
 	 *               project
 	 */
 	template <class ProjectT>
-	void setParamsForProject(ProjectT* proj) {
+	void setParamsForProject(const ProjectT* proj) {
 		if (proj) {
 			// Display properties for an existing project.
 			setWindowTitle(tr("Project Properties"));

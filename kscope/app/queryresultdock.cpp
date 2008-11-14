@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include "queryresultdock.h"
-#include "application.h"
+#include "projectmanager.h"
 
 namespace KScope
 {
@@ -63,7 +63,13 @@ void QueryResultDock::query(const Core::Query& query, Core::QueryView* view)
 
 	// Run the query.
 	view->initQuery(query);
-	currentProject()->engine()->query(*view, query);
+	try {
+		ProjectManager::engine().query(*view, query);
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 Core::QueryView* QueryResultDock::addView(const QString& title)

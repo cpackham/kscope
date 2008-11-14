@@ -18,10 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_APPLICATION_H
-#define __APP_APPLICATION_H
-
-#include <QApplication>
+#include "projectmanager.h"
+#include "exception.h"
 
 namespace KScope
 {
@@ -29,41 +27,55 @@ namespace KScope
 namespace App
 {
 
-class MainWindow;
+Core::ProjectBase* ProjectManager::proj_ = NULL;
+ProjectManagerSignals ProjectManager::signals_;
 
-/**
- * The KScope application.
- * Runs the event loop and maintains the active project.
- * @author Elad Lahav
- */
-class Application : public QApplication
+const Core::ProjectBase* ProjectManager::project()
 {
-	Q_OBJECT
+	return proj_;
+}
 
-public:
-	Application(int&, char**);
-	~Application();
+Core::Engine& ProjectManager::engine()
+{
+	if (proj_ == NULL)
+		throw Core::Exception("No project is currently loaded");
 
-	enum Event { AppInitEvent = QEvent::User };
+	Core::Engine* engine = proj_->engine();
+	if (engine == NULL)
+		throw Core::Exception("No engine is available");
 
-	int run();
+	return *engine;
+}
 
-protected:
-	void customEvent(QEvent*);
+Core::Codebase& ProjectManager::codebase()
+{
+	if (proj_ == NULL)
+		throw Core::Exception("No project is currently loaded");
 
-private:
-	/**
-	 * The main window.
-	 */
-	MainWindow* mainWnd_;
+	Core::Codebase* cbase = proj_->codebase();
+	if (cbase == NULL)
+		throw Core::Exception("No engine is available");
 
-	void init();
-};
+	return *cbase;
+}
 
-inline Application* theApp() { return static_cast<Application*>(qApp); }
+const ProjectManagerSignals* ProjectManager::signalProxy()
+{
+	return &signals_;
+}
+
+void ProjectManager::close()
+{
+		if (!proj_)
+			return;
+
+		proj_->close();
+		delete proj_;
+		proj_ = NULL;
+
+		signals_.emitHasProject(false);
+}
 
 } // namespace App
 
 } // namespace KScope
-
-#endif // __APP_APPLICATION_H

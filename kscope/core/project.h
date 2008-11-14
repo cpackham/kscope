@@ -97,12 +97,12 @@ public:
 	/**
 	 * @return The name of the project
 	 */
-	virtual QString name() = 0;
+	virtual QString name() const = 0;
 
 	/**
 	 * @return The root path for the code base
 	 */
-	virtual QString rootPath() = 0;
+	virtual QString rootPath() const = 0;
 
 	/**
 	 * @return Pointer to the engine
@@ -226,12 +226,12 @@ public:
 	/**
 	 * @return The name of the project
 	 */
-	virtual QString name() { return params_.name_; }
+	virtual QString name() const { return params_.name_; }
 
 	/**
 	 * @return The root path for the project's code base
 	 */
-	virtual QString rootPath() { return params_.rootPath_; }
+	virtual QString rootPath() const { return params_.rootPath_; }
 
 	/**
 	 * @return A pointer to the engine object
@@ -247,7 +247,7 @@ public:
 	 * Retrieves a copy of the current configuration parameters.
 	 * @param  params  An object into which current values are copied
 	 */
-	void getCurrentParams(Params& params) {
+	void getCurrentParams(Params& params) const {
 		params = params_;
 	}
 

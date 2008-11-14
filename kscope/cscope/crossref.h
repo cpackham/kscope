@@ -52,7 +52,7 @@ public:
 	/**
 	 * @return The current status of the database.
 	 */
-	Status status() { return status_; }
+	Status status() const { return status_; }
 
 public slots:
 	void query(Core::Engine::Connection&, const Core::Query&) const;

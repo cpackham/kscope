@@ -93,7 +93,7 @@ public:
 	 * Determines the status of the database: whether a build is required and
 	 * whether queries can be issued.
 	 */
-	virtual Status status() = 0;
+	virtual Status status() const = 0;
 
 	/**
 	 * Abstract base class for a controllable object.

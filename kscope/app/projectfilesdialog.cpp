@@ -22,6 +22,7 @@
 #include "projectfilesdialog.h"
 #include "codebasemodel.h"
 #include "addfilesdialog.h"
+#include "projectmanager.h"
 
 namespace KScope
 {
@@ -34,10 +35,18 @@ ProjectFilesDialog::ProjectFilesDialog(QWidget* parent)
 {
 	setupUi(this);
 
-	Core::CodebaseModel* model
-		= new Core::CodebaseModel(currentProject()->codebase(),
-	                              currentProject()->rootPath(), this);
-	view_->setModel(model);
+	try {
+		const Core::ProjectBase* proj = ProjectManager::project();
+		const Core::Codebase* codebase = &ProjectManager::codebase();
+
+		Core::CodebaseModel* model
+			= new Core::CodebaseModel(codebase, proj->rootPath(), this);
+		view_->setModel(model);
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 ProjectFilesDialog::~ProjectFilesDialog()
@@ -53,7 +62,13 @@ void ProjectFilesDialog::accept()
 	model->getFiles(fileList);
 
 	// Update the code base.
-	currentProject()->codebase()->setFiles(fileList);
+	try {
+		ProjectManager::codebase().setFiles(fileList);
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 
 	QDialog::accept();
 }

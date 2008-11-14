@@ -9,7 +9,8 @@ CONFIG += debug_and_release \
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 # Input
-SOURCES += editorconfigdialog.cpp \
+SOURCES += projectmanager.cpp \
+    editorconfigdialog.cpp \
     projectdialog.cpp \
     projectfilesdialog.cpp \
     stackwidget.cpp \
@@ -23,7 +24,8 @@ SOURCES += editorconfigdialog.cpp \
     queryresultdock.cpp \
     queryresultdialog.cpp \
     addfilesdialog.cpp
-HEADERS += editorconfigdialog.h \
+HEADERS += projectmanager.h \
+    editorconfigdialog.h \
     projectfilesdialog.h \
     stackwidget.h \
     mainwindow.h \

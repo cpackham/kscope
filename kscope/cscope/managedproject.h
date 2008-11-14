@@ -65,7 +65,7 @@ struct ProjectConfig<Cscope::ManagedProject>
 	 * @param  parent   The parent widget
 	 * @return A new configuration widget
 	 */
-	static QWidget* createConfigWidget(Cscope::ManagedProject* project,
+	static QWidget* createConfigWidget(const Cscope::ManagedProject* project,
 	                                   QWidget* parent) {
 		Cscope::ConfigWidget* widget = new Cscope::ConfigWidget(parent);
 
