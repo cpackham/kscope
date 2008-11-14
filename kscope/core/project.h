@@ -23,7 +23,7 @@
 
 #include <QSettings>
 #include <QDir>
-#include <QtDebug>
+#include <QDebug>
 #include "engine.h"
 #include "codebase.h"
 #include "exception.h"
@@ -206,13 +206,16 @@ public:
 		params_ = params;
 
 		// Write the configuration file.
-		QSettings projConfig(configPath(), QSettings::IniFormat);
+		QSettings projConfig(dir.filePath(configFileName_),
+		                     QSettings::IniFormat);
 		projConfig.beginGroup("Project");
 		projConfig.setValue("Name", params_.name_);
 		projConfig.setValue("RootPath", params_.rootPath_);
 		projConfig.setValue("EngineString", params_.engineString_);
 		projConfig.setValue("CodebaseString", params_.codebaseString_);
 		projConfig.endGroup();
+
+		qDebug() << __func__ << dir.filePath(configFileName_);
 	}
 
 	/**
