@@ -55,6 +55,7 @@ public:
 			// Display properties for an existing project.
 			setWindowTitle(tr("Project Properties"));
 			projectPathWidget_->setEnabled(false);
+			hiddenProjDirCheck_->setEnabled(false);
 
 			// Get the current project properties.
 			Core::ProjectBase::Params params;

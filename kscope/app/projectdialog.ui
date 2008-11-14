@@ -86,17 +86,25 @@
             </item>
            </layout>
           </item>
-          <item>
-           <widget class="QCheckBox" name="checkBox" >
-            <property name="text" >
-             <string>Use a hidden directory under the source path</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
+       <item row="3" column="1" >
+        <widget class="QCheckBox" name="hiddenProjDirCheck_" >
+         <property name="text" >
+          <string>Use a hidden directory under the source path</string>
+         </property>
+        </widget>
+       </item>
       </layout>
+      <zorder>label</zorder>
+      <zorder>nameEdit_</zorder>
+      <zorder>label_2</zorder>
+      <zorder>rootPathWidget_</zorder>
+      <zorder>label_3</zorder>
+      <zorder>projectPathWidget_</zorder>
+      <zorder>hiddenProjDirCheck_</zorder>
+      <zorder>hiddenProjDirCheck_</zorder>
      </widget>
     </widget>
    </item>
@@ -121,8 +129,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>227</x>
-     <y>160</y>
+     <x>236</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -137,12 +145,76 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>295</x>
-     <y>166</y>
+     <x>304</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
      <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hiddenProjDirCheck_</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>projectPathWidget_</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>390</x>
+     <y>158</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>421</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hiddenProjDirCheck_</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ProjectDialog</receiver>
+   <slot>setUseHiddenProjectDir(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>308</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>473</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseProjectPathButton_</sender>
+   <signal>clicked()</signal>
+   <receiver>ProjectDialog</receiver>
+   <slot>browseProjectPath()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>447</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>472</x>
+     <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseRootPathButton_</sender>
+   <signal>clicked()</signal>
+   <receiver>ProjectDialog</receiver>
+   <slot>browseRootPath()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>445</x>
+     <y>94</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>470</x>
+     <y>105</y>
     </hint>
    </hints>
   </connection>
