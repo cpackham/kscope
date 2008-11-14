@@ -102,7 +102,13 @@ void Application::init()
 	                          tr("Would you like to reload '%1'?").arg(name),
 	                          QMessageBox::Yes | QMessageBox::No)
 	    == QMessageBox::Yes) {
-		ProjectManager::load<Cscope::ManagedProject>(lastProj);
+		try {
+			ProjectManager::load<Cscope::ManagedProject>(lastProj);
+		}
+		catch (Core::Exception* e) {
+			e->showMessage();
+			delete e;
+		}
 	}
 }
 

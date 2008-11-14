@@ -255,19 +255,18 @@ void Actions::newProject()
 	Core::ProjectBase::Params params;
 	dlg.getParams<Cscope::ManagedProject>(params);
 
-	// Create a project.
 	try {
+		// Create a project.
 		Cscope::ManagedProject proj;
 		proj.create(params);
+
+		// Load the new project.
+		ProjectManager::load<Cscope::ManagedProject>(params.projPath_);
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();
 		delete e;
-		return;
 	}
-
-	// Load the new project.
-	ProjectManager::load<Cscope::ManagedProject>(params.projPath_);
 }
 
 void Actions::openProject()
@@ -289,8 +288,17 @@ void Actions::openProject()
 	// Show the "Open Project" dialogue.
 	QString path = QFileDialog::getOpenFileName(mainWnd(), tr("Open Project"),
 	                                            QString(), "cscope.proj");
-	if (!path.isEmpty())
-		ProjectManager::load<Cscope::ManagedProject>(path);
+	if (path.isEmpty())
+		return;
+
+	try {
+		// Load the project.
+		ProjectManager::load<Cscope::ManagedProject>(QFileInfo(path).path());
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 void Actions::projectFiles()
