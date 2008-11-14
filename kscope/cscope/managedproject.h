@@ -44,6 +44,8 @@ class ManagedProject : public Core::Project<Crossref, Files>
 public:
 	ManagedProject(const QString& projPath = QString());
 	virtual ~ManagedProject();
+
+	void create(const Params&);
 };
 
 }

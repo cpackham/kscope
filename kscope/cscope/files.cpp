@@ -30,26 +30,68 @@ namespace KScope
 namespace Cscope
 {
 
+/**
+ * Class constructor.
+ * @param  parent  Parent object
+ */
 Files::Files(QObject* parent) : Core::Codebase(parent), writable_(false)
 {
 }
 
+/**
+ * Class destructor.
+ */
 Files::~Files()
 {
 }
 
-void Files::load(const QString& path)
+/**
+ * Creates a new cscope.files file.
+ * @param  path  The project path under which to create the new file
+ */
+void Files::create(const QString& path)
 {
+	// Make sure the directory exists.
 	QDir dir(path);
 	if (!dir.exists())
 		throw new Core::Exception("File list directory does not exist");
 
-	QFileInfo fi(dir, "cscope.files");
-	if (!fi.exists() || !fi.isReadable())
-		throw new Core::Exception("Cannot open 'cscope.files' for reading");
+	// Open the file for writing.
+	QFile file(dir.filePath("cscope.files"));
+	if (!file.open(QIODevice::WriteOnly))
+		throw Core::Exception("Failed to create the 'cscope.files' file");
 
 	path_ = dir.filePath("cscope.files");
-	writable_ = fi.isWritable();
+	writable_ = true;
+}
+
+void Files::load(const QString& path)
+{
+	// Make sure the directory exists.
+	QDir dir(path);
+	if (!dir.exists())
+		throw new Core::Exception("File list directory does not exist");
+
+	// Check if the file exists.
+	QFileInfo fi(dir, "cscope.files");
+	if (fi.exists()) {
+		// Yes, make sure it can be read.
+		if (!fi.isReadable())
+			throw new Core::Exception("Cannot open 'cscope.files' for reading");
+
+		path_ = dir.filePath("cscope.files");
+		writable_ = fi.isWritable();
+	}
+	else {
+		// No, create a new file.
+		try {
+			create(path);
+		}
+		catch (Core::Exception* e) {
+			throw e;
+		}
+	}
+
 	emit loaded();
 }
 
@@ -83,6 +125,6 @@ void Files::setFiles(const QStringList& fileList)
 	emit modified();
 }
 
-}
+} // namespace Cscope
 
-}
+} // namespace KScope

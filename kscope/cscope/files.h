@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CSCOPE_FILES_H
-#define __CSCOPE_FILES_H
+#ifndef __CSCOPE_FILES_H__
+#define __CSCOPE_FILES_H__
 
 #include "codebase.h"
 
@@ -43,6 +43,9 @@ public:
 	Files(QObject* parent = NULL);
 	~Files();
 
+	void create(const QString&);
+
+	// Core::Codebase implementation.
 	virtual void load(const QString&);
 	virtual void store(const QString&);
 	virtual void getFiles(Callback&) const;
@@ -50,12 +53,19 @@ public:
 	virtual bool canModify() { return writable_; }
 
 private:
+	/**
+	 * The path to the cscope.files file.
+	 */
 	QString path_;
+
+	/**
+	 * Whether the file can be written to.
+	 */
 	bool writable_;
 };
 
-}
+} // namespace Cscope
 
-}
+} // namespace KScope
 
-#endif  // CSCOPEFILES_H
+#endif  // __CSCOPE_FILES_H__
