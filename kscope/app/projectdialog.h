@@ -18,22 +18,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_PROJECTDIALOG_H__
-#define __KSCOPE_PROJECTDIALOG_H__
+#ifndef __APP_PROJECTDIALOG_H__
+#define __APP_PROJECTDIALOG_H__
 
 #include <QDialog>
 #include "ui_projectdialog.h"
 #include "project.h"
+#include "projectconfig.h"
 
 namespace KScope
 {
-
-namespace Cscope
-{
-
-class ManagedProject;
-
-}
 
 namespace App
 {
@@ -51,10 +45,56 @@ public:
 	ProjectDialog(QWidget* parent = NULL);
 	~ProjectDialog();
 
-	QString path() { return projectPathEdit_->text(); }
+	/**
+	 * @param  proj  The project from which to read parameters, NULL for a new
+	 *               project
+	 */
+	template <class ProjectT>
+	void setParamsForProject(ProjectT* proj) {
+		if (proj) {
+			// Display properties for an existing project.
+			setWindowTitle(tr("Project Properties"));
+			projectPathWidget_->setEnabled(false);
 
-public slots:
-	void accept();
+			// Get the current project properties.
+			Core::ProjectBase::Params params;
+			proj->getCurrentParams(params);
+
+			// Update dialogue controls.
+			nameEdit_->setText(params.name_);
+			rootPathEdit_->setText(params.rootPath_);
+			projectPathEdit_->setText(params.projPath_);
+		}
+		else {
+			// New project dialogue.
+			setWindowTitle(tr("New Project"));
+		}
+
+		// Add a project-specific configuration page.
+		confWidget_
+			= Core::ProjectConfig<ProjectT>::createConfigWidget(proj, this);
+		if (confWidget_)
+			configTabs_->addTab(confWidget_, confWidget_->windowTitle());
+	}
+
+	/**
+	 * Fills a project parameters structure with values reflecting the current
+	 * selections in the dialogue.
+	 * @param  params  The structure to fill
+	 */
+	template <class ProjectT>
+	void getParams(Core::ProjectBase::Params& params) {
+		// Fill parameters from the main page.
+		params.projPath_ = projectPathEdit_->text();
+		params.name_ = nameEdit_->text();
+		params.rootPath_ = rootPathEdit_->text();
+
+		// Get parameters from the project-specific configuration page.
+		if (confWidget_) {
+			Core::ProjectConfig<ProjectT>
+			    ::paramsFromWidget(confWidget_, params);
+		}
+	}
 
 protected slots:
 	void browseRootPath();
@@ -63,12 +103,11 @@ protected slots:
 	void updateProjectPath(const QString&);
 
 private:
-	Cscope::ManagedProject* project_;
-	QWidget* projConfigWidget_;
+	QWidget* confWidget_;
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif // __KSCOPE_PROJECTDIALOG_H__
+#endif // __APP_PROJECTDIALOG_H__

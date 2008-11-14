@@ -27,6 +27,7 @@
 #include "editorcontainer.h"
 #include "projectdialog.h"
 #include "projectfilesdialog.h"
+#include "managedproject.h"
 
 namespace KScope
 {
@@ -244,8 +245,27 @@ void Actions::newProject()
 
 	// Show the "New Project" dialogue.
 	ProjectDialog dlg(mainWnd());
-	if (dlg.exec() == QDialog::Accepted)
-		theApp()->loadProject(dlg.path());
+	dlg.setParamsForProject<Cscope::ManagedProject>(NULL);
+	if (dlg.exec() == QDialog::Rejected)
+		return;
+
+	// Get the new parameters from the dialogue.
+	Core::ProjectBase::Params params;
+	dlg.getParams<Cscope::ManagedProject>(params);
+
+	// Create a project.
+	try {
+		Cscope::ManagedProject proj;
+		proj.create(params);
+	}
+	catch (Core::Exception* e) {
+		QMessageBox::critical(mainWnd(), tr("Failed to Create Project"),
+		                      e->reason());
+		delete e;
+		return;
+	}
+
+	theApp()->loadProject(params.projPath_);
 }
 
 void Actions::openProject()
@@ -279,8 +299,23 @@ void Actions::projectFiles()
 
 void Actions::projectProperties()
 {
+	// Get the active project.
+	Cscope::ManagedProject* project
+		= dynamic_cast<Cscope::ManagedProject*>(currentProject());
+	if (project == NULL)
+		return;
+
+	// Create the project properties dialogue.
 	ProjectDialog dlg(mainWnd());
-	dlg.exec();
+	dlg.setParamsForProject(project);
+	if (dlg.exec() == QDialog::Rejected)
+		return;
+
+	// Get the new parameters from the dialogue.
+	Core::ProjectBase::Params params;
+	dlg.getParams<Cscope::ManagedProject>(params);
+
+	// TODO: Update project properties.
 }
 
 void Actions::query(QAction* action)

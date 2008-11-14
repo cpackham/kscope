@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Elad Lahav
+ *   Copyright (C) 2007-2008 by Elad Lahav
  *   elad_lahav@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ namespace Cscope
 class ManagedProject : public Core::Project<Crossref, Files>
 {
 public:
-	ManagedProject(const QString&);
+	ManagedProject(const QString& projPath = QString());
 	virtual ~ManagedProject();
 };
 
@@ -51,14 +51,27 @@ public:
 namespace Core
 {
 
+/**
+ * Template specialisation for Cscope managed projects.
+ * @author Elad Lahav
+ */
 template<>
 struct ProjectConfig<Cscope::ManagedProject>
 {
+	/**
+	 * Creates a Cscope configuration widget.
+	 * @param  project  The project for which parameters are shown (NULL for a
+	 *                  new project)
+	 * @param  parent   The parent widget
+	 * @return A new configuration widget
+	 */
 	static QWidget* createConfigWidget(Cscope::ManagedProject* project,
 	                                   QWidget* parent) {
 		Cscope::ConfigWidget* widget = new Cscope::ConfigWidget(parent);
 
 		if (project) {
+			// Existing project: set widget controls to reflect current
+			// configuration.
 			ProjectBase::Params params;
 			project->getCurrentParams(params);
 
@@ -68,6 +81,7 @@ struct ProjectConfig<Cscope::ManagedProject>
 			widget->compressCheck_->setChecked(!args.contains("-c"));
 		}
 		else {
+			// New project: set default configuration.
 			widget->kernelCheck_->setChecked(false);
 			widget->invIndexCheck_->setChecked(true);
 			widget->compressCheck_->setChecked(true);
@@ -76,6 +90,12 @@ struct ProjectConfig<Cscope::ManagedProject>
 		return widget;
 	}
 
+	/**
+	 * Updates a project parameters structure to reflect the current selections
+	 * in a configuration widget.
+	 * @param  widget  The widget from which parameters are taken
+	 * @param  params  The structure to fill
+	 */
 	static void paramsFromWidget(QWidget* widget, ProjectBase::Params& params) {
 		params.engineString_ = params.projPath_;
 		params.codebaseString_ = params.projPath_;
@@ -93,8 +113,8 @@ struct ProjectConfig<Cscope::ManagedProject>
 	}
 };
 
-}
+} // namespace Cscope
 
-}
+} // namespace KScope
 
 #endif // __CSCOPE_MANAGEDPROJECT_H
