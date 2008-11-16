@@ -36,6 +36,16 @@ FindTextDialog::~FindTextDialog()
 {
 }
 
+void FindTextDialog::getParams(Editor::FindParams& params)
+{
+	params.pattern_ = patternCombo_->lineEdit()->text();
+	params.regExp_ = regExpCheck_->isChecked();
+	params.caseSensitive_ = caseSensitiveCheck_->isChecked();;
+	params.wholeWordsOnly_ = wholeWordsCheck_->isChecked();
+	params.wrap_ = wrapCheck_->isChecked();
+	params.forward_ = !backwardsCheck_->isChecked();
+}
+
 } // namespace App
 
 } // namespace KScope

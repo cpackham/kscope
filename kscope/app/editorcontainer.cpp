@@ -144,7 +144,7 @@ void EditorContainer::findText()
 {
 	Editor* editor = currentEditor();
 	if (editor != NULL)
-		editor->findText();
+		editor->findFirst();
 }
 
 /**

@@ -56,6 +56,42 @@ public:
 		int tabWidth_;
 	};
 
+	/**
+	 * Parameters for text searches.
+	 */
+	struct FindParams
+	{
+		/**
+		 * The pattern to search for.
+		 */
+		QString pattern_;
+
+		/**
+		 * Whether the pattern represents a regular expression.
+		 */
+		bool regExp_;
+
+		/**
+		 * Whether the search is case sensitive.
+		 */
+		bool caseSensitive_;
+
+		/**
+		 * Whether to look for whole words only.
+		 */
+		bool wholeWordsOnly_;
+
+		/**
+		 * Whether the search should wrap at the end of the document.
+		 */
+		bool wrap_;
+
+		/**
+		 * Whether to search forward in the document.
+		 */
+		bool forward_;
+	};
+
 	bool load(const QString&);
 	void setCursorPosition(uint, uint);
 	QString currentText() const;
@@ -65,7 +101,8 @@ public:
 
 public slots:
 	void loadDone(const QString&);
-	void findText();
+	void findFirst();
+	void findFirst(const FindParams&);
 
 private:
 	bool isLoading_;

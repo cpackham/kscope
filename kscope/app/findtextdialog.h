@@ -24,6 +24,7 @@
 #include <QDialog>
 #include <QLineEdit>
 #include "ui_findtextdialog.h"
+#include "editor.h"
 
 namespace KScope
 {
@@ -43,12 +44,7 @@ public:
 	FindTextDialog(QWidget* parent = 0);
 	~FindTextDialog();
 
-	QString pattern() { return patternCombo_->lineEdit()->text(); }
-	bool useRegExp() { return regExpCheck_->isChecked(); }
-	bool caseSensitive() { return caseSensitiveCheck_->isChecked(); }
-	bool wholeWordsOnly() { return wholeWordsCheck_->isChecked(); }
-	bool wrapSearch() { return wrapCheck_->isChecked(); }
-	bool searchForward() { return !backwardsCheck_->isChecked(); }
+	void getParams(Editor::FindParams&);
 };
 
 } // namespace App

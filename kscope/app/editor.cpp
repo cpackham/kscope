@@ -18,7 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#include <QtDebug>
+#include <QMessageBox>
+#include <QDebug>
 #include <qscilexercpp.h>
 #include "editor.h"
 #include "fileiothread.h"
@@ -219,13 +220,29 @@ void Editor::loadDone(const QString& text)
  * Searches for text inside the document.
  * Prompts the user for the text to find.
  */
-void Editor::findText()
+void Editor::findFirst()
 {
 	FindTextDialog dlg(this);
 	if (dlg.exec() == QDialog::Accepted) {
-		qDebug() << __func__ << dlg.pattern();
-		findFirst(dlg.pattern(), dlg.useRegExp(), dlg.caseSensitive(),
-		          dlg.wholeWordsOnly(), dlg.wrapSearch(), dlg.searchForward());
+		FindParams params;
+		dlg.getParams(params);
+		findFirst(params);
+	}
+}
+
+/**
+ * Searches for text inside the document.
+ * Uses the given search parameters.
+ * @param  params  Search parameters
+ */
+void Editor::findFirst(const Editor::FindParams& params)
+{
+	if (!QsciScintilla::findFirst(params.pattern_, params.regExp_,
+	                              params.caseSensitive_, params.wholeWordsOnly_,
+	                              params.wrap_, params.forward_)) {
+		QString msg = tr("'%1' could not be found in the document")
+		              .arg(params.pattern_);
+		QMessageBox::warning(this, tr("Pattern not found"), msg);
 	}
 }
 
