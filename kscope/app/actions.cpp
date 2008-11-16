@@ -216,7 +216,7 @@ void Actions::setup()
 
 	// Find including files.
 	action = new QAction(tr("&Including Files"), this);
-	action->setShortcut(tr("Ctrl+7"));
+	action->setShortcut(tr("Ctrl+8"));
 	action->setStatusTip(tr("Find files #including a given file"));
 	action->setData(Core::Query::IncludingFiles);
 	menu->addAction(action);
