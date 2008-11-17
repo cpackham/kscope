@@ -76,12 +76,13 @@ void QueryResultDock::query(const Core::Query& query, Core::QueryView* view)
 
 Core::QueryView* QueryResultDock::addView(const QString& title)
 {
-	Core::QueryView* view;
-
-	view = new Core::QueryView(this);
+	// Create a new query view.
+	Core::QueryView* view = new Core::QueryView(this);
 	connect(view, SIGNAL(locationRequested(const Core::Location&)), this,
 	        SIGNAL(locationRequested(const Core::Location&)));
+	view->setAutoSelectSingleResult(true);
 
+	// Add to the tab widget.
 	tabWidget()->addTab(view, title);
 	return view;
 }
