@@ -94,6 +94,10 @@ public:
 		// Signal the availability of a project.
 		signals_.emitHasProject(true);
 
+#if 0
+		// TODO: Consider auto-rebuilds on startup. This feature is disabled
+		// for the time being.
+
 		// Does the database need to be rebuilt?
 		Core::Engine* engine = proj_->engine();
 		if (engine) {
@@ -102,6 +106,7 @@ public:
 				signals_.emitBuildProject();
 			}
 		}
+#endif
 	}
 
 	static void close();
