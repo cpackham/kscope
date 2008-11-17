@@ -100,15 +100,17 @@ public:
 	void getConfig(Config&);
 
 public slots:
-	void loadDone(const QString&);
-	void findFirst();
-	void findFirst(const FindParams&);
+	void find();
+	void find(const Editor::FindParams&);
 
 private:
 	bool isLoading_;
 	uint onLoadLine_;
 	uint onLoadColumn_;
 	bool onLoadFocus_;
+
+private slots:
+	void loadDone(const QString&);
 };
 
 } // namespace App

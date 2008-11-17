@@ -26,24 +26,49 @@ namespace KScope
 namespace App
 {
 
+/**
+ * Class constructor.
+ * @param  parent  Parent widget
+ */
 FindTextDialog::FindTextDialog(QWidget* parent)
 	: QDialog(parent), Ui::FindTextDialog()
 {
 	setupUi(this);
 }
 
+/**
+ * Class destructor.
+ */
 FindTextDialog::~FindTextDialog()
 {
 }
 
-void FindTextDialog::getParams(Editor::FindParams& params)
+/**
+ * Called when the user clicks the "OK" button.
+ * Emits the find() signal and closes the dialogue.
+ */
+void FindTextDialog::accept()
 {
+	findNext();
+	QDialog::accept();
+}
+
+/**
+ * Called when the user clicks the "Find Next" button.
+ * Emits the find() signal without closing the dialogue.
+ */
+void FindTextDialog::findNext()
+{
+	// Get the current search parameters.
+	Editor::FindParams params;
 	params.pattern_ = patternCombo_->lineEdit()->text();
 	params.regExp_ = regExpCheck_->isChecked();
 	params.caseSensitive_ = caseSensitiveCheck_->isChecked();;
 	params.wholeWordsOnly_ = wholeWordsCheck_->isChecked();
 	params.wrap_ = wrapCheck_->isChecked();
 	params.forward_ = !backwardsCheck_->isChecked();
+
+	emit find(params);
 }
 
 } // namespace App

@@ -44,7 +44,13 @@ public:
 	FindTextDialog(QWidget* parent = 0);
 	~FindTextDialog();
 
-	void getParams(Editor::FindParams&);
+	void accept();
+
+signals:
+	void find(const Editor::FindParams&);
+
+protected slots:
+	void findNext();
 };
 
 } // namespace App

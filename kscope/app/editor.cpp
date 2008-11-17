@@ -199,35 +199,15 @@ void Editor::getConfig(Config& config)
 }
 
 /**
- * Called when the thread loading the file for the editor terminates.
- * Invokes any methods that were deferred while the file was loading.
- * @param  text  The contents of the file
- */
-void Editor::loadDone(const QString& text)
-{
-	setText(text);
-	isLoading_ = false;
-	setCursorPosition(onLoadLine_, onLoadColumn_);
-	setEnabled(true);
-
-	if (onLoadFocus_) {
-		setFocus();
-		onLoadFocus_ = false;
-	}
-}
-
-/**
  * Searches for text inside the document.
  * Prompts the user for the text to find.
  */
-void Editor::findFirst()
+void Editor::find()
 {
 	FindTextDialog dlg(this);
-	if (dlg.exec() == QDialog::Accepted) {
-		FindParams params;
-		dlg.getParams(params);
-		findFirst(params);
-	}
+	connect(&dlg, SIGNAL(find(const Editor::FindParams&)), this,
+	        SLOT(find(const Editor::FindParams&)));
+	dlg.exec();
 }
 
 /**
@@ -235,7 +215,7 @@ void Editor::findFirst()
  * Uses the given search parameters.
  * @param  params  Search parameters
  */
-void Editor::findFirst(const Editor::FindParams& params)
+void Editor::find(const Editor::FindParams& params)
 {
 	if (!QsciScintilla::findFirst(params.pattern_, params.regExp_,
 	                              params.caseSensitive_, params.wholeWordsOnly_,
@@ -272,6 +252,24 @@ void Editor::Config::store(QSettings& settings)
 	settings.setValue("HighlightCurrentLine", hlCurLine_);
 	settings.setValue("IndentWithTabs", indentTabs_);
 	settings.setValue("TabWidth", tabWidth_);
+}
+
+/**
+ * Called when the thread loading the file for the editor terminates.
+ * Invokes any methods that were deferred while the file was loading.
+ * @param  text  The contents of the file
+ */
+void Editor::loadDone(const QString& text)
+{
+	setText(text);
+	isLoading_ = false;
+	setCursorPosition(onLoadLine_, onLoadColumn_);
+	setEnabled(true);
+
+	if (onLoadFocus_) {
+		setFocus();
+		onLoadFocus_ = false;
+	}
 }
 
 } // namespace App
