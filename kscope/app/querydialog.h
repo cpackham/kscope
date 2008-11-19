@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_QUERYDIALOG_H
-#define __KSCOPE_QUERYDIALOG_H
+#ifndef __KSCOPE_QUERYDIALOG_H__
+#define __KSCOPE_QUERYDIALOG_H__
 
 #include <QDialog>
 #include "ui_querydialog.h"
@@ -32,6 +32,7 @@ namespace App
 {
 
 /**
+ * A dialogue that prompts for a query's type and pattern.
  * @author Elad Lahav
  */
 class QueryDialog : public QDialog, private Ui::QueryDialog
@@ -48,8 +49,8 @@ public:
 	Core::Query::Type type();
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif // __KSCOPE_QUERYDIALOG_H
+#endif // __KSCOPE_QUERYDIALOG_H__

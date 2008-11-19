@@ -26,12 +26,18 @@ namespace KScope
 namespace App
 {
 
-QueryDialog::QueryDialog(Core::Query::Type type, QWidget* parent) :
-	QDialog(parent),
-	Ui::QueryDialog()
+/**
+ * Class constructor.
+ * @param  type    Default query type
+ * @param  parent  Parent widget
+ */
+QueryDialog::QueryDialog(Core::Query::Type type, QWidget* parent)
+	: QDialog(parent), Ui::QueryDialog()
 {
+	// Generate the GUI.
 	setupUi(this);
 
+	// Prepare the query type combo box.
 	typeCombo_->addItem(tr("Text"), Core::Query::Text);
 	typeCombo_->addItem(tr("References"), Core::Query::References);
 	typeCombo_->addItem(tr("Definition"), Core::Query::Definition);
@@ -45,28 +51,49 @@ QueryDialog::QueryDialog(Core::Query::Type type, QWidget* parent) :
 	typeCombo_->setCurrentIndex(typeCombo_->findData(type));
 }
 
-QueryDialog::QueryDialog(QWidget* parent) :
-	QDialog(parent),
-	Ui::QueryDialog()
+/**
+ * Class constructor.
+ * Used for prompting for a symbol when generating a call-graph/tree.
+ * @param  parent  Parent widget
+ */
+QueryDialog::QueryDialog(QWidget* parent) : QDialog(parent), Ui::QueryDialog()
 {
+	// Generate the GUI.
 	setupUi(this);
+
+	// Prepare the query type combo box.
+	typeCombo_->addItem(tr("Call Tree"));
+	typeCombo_->addItem(tr("Calling Tree"));
 	typeCombo_->addItem(tr("Call Graph"));
 }
 
+/**
+ * Class destructor.
+ */
 QueryDialog::~QueryDialog()
 {
 }
 
+/**
+ * @return The text in the pattern editor
+ */
 QString QueryDialog::pattern()
 {
 	return patternEdit_->text();
 }
 
+/**
+ * @param  pattern  Initial text for the pattern editor
+ */
 void QueryDialog::setPattern(const QString& pattern)
 {
-	return patternEdit_->setText(pattern);
+	patternEdit_->setText(pattern);
+	patternEdit_->selectAll();
 }
 
+/**
+ * @return The selected query type.
+ */
 Core::Query::Type QueryDialog::type()
 {
 	int index;
@@ -80,6 +107,6 @@ Core::Query::Type QueryDialog::type()
 	return static_cast<Core::Query::Type>(data.toUInt());
 }
 
-}
+} // namespace App
 
-}
+} // namespace KScope
