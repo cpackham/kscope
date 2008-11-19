@@ -92,7 +92,7 @@ void MainWindow::promptQuery(Core::Query::Type type)
 	// editor (if any).
 	Editor* editor = editCont_->currentEditor();
 	if (editor)
-		dlg.setPattern(editor->currentText());
+		dlg.setPattern(editor->currentSymbol());
 
 	// Prompt the user.
 	if (dlg.exec() != QDialog::Accepted)

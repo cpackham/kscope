@@ -94,7 +94,7 @@ public:
 
 	bool load(const QString&);
 	void setCursorPosition(uint, uint);
-	QString currentText() const;
+	QString currentSymbol() const;
 	void setFocus();
 	void applyConfig(const Config&);
 	void getConfig(Config&);

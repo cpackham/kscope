@@ -119,22 +119,21 @@ void Editor::setCursorPosition(uint line, uint column)
 }
 
 /**
- * Returns text for automatic selection.
+ * Returns a symbol for automatic selection.
  * If any text is selected in the editor, it is returned. Otherwise, the method
  * returns the word on which the cursor is currently positioned.
  * @return The current text
  */
-QString Editor::currentText() const
+QString Editor::currentSymbol() const
 {
-	long pos, start, end;
-	QByteArray result;
-
 	// Return any selected text.
+	// TODO: Should we test for a valid symbol here to?
 	if (hasSelectedText())
 		return QsciScintilla::selectedText();
 
 	// No selected text.
 	// Get the boundaries of the word from the current cursor position.
+	long pos, start, end;
 	pos = SendScintilla(SCI_GETCURRENTPOS);
 	start = SendScintilla(SCI_WORDSTARTPOSITION, pos, 0L);
 	end = SendScintilla(SCI_WORDENDPOSITION, pos, 0L);
@@ -144,10 +143,18 @@ QString Editor::currentText() const
 		return QString();
 
 	// Extract the word's text using its position boundaries.
-	result.resize(end - start );
-	SendScintilla(SCI_GETTEXTRANGE, start, end, result.data());
+	QByteArray curText;
+	curText.resize(end - start );
+	SendScintilla(SCI_GETTEXTRANGE, start, end, curText.data());
 
-	return result;
+	// NOTE: Scintilla's definition of a "word" does not correspond to a
+	// "symbol". Make sure the result contains only alpha-numeric characters
+	// or an underscore.
+	QString symbol(curText);
+	if (!QRegExp("\\w+").exactMatch(symbol))
+		return QString();
+
+	return symbol;
 }
 
 /**
