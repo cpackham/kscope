@@ -84,6 +84,7 @@ Core::QueryView* QueryResultDock::addView(const QString& title)
 
 	// Add to the tab widget.
 	tabWidget()->addTab(view, title);
+	view->model()->setRootPath(ProjectManager::project()->rootPath());
 	return view;
 }
 

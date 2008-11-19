@@ -115,8 +115,10 @@ void QueryView::onFinished()
 
 	// Auto-select a single result, if required.
 	Location loc;
-	if (autoSelectSingleResult_ && model()->firstLocation(loc))
+	if (autoSelectSingleResult_ && model()->rowCount() == 1
+	                            && model()->firstLocation(loc)) {
 		emit locationRequested(loc);
+	}
 }
 
 /**

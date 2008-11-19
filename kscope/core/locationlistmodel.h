@@ -70,6 +70,7 @@ public:
 
 	bool locationFromIndex(const QModelIndex&, Location&) const;
 	bool firstLocation(Location&) const;
+	void setRootPath(const QString&);
 
 	virtual QModelIndex index(int row, int column,
 							  const QModelIndex& parent) const;
@@ -95,6 +96,13 @@ private:
 	 * Result list.
 	 */
 	LocationList locList_;
+
+	/**
+	 * A common root path for all files in the model.
+	 * Files for which this path is a prefix will be presented with a '$' sign
+	 * as an abbreviation of the common path.
+	 */
+	QString rootPath_;
 
 	QString columnText(Columns) const;
 };

@@ -60,6 +60,29 @@ bool LocationListModel::firstLocation(Location& loc) const
 	return true;
 }
 
+/**
+ * Sets a new common root path for display purposes.
+ * @param  path  The new path to set
+ */
+void LocationListModel::setRootPath(const QString& path)
+{
+	QString actPath = path;
+	if (path == "/")
+		actPath = QString();
+
+	if (actPath != rootPath_) {
+		rootPath_ = actPath;
+		reset();
+	}
+}
+
+/**
+ * Creates an index for the given parameters.
+ * @param  row     Row number, with respect to the parent
+ * @param  column  Column number
+ * @param  parent  Parent index
+ * @return The new index, if created, an invalid index otherwise
+ */
 QModelIndex LocationListModel::index(int row, int column,
 									 const QModelIndex& parent) const
 {
@@ -110,6 +133,9 @@ QVariant LocationListModel::data(const QModelIndex& index, int role) const
 
 	switch (colList_[index.column()]) {
 	case File:
+		if (!rootPath_.isEmpty() && loc.file_.startsWith(rootPath_))
+			return QString("$/") + loc.file_.mid(rootPath_.length());
+
 		return loc.file_;
 
 	case Line:

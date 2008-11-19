@@ -67,6 +67,10 @@ public:
 	virtual void onAborted();
 	virtual void onProgress(const QString&, uint, uint);
 
+	inline LocationListModel* model() {
+		return static_cast<LocationListModel*>(QTreeView::model());
+	}
+
 signals:
 	void locationRequested(const Core::Location& loc);
 
@@ -90,10 +94,6 @@ private:
 	 * @param  select  true to select a single result, false otherwise
 	 */
 	bool autoSelectSingleResult_;
-
-	inline LocationListModel* model() {
-		return static_cast<LocationListModel*>(QTreeView::model());
-	}
 
 private slots:
 	void handleDoubleClick(const QModelIndex&);
