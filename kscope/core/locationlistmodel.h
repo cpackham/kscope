@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CORE_LOCATIONLISTMODEL_H
-#define __CORE_LOCATIONLISTMODEL_H
+#ifndef __CORE_LOCATIONLISTMODEL_H__
+#define __CORE_LOCATIONLISTMODEL_H__
 
 #include <QAbstractItemModel>
 #include "engine.h"
@@ -71,7 +71,10 @@ public:
 	bool locationFromIndex(const QModelIndex&, Location&) const;
 	bool firstLocation(Location&) const;
 	void setRootPath(const QString&);
+	QModelIndex nextIndex(const QModelIndex&) const;
+	QModelIndex prevIndex(const QModelIndex&) const;
 
+	// QAsbstractItemModel implementation.
 	virtual QModelIndex index(int row, int column,
 							  const QModelIndex& parent) const;
 	virtual QModelIndex parent(const QModelIndex& index) const;
@@ -107,8 +110,8 @@ private:
 	QString columnText(Columns) const;
 };
 
-}
+} // namespace Core
 
-}
+} // namespace KScope
 
-#endif // __CORE_LOCATIONLISTMODEL_H
+#endif // __CORE_LOCATIONLISTMODEL_H__

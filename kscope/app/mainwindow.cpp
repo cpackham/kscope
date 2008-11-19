@@ -51,7 +51,7 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 	setCentralWidget(editCont_);
 
 	// Create the query result dock.
-	queryDock_ = new QueryResultDock(tr("Query Results"), this);
+	queryDock_ = new QueryResultDock(this);
 	addDockWidget(Qt::RightDockWidgetArea, queryDock_);
 	connect(queryDock_, SIGNAL(locationRequested(const Core::Location&)),
 	        editCont_, SLOT(gotoLocation(const Core::Location&)));

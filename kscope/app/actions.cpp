@@ -28,6 +28,7 @@
 #include "projectfilesdialog.h"
 #include "managedproject.h"
 #include "projectmanager.h"
+#include "queryresultdock.h"
 
 namespace KScope
 {
@@ -106,6 +107,25 @@ void Actions::setup()
 	        SLOT(findText()));
 	menu->addAction(action);
 	group->addAction(action);
+
+	// Navigate menu.
+	menu = mainWnd()->menuBar()->addMenu(tr("&Navigate"));
+
+	// Select the next query result.
+	action = new QAction(tr("Next &Result"), this);
+	action->setShortcut(tr("Alt+Down"));
+	action->setStatusTip(tr("Select the next query result"));
+	connect(action, SIGNAL(triggered()), mainWnd()->queryDock_,
+	        SLOT(selectNextResult()));
+	menu->addAction(action);
+
+	// Select the previous query result.
+	action = new QAction(tr("Previous R&esult"), this);
+	action->setShortcut(tr("Alt+Up"));
+	action->setStatusTip(tr("Select the previous query result"));
+	connect(action, SIGNAL(triggered()), mainWnd()->queryDock_,
+	        SLOT(selectPrevResult()));
+	menu->addAction(action);
 
 	// Project menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Project"));

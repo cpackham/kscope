@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_QUERYRESULTDOCK_H
-#define __KSCOPE_QUERYRESULTDOCK_H
+#ifndef __APP_QUERYRESULTDOCK_H__
+#define __APP_QUERYRESULTDOCK_H__
 
 #include <QDockWidget>
 #include "stackwidget.h"
@@ -32,6 +32,7 @@ namespace App
 {
 
 /**
+ * A docked widget that holds query views.
  * @author Elad Lahav
  */
 class QueryResultDock : public QDockWidget
@@ -39,29 +40,46 @@ class QueryResultDock : public QDockWidget
 	Q_OBJECT
 
 public:
-	QueryResultDock(const QString&, QWidget* parent = 0);
+	QueryResultDock(QWidget* parent = 0);
 	~QueryResultDock();
 
 	void query(const Core::Query& query, Core::QueryView* view = NULL);
 	Core::QueryView* addView(const QString&);
 
+public slots:
+	void selectNextResult();
+	void selectPrevResult();
+
 signals:
+	/**
+	 * Forwards a locationRequested() signal from any of the query views.
+	 * @param  loc  The requested location
+	 */
 	void locationRequested(const Core::Location& loc);
 
 private:
+	/**
+	 * Converts a query type into a string.
+	 * Used to create titles for the query views.
+	 */
 	QMap<Core::Query::Type, QString> titleMap_;
 
 	inline StackWidget* tabWidget() {
 		return static_cast<StackWidget*>(widget());
 	}
 
+	/**
+	 * Generates a title for a query view.
+	 * @param  query  Query parameters
+	 * @return The query view title
+	 */
 	inline QString tabTitle(const Core::Query& query) {
 		return titleMap_[query.type_].arg(query.pattern_);
 	}
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif  // __KSCOPE_QUERYRESULTDOCK_H
+#endif  // __APP_QUERYRESULTDOCK_H__

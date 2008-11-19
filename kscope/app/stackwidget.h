@@ -45,6 +45,11 @@ public:
 	StackPage(QWidget*, const QString&, QWidget* parent = 0);
 	~StackPage();
 
+	/**
+	 * @return The managed widget
+	 */
+	QWidget* widget() { return widget_; }
+
 public slots:
 	void showWidget();
 	void hideWidget();
@@ -87,6 +92,15 @@ public:
 	~StackWidget();
 
 	void addTab(QWidget*, const QString&);
+
+	/**
+	 * @return The widget of the active page, NULL if no page exists
+	 */
+	QWidget* currentWidget() {
+		if (activePage_)
+			return activePage_->widget();
+		return NULL;
+	}
 
 private:
 	/**

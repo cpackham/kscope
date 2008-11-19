@@ -27,8 +27,12 @@ namespace KScope
 namespace App
 {
 
-QueryResultDock::QueryResultDock(const QString& title, QWidget* parent) :
-	QDockWidget(title, parent)
+/**
+ * Class constructor.
+ * @param  parent  Parent widget
+ */
+QueryResultDock::QueryResultDock(QWidget* parent) :
+	QDockWidget(tr("Query Results"), parent)
 {
 	setObjectName("QueryResultDock");
 	setWidget(new StackWidget(this));
@@ -44,10 +48,19 @@ QueryResultDock::QueryResultDock(const QString& title, QWidget* parent) :
 	titleMap_[Core::Query::IncludingFiles] = tr("Files including '%1'");
 }
 
+/**
+ * Class destructor.
+ */
 QueryResultDock::~QueryResultDock()
 {
 }
 
+/**
+ * Runs a query and displays its results in a query view.
+ * @param  query  The query to run
+ * @param  view   If not NULL, uses this view to display the results. Otherwise,
+ *                a new QueryView object is created
+ */
 void QueryResultDock::query(const Core::Query& query, Core::QueryView* view)
 {
 	// If a view was given, adjust its title.
@@ -74,6 +87,33 @@ void QueryResultDock::query(const Core::Query& query, Core::QueryView* view)
 	}
 }
 
+/**
+ * Selects the next location in the current view.
+ */
+void QueryResultDock::selectNextResult()
+{
+	Core::QueryView* view
+		= static_cast<Core::QueryView*>(tabWidget()->currentWidget());
+	if (view != NULL)
+		view->selectNext();
+}
+
+/**
+ * Selects the next location in the current view.
+ */
+void QueryResultDock::selectPrevResult()
+{
+	Core::QueryView* view
+		= static_cast<Core::QueryView*>(tabWidget()->currentWidget());
+	if (view != NULL)
+		view->selectPrev();
+}
+
+/**
+ * Creates a new query view and adds it to the container widget.
+ * @param  title  The title of the query view
+ * @return The created widget
+ */
 Core::QueryView* QueryResultDock::addView(const QString& title)
 {
 	// Create a new query view.
@@ -88,6 +128,6 @@ Core::QueryView* QueryResultDock::addView(const QString& title)
 	return view;
 }
 
-}
+} // namespace App
 
-}
+} // namespace KScope

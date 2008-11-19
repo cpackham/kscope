@@ -71,6 +71,10 @@ public:
 		return static_cast<LocationListModel*>(QTreeView::model());
 	}
 
+public slots:
+	void selectNext();
+	void selectPrev();
+
 signals:
 	void locationRequested(const Core::Location& loc);
 

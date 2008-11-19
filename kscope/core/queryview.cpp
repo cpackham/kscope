@@ -134,6 +134,34 @@ void QueryView::onAborted()
 }
 
 /**
+ * Selects the next location in the list.
+ */
+void QueryView::selectNext()
+{
+	QModelIndex selIndex = model()->nextIndex(currentIndex());
+	if (selIndex.isValid())
+		setCurrentIndex(selIndex);
+
+	Location loc;
+	if (model()->locationFromIndex(selIndex, loc))
+		emit locationRequested(loc);
+}
+
+/**
+ * Selects the previous location in the list.
+ */
+void QueryView::selectPrev()
+{
+	QModelIndex selIndex = model()->prevIndex(currentIndex());
+	if (selIndex.isValid())
+		setCurrentIndex(selIndex);
+
+	Location loc;
+	if (model()->locationFromIndex(selIndex, loc))
+		emit locationRequested(loc);
+}
+
+/**
  * Called when the user double-clicks a location item in the list.
  * Emits the locationRequested() signal for this location.
  * @param  index  Identifies the clicked item
