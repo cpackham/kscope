@@ -39,7 +39,6 @@ Cscope::Cscope(const QStringList& baseArgs)
 	  conn_(NULL),
 	  buildInitState_("BuildInit"),
 	  buildProgState_("BuildProgress"),
-	  queryInitState_("QueryInit"),
 	  queryProgState_("QueryProgress"),
 	  queryResultState_("QueryResults")
 {
@@ -49,20 +48,11 @@ Cscope::Cscope(const QStringList& baseArgs)
 	                         << Parser::Number()
 	                         << Parser::Literal(" of ") << Parser::Number(),
 	        buildProgState_, ProgAction(*this, tr("Building database...")));
-	addRule(queryInitState_, Parser::Literal("> Symbols matched ")
+	addRule(queryProgState_, Parser::Literal("> Symbols matched ")
 	                         << Parser::Number()
 	                         << Parser::Literal(" of ")
 	                         << Parser::Number(),
 	        queryProgState_, ProgAction(*this, tr("Querying...")));
-	addRule(queryInitState_, Parser::Literal("> Search ")
-	                         << Parser::Number()
-	                         << Parser::Literal(" of ")
-	                         << Parser::Number(),
-	        queryProgState_, ProgAction(*this, tr("Querying...")));
-	addRule(queryInitState_, Parser::Literal("cscope: ")
-	                         << Parser::Number()
-	                         << Parser::Literal(" lines"),
-	        queryResultState_, QueryEndAction(*this));
 	addRule(queryProgState_, Parser::Literal("> Possible references retrieved ")
 	                         << Parser::Number()
 	                         << Parser::Literal(" of ")
@@ -124,7 +114,7 @@ void Cscope::query(Core::Engine::Connection* conn, const QString& path,
 	// Initialise parsing.
 	conn_ = conn;
 	conn_->setCtrlObject(this);
-	setState(queryInitState_);
+	setState(queryProgState_);
 	locList_.clear();
 
 	// Start the process.

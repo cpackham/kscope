@@ -82,7 +82,6 @@ private:
 	uint resParsed_;
 	State buildInitState_;
 	State buildProgState_;
-	State queryInitState_;
 	State queryProgState_;
 	State queryResultState_;
 	Core::LocationList locList_;
