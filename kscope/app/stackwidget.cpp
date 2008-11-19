@@ -111,18 +111,25 @@ void StackWidget::removePage(StackPage* page)
 	QLinkedList<StackPage*>::Iterator itr;
 	for (itr = pageList_.begin(); itr != pageList_.end(); ++itr) {
 		if (*itr == page) {
-			pageList_.erase(itr);
+			itr = pageList_.erase(itr);
 			break;
 		}
 	}
 
 	// Handle the case that the removed page was the active one.
-	// If other pages exist, show the first one (this will also make it the
-	// active one).
 	if (page == activePage_) {
 		activePage_ = NULL;
-		if (!pageList_.isEmpty())
-			pageList_.front()->showWidget();
+
+		// Determine the new page to show:
+		// 1. The page immediately above, if any
+		// 2. The page immediately below, if any
+		// 3. The list is empty, don't show any page
+		if (!pageList_.isEmpty()) {
+			if (itr == pageList_.begin())
+				(*itr)->showWidget();
+			else
+				(*(--itr))->showWidget();
+		}
 	}
 }
 
