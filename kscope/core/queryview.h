@@ -100,7 +100,7 @@ private:
 	bool autoSelectSingleResult_;
 
 private slots:
-	void handleDoubleClick(const QModelIndex&);
+	void requestLocation(const QModelIndex&);
 	void stopQuery();
 };
 

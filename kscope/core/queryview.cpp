@@ -50,8 +50,8 @@ QueryView::QueryView(QWidget* parent) : QTreeView(parent),
 	setModel(new LocationListModel(colList, this));
 
 	// Emit requests for locations when an item is double-clicked.
-	connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this,
-	        SLOT(handleDoubleClick(const QModelIndex&)));
+	connect(this, SIGNAL(activated(const QModelIndex&)), this,
+	        SLOT(requestLocation(const QModelIndex&)));
 }
 
 /**
@@ -166,7 +166,7 @@ void QueryView::selectPrev()
  * Emits the locationRequested() signal for this location.
  * @param  index  Identifies the clicked item
  */
-void QueryView::handleDoubleClick(const QModelIndex& index)
+void QueryView::requestLocation(const QModelIndex& index)
 {
 	Location loc;
 	if (model()->locationFromIndex(index, loc))
