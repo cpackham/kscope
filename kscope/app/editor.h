@@ -100,8 +100,8 @@ public:
 	void getConfig(Config&);
 
 public slots:
-	void find();
-	void find(const Editor::FindParams&);
+	void search();
+	void searchNext();
 
 private:
 	bool isLoading_;

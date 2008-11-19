@@ -104,7 +104,16 @@ void Actions::setup()
 	action->setShortcut(tr("Ctrl+F"));
 	action->setStatusTip(tr("Find text in this file"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
-	        SLOT(findText()));
+	        SIGNAL(find()));
+	menu->addAction(action);
+	group->addAction(action);
+
+	// Find the next occurrence of the text.
+	action = new QAction(tr("Find &Next"), this);
+	action->setShortcut(tr("F3"));
+	action->setStatusTip(tr("Find next occurrence of text in this file"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+	        SIGNAL(findNext()));
 	menu->addAction(action);
 	group->addAction(action);
 

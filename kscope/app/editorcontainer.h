@@ -55,12 +55,14 @@ public slots:
 	void openFile();
 	void configEditor();
 	void gotoLocation(const Core::Location&);
-	void findText();
 
 signals:
 	void hasActiveEditor(bool has);
+	void find();
+	void findNext();
 
 private:
+	Editor* activeEditor_;
 	QMap<QString, QMdiSubWindow*> fileMap_;
 	uint newFileIndex_;
 	Editor::Config config_;

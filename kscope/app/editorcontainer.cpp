@@ -20,6 +20,7 @@
 
 #include <QMdiSubWindow>
 #include <QFileDialog>
+#include <QDebug>
 #include "editorcontainer.h"
 #include "editorconfigdialog.h"
 
@@ -29,8 +30,8 @@ namespace KScope
 namespace App
 {
 
-EditorContainer::EditorContainer(QWidget* parent) : QMdiArea(parent),
-	newFileIndex_(1)
+EditorContainer::EditorContainer(QWidget* parent)
+	: QMdiArea(parent), activeEditor_(NULL), newFileIndex_(1)
 {
 	// Load editor configuration settings.
 	QSettings settings;
@@ -139,15 +140,6 @@ void EditorContainer::gotoLocation(const Core::Location& loc)
 }
 
 /**
- */
-void EditorContainer::findText()
-{
-	Editor* editor = currentEditor();
-	if (editor != NULL)
-		editor->find();
-}
-
-/**
  * @param  path
  * @param  activate
  * @return
@@ -214,7 +206,28 @@ void EditorContainer::handleWindowAction(QAction* action)
  */
 void EditorContainer::windowActivated(QMdiSubWindow* window)
 {
-	emit hasActiveEditor(window != NULL);
+	// Get the new active editor widget, if any.
+	Editor* editor = window ?  static_cast<Editor*>(window->widget()) : NULL;
+	if (editor != activeEditor_) {
+		// Stop forwarding signals to the active editor.
+		if (activeEditor_)
+			disconnect(activeEditor_);
+
+		// Update the active editor.
+		activeEditor_ = editor;
+
+		if (activeEditor_) {
+			// Forward signals.
+			connect(this, SIGNAL(find()), activeEditor_, SLOT(search()));
+			connect(this, SIGNAL(findNext()), activeEditor_,
+			        SLOT(searchNext()));
+
+			emit hasActiveEditor(true);
+		}
+		else {
+			emit hasActiveEditor(false);
+		}
+	}
 }
 
 } // namespace App

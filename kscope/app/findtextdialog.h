@@ -41,16 +41,10 @@ class FindTextDialog : public QDialog, public Ui::FindTextDialog
 	Q_OBJECT
 
 public:
-	FindTextDialog(QWidget* parent = 0);
+	FindTextDialog(const QString&, QWidget* parent = 0);
 	~FindTextDialog();
 
-	void accept();
-
-signals:
-	void find(const Editor::FindParams&);
-
-protected slots:
-	void findNext();
+	void getParams(Editor::FindParams&);
 };
 
 } // namespace App

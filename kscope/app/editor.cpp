@@ -209,26 +209,35 @@ void Editor::getConfig(Config& config)
  * Searches for text inside the document.
  * Prompts the user for the text to find.
  */
-void Editor::find()
+void Editor::search()
 {
-	FindTextDialog dlg(this);
-	connect(&dlg, SIGNAL(find(const Editor::FindParams&)), this,
-	        SLOT(find(const Editor::FindParams&)));
-	dlg.exec();
-}
+	// Prompt for text to find.
+	FindTextDialog dlg(currentSymbol(), this);
+	if (dlg.exec() != QDialog::Accepted)
+		return;
 
-/**
- * Searches for text inside the document.
- * Uses the given search parameters.
- * @param  params  Search parameters
- */
-void Editor::find(const Editor::FindParams& params)
-{
+	// Get search parameters from the dialogue.
+	FindParams params;
+	dlg.getParams(params);
+
+	// Find the first occurrence of the searched text.
 	if (!QsciScintilla::findFirst(params.pattern_, params.regExp_,
 	                              params.caseSensitive_, params.wholeWordsOnly_,
 	                              params.wrap_, params.forward_)) {
 		QString msg = tr("'%1' could not be found in the document")
 		              .arg(params.pattern_);
+		QMessageBox::warning(this, tr("Pattern not found"), msg);
+	}
+}
+
+/**
+ * Searches for the next occurrence of the previously-selected text inside the
+ * document.
+ */
+void Editor::searchNext()
+{
+	if (!QsciScintilla::findNext()) {
+		QString msg = tr("No more matches.");
 		QMessageBox::warning(this, tr("Pattern not found"), msg);
 	}
 }
