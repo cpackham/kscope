@@ -67,7 +67,6 @@ void Process::readStandardOutput()
 	// Parse each of the complete lines received.
 	for(itr = lines.begin(); itr != lines.end(); ++itr) {
 		if (!step(*itr)) {
-			qDebug() << "Parse error!";
 			emit parseError();
 			return;
 		}

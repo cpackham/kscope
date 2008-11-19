@@ -144,6 +144,8 @@ public:
 			}
 		}
 
+		qDebug() << "Parse error!" << curState_->name_ << input;
+
 		// Set the current state to NULL if matching failed.
 		curState_ = &initState_;
 		return false;
