@@ -92,7 +92,7 @@ void Crossref::open(const QString& initString)
  * @param  query Query information
  * @throw  Exception
  */
-void Crossref::query(Core::Engine::Connection& conn,
+void Crossref::query(Core::Engine::Connection* conn,
                      const Core::Query& query) const
 {
 	Cscope::QueryType type;
@@ -140,14 +140,14 @@ void Crossref::query(Core::Engine::Connection& conn,
 	// Create a new Cscope process object, and start the query.
 	Cscope* cscope = new Cscope(args_);
 	cscope->setDeleteOnExit();
-	cscope->query(&conn, path_, type, query.pattern_);
+	cscope->query(conn, path_, type, query.pattern_);
 }
 
 /**
  * Starts a Cscope build process.
  * @param  conn  Connection object to attach to the new process
  */
-void Crossref::build(Core::Engine::Connection& conn) const
+void Crossref::build(Core::Engine::Connection* conn) const
 {
 	// Create the Cscope process object.
 	Cscope* cscope = new Cscope(args_);
@@ -158,7 +158,7 @@ void Crossref::build(Core::Engine::Connection& conn) const
 	        SLOT(buildProcessFinished(int, QProcess::ExitStatus)));
 
 	// Start the build process.
-	cscope->build(&conn, path_);
+	cscope->build(conn, path_);
 }
 
 void Crossref::buildProcessFinished(int code, QProcess::ExitStatus status)

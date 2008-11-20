@@ -173,13 +173,13 @@ public slots:
 	 * @param  conn    Used for communication with the ongoing operation
 	 * @param  query   The query to execute
 	 */
-	virtual void query(Connection& conn, const Query& query) const = 0;
+	virtual void query(Connection* conn, const Query& query) const = 0;
 
 	/**
 	 * (Re)builds the symbols database.
 	 * @param  conn    Used for communication with the ongoing operation
 	 */
-	virtual void build(Connection&) const = 0;
+	virtual void build(Connection*) const = 0;
 };
 
 } // namespace Core

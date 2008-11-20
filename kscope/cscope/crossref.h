@@ -55,8 +55,8 @@ public:
 	Status status() const { return status_; }
 
 public slots:
-	void query(Core::Engine::Connection&, const Core::Query&) const;
-	void build(Core::Engine::Connection&) const;
+	void query(Core::Engine::Connection*, const Core::Query&) const;
+	void build(Core::Engine::Connection*) const;
 
 	const QString& path() { return path_; }
 
