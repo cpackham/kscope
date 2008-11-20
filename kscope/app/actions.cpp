@@ -124,6 +124,22 @@ void Actions::setup()
 	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), menu,
 	        SLOT(setEnabled(bool)));
 
+	// Go to the next location in the navigation history.
+	action = new QAction(tr("Next &Location"), this);
+	action->setShortcut(tr("Alt+Right"));
+	action->setStatusTip(tr("Next location in navigation history"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+	        SLOT(gotoNextLocation()));
+	menu->addAction(action);
+
+	// Go to the previous location in the navigation history.
+	action = new QAction(tr("Previous L&ocation"), this);
+	action->setShortcut(tr("Alt+Left"));
+	action->setStatusTip(tr("Previous location in navigation history"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+	        SLOT(gotoPrevLocation()));
+	menu->addAction(action);
+
 	// Select the next query result.
 	action = new QAction(tr("Next &Result"), this);
 	action->setShortcut(tr("Alt+Down"));

@@ -76,7 +76,18 @@ public slots:
 	void selectPrev();
 
 signals:
+	/**
+	 * Emitted when a location item is selected.
+	 * @param  loc  The location descriptor
+	 */
 	void locationRequested(const Core::Location& loc);
+
+	/**
+	 * Emitted when the view needs to be visible.
+	 * This is useful for creating containers that only become visible when
+	 * there is something to show in the view (either progress or results).
+	 */
+	void needToShow();
 
 private:
 	/**

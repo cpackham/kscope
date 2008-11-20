@@ -30,6 +30,10 @@ namespace KScope
 namespace App
 {
 
+/**
+ * Class constructor.
+ * @param  parent  Parent widget
+ */
 EditorContainer::EditorContainer(QWidget* parent)
 	: QMdiArea(parent), activeEditor_(NULL), newFileIndex_(1)
 {
@@ -44,6 +48,9 @@ EditorContainer::EditorContainer(QWidget* parent)
 	        SLOT(windowActivated(QMdiSubWindow*)));
 }
 
+/**
+ * Class destructor.
+ */
 EditorContainer::~EditorContainer()
 {
 }
@@ -82,20 +89,29 @@ void EditorContainer::populateWindowMenu(QMenu* wndMenu) const
 	        SLOT(handleWindowAction(QAction*)));
 }
 
+/**
+ * Creates an editor window with an empty, unnamed file.
+ */
 void EditorContainer::newFile()
 {
 	(void)getEditor(QString(), true);
 }
 
+/**
+ * Prompts the user for a file name, and creates an editor window for editing
+ * the selected file.
+ */
 void EditorContainer::openFile()
 {
-	QString path;
-
-	path = QFileDialog::getOpenFileName(0, tr("Open File"));
+	QString path = QFileDialog::getOpenFileName(0, tr("Open File"));
 	if (!path.isEmpty())
 		(void)getEditor(path, true);
 }
 
+/**
+ * Displays the editor configuration dialogue.
+ * Any changes to the configuration are then applied to all open editor windows.
+ */
 void EditorContainer::configEditor()
 {
 	// Show the "Configure Editor" dialogue.
@@ -119,39 +135,49 @@ void EditorContainer::configEditor()
 }
 
 /**
- * Activates an editor window showing the given location.
- * The file, line and column values of the Location structure are used to open
- * an editor for the given file (or activate an existing one), and to set the
- * cursor to the requested coordinates.
- * @param  loc  The requested location
+ * Sets the focus to a line in an editor window matching the given location.
+ * @param  loc  The location to go to
  */
 void EditorContainer::gotoLocation(const Core::Location& loc)
 {
-	QMdiSubWindow* window;
-	Editor* editor;
-
-	// Open/activate an editor window for the requested file.
-	window = getEditor(loc.file_, true);
-	if (window) {
-		// Set the cursor to the given line and column.
-		editor = static_cast<Editor*>(window->widget());
-		editor->setCursorPosition(loc.line_, loc.column_);
-	}
+	if (gotoLocationInternal(loc))
+		history_.add(loc);
 }
 
 /**
- * @param  path
- * @param  activate
- * @return
+ * Sets the focus to a line in an editor window matching the next location in
+ * the history list.
+ */
+void EditorContainer::gotoNextLocation()
+{
+	Core::Location loc;
+	if (history_.next(loc))
+		gotoLocationInternal(loc);
+}
+
+/**
+ * Sets the focus to a line in an editor window matching the previous location
+ * in the history list.
+ */
+void EditorContainer::gotoPrevLocation()
+{
+	Core::Location loc;
+	if (history_.prev(loc))
+		gotoLocationInternal(loc);
+}
+
+/**
+ * Finds an editor window for the given file.
+ * If one does not exist, a new one is created.
+ * @param  path      The path of the file to edit
+ * @param  activate  Whether to also activate the window
+ * @return The found/created editor if successful, NULL otherwise
  */
 QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 {
-	QMap<QString, QMdiSubWindow*>::Iterator itr;
-	QMdiSubWindow* window;
-	Editor* editor;
-	QString name;
 
-	itr = fileMap_.find(path);
+	// Try to find an existing editor window, based on the path.
+	QMap<QString, QMdiSubWindow*>::Iterator itr = fileMap_.find(path);
 	if (itr != fileMap_.end()) {
 		if (activate)
 			activateEditor(*itr);
@@ -159,8 +185,11 @@ QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 		return *itr;
 	}
 
-	editor = new Editor(this);
+	// Create a new editor widget.
+	Editor* editor = new Editor(this);
 
+	// Open the given file in the editor.
+	QString name;
 	if (!path.isEmpty()) {
 		if (!editor->load(path)) {
 			delete editor;
@@ -170,12 +199,14 @@ QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 		name = path;
 	}
 	else {
+		// No path supplied, treat as a new file.
 		name = QString("Untitled %1").arg(newFileIndex_++);
 	}
 
 	editor->applyConfig(config_);
 
-	window = addSubWindow(editor);
+	// Create a new sub window for the editor.
+	QMdiSubWindow* window = addSubWindow(editor);
 	window->setAttribute(Qt::WA_DeleteOnClose);
 	window->setWindowTitle(name);
 	fileMap_[name] = window;
@@ -186,15 +217,46 @@ QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 	return window;
 }
 
+/**
+ * Makes the given window the active one.
+ * Shows the window and sets the focus to the editor.
+ * @param  window  The window to activate
+ */
 void EditorContainer::activateEditor(QMdiSubWindow* window)
 {
-	Editor* editor;
-
 	window->show();
-	editor = static_cast<Editor*>(window->widget());
-	editor->setFocus();
+	static_cast<Editor*>(window->widget())->setFocus();
 }
 
+/**
+ * Activates an editor window showing the given location.
+ * The file, line and column values of the Location structure are used to open
+ * an editor for the given file (or activate an existing one), and to set the
+ * cursor to the requested coordinates.
+ * @param  loc  The requested location
+ * @return true if successful, false otherwise
+ */
+bool EditorContainer::gotoLocationInternal(const Core::Location& loc)
+{
+	QMdiSubWindow* window;
+	Editor* editor;
+
+	// Open/activate an editor window for the requested file.
+	window = getEditor(loc.file_, true);
+	if (!window)
+		return false;
+
+	// Set the cursor to the given line and column.
+	editor = static_cast<Editor*>(window->widget());
+	editor->setCursorPosition(loc.line_, loc.column_);
+	return true;
+}
+
+/**
+ * Common handler for the file names in the "Window" menu.
+ * Activates the window corresponding to the chosen file.
+ * @param  action  The triggered action
+ */
 void EditorContainer::handleWindowAction(QAction* action)
 {
 	(void)getEditor(action->text(), true);

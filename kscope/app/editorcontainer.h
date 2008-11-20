@@ -26,6 +26,7 @@
 #include <QMenu>
 #include "globals.h"
 #include "editor.h"
+#include "locationhistory.h"
 
 namespace KScope
 {
@@ -55,6 +56,8 @@ public slots:
 	void openFile();
 	void configEditor();
 	void gotoLocation(const Core::Location&);
+	void gotoNextLocation();
+	void gotoPrevLocation();
 
 signals:
 	void hasActiveEditor(bool has);
@@ -66,9 +69,11 @@ private:
 	QMap<QString, QMdiSubWindow*> fileMap_;
 	uint newFileIndex_;
 	Editor::Config config_;
+	LocationHistory history_;
 
 	QMdiSubWindow* getEditor(const QString& path, bool activate = false);
 	void activateEditor(QMdiSubWindow*);
+	bool gotoLocationInternal(const Core::Location&);
 
 private slots:
 	void handleWindowAction(QAction*);

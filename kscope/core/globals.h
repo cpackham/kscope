@@ -52,6 +52,18 @@ struct Location
 	QString scope_;
 	/** Line text. */
 	QString text_;
+
+	/**
+	 * Two locations are equal if and only if they refer to the same line and
+	 * column in the same file.
+	 * @param  other  The location to compare with
+	 * @return true if the locations are equal, false otherwise
+	 */
+	bool operator==(const Location& other) {
+		return ((file_ == other.file_)
+				&& (line_ == other.line_)
+				&& (column_ == other.column_));
+	}
 };
 
 typedef QList<Location> LocationList;

@@ -100,6 +100,9 @@ void QueryView::onProgress(const QString& text, uint cur, uint total)
 	// Update progress information in the progres bar.
 	progBar_->setLabel(text);
 	progBar_->setProgress(cur, total);
+
+	if (!isVisible())
+		emit needToShow();
 }
 
 /**
@@ -118,6 +121,9 @@ void QueryView::onFinished()
 	if (autoSelectSingleResult_ && model()->rowCount() == 1
 	                            && model()->firstLocation(loc)) {
 		emit locationRequested(loc);
+	}
+	else if (!isVisible()) {
+		emit needToShow();
 	}
 }
 
