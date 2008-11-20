@@ -33,8 +33,7 @@ namespace Core
  * @param  parent   Parent object
  */
 LocationListModel::LocationListModel(QList<Columns> colList, QObject* parent)
-	: QAbstractItemModel(parent),
-	  colList_(colList)
+	: LocationModel(colList, parent)
 {
 }
 
@@ -81,22 +80,6 @@ bool LocationListModel::firstLocation(Location& loc) const
 
 	loc = locList_.at(0);
 	return true;
-}
-
-/**
- * Sets a new common root path for display purposes.
- * @param  path  The new path to set
- */
-void LocationListModel::setRootPath(const QString& path)
-{
-	QString actPath = path;
-	if (path == "/")
-		actPath = QString();
-
-	if (actPath != rootPath_) {
-		rootPath_ = actPath;
-		reset();
-	}
 }
 
 /**
@@ -174,24 +157,6 @@ QModelIndex LocationListModel::parent(const QModelIndex& idx) const
 }
 
 /**
- * Provides information for constructing a header when this model is displayed
- * in a view.
- * @param  section  Corresponds to the column number
- * @param  orient   Horizontal or vertical header
- * @param  role     How to interpret the information
- * @return For a horizontal header with a display role, returns the column
- *         title; An empty variant for all other type
- */
-QVariant LocationListModel::headerData(int section, Qt::Orientation orient,
-									   int role) const
-{
-	if (orient != Qt::Horizontal || role != Qt::DisplayRole)
-		return QVariant();
-
-	return columnText(colList_[section]);
-}
-
-/**
  * Determines the number of children for the given parent index.
  * For a flat list, this is the number of items for the root (invalid) index,
  * and 0 for any other index.
@@ -207,52 +172,56 @@ int LocationListModel::rowCount(const QModelIndex& parent) const
 }
 
 /**
- * Returns the number of columns for the children of the given parent.
- * @param  parent  The parent index
- * @return The size of the column list for all the children of the root index
+ * Extracts location data from the given index.
+ * @param   index  The index for which data is requested
+ * @param   role   The role of the data
+ * @return
  */
-int LocationListModel::columnCount(const QModelIndex& parent) const
-{
-	if (!parent.isValid())
-		return colList_.size();
-
-	return 0;
-}
-
 QVariant LocationListModel::data(const QModelIndex& index, int role) const
 {
+	// No data for invalid indices.
 	if (!index.isValid())
 		return QVariant();
 
+	// Only support DisplayRole.
 	if (role != Qt::DisplayRole)
 		return QVariant();
 
+	// Get the location for the index's row.
 	const Location& loc = locList_.at(index.row());
 
+	// Get the column-specific data.
 	switch (colList_[index.column()]) {
 	case File:
+		// File path.
+		// Replace root prefix with "$".
 		if (!rootPath_.isEmpty() && loc.file_.startsWith(rootPath_))
 			return QString("$/") + loc.file_.mid(rootPath_.length());
 
 		return loc.file_;
 
 	case Line:
+		// Line number.
 		return loc.line_;
 
 	case Column:
+		// Column number.
 		return loc.column_;
 
 	case Tag:
+		// Tag type.
 		return loc.tag_;
 
 	case Scope:
+		// Scope.
 		return loc.scope_;
 
 	case Text:
+		// Line text.
 		return loc.text_;
 	}
 
-	return "";
+	return QVariant();
 }
 
 /**
@@ -289,31 +258,6 @@ void LocationListModel::add(const LocationList& locList)
 void LocationListModel::clear()
 {
 	locList_.clear();
-}
-
-QString LocationListModel::columnText(Columns col) const
-{
-	switch (col) {
-	case File:
-		return "File";
-
-	case Line:
-		return "Line";
-
-	case Column:
-		return "Column";
-
-	case Tag:
-		return "Tag";
-
-	case Scope:
-		return "Scope";
-
-	case Text:
-		return "Text";
-	}
-
-	return "";
 }
 
 } // namespace Core
