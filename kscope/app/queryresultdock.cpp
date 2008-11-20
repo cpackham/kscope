@@ -79,7 +79,7 @@ void QueryResultDock::query(const Core::Query& query, Core::QueryView* view)
 	// Run the query.
 	view->initQuery(query);
 	try {
-		ProjectManager::engine().query(*view, query);
+		ProjectManager::engine().query(view, query);
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();
