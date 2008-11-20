@@ -26,16 +26,23 @@ namespace KScope
 namespace App
 {
 
-QueryResultDialog::QueryResultDialog(QWidget* parent) :
-	QDialog(parent),
-	Ui::QueryResultDialog()
+/**
+ * Class constructor.
+ * @param  parent  Parent widget
+ */
+QueryResultDialog::QueryResultDialog(QWidget* parent)
+	: QDialog(parent), Ui::QueryResultDialog()
 {
+	setupUi(this);
 }
 
+/**
+ * Class destructor.
+ */
 QueryResultDialog::~QueryResultDialog()
 {
 }
 
-}
+} // namespace App
 
-}
+} // namespace KScope

@@ -56,6 +56,7 @@ private:
 private slots:
 	void newProject();
 	void openProject();
+	void closeProject();
 	void projectFiles();
 	void projectProperties();
 	void query(QAction*);

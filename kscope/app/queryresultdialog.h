@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_QUERYRESULTDIALOG_H
-#define __KSCOPE_QUERYRESULTDIALOG_H
+#ifndef __APP_QUERYRESULTDIALOG_H__
+#define __APP_QUERYRESULTDIALOG_H__
 
 #include <QDialog>
 #include "ui_queryresultdialog.h"
@@ -40,10 +40,12 @@ class QueryResultDialog : public QDialog, private Ui::QueryResultDialog
 public:
 	QueryResultDialog(QWidget* parent = 0);
 	~QueryResultDialog();
+
+	Core::QueryView* view() { return view_; }
 };
 
-}
+} // namespace App
 
-}
+} // namespace KScope
 
-#endif // __KSCOPE_QUERYRESULTDIALOG_H
+#endif // __APP_QUERYRESULTDIALOG_H__

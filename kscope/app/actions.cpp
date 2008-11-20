@@ -118,7 +118,11 @@ void Actions::setup()
 	group->addAction(action);
 
 	// Navigate menu.
+	// Enabled only when there is an active project.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Navigate"));
+	menu->setEnabled(false);
+	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), menu,
+	        SLOT(setEnabled(bool)));
 
 	// Select the next query result.
 	action = new QAction(tr("Next &Result"), this);
@@ -184,16 +188,39 @@ void Actions::setup()
 	menu->addAction(action);
 	group->addAction(action);
 
+	menu->addSeparator();
+
+	// Close the active project.
+	action = new QAction(tr("&Close"), this);
+	action->setStatusTip(tr("Close the active project"));
+	connect(action, SIGNAL(triggered()), this, SLOT(closeProject()));
+	menu->addAction(action);
+	group->addAction(action);
+
 	// Query menu.
+	// Enabled only when there is an active project.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Query"));
+	menu->setEnabled(false);
+	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), menu,
+	        SLOT(setEnabled(bool)));
+
+	// Quick definition.
+	// Needs an active editor to be enabled.
+	action = new QAction(tr("&Quick Definition"), this);
+	action->setShortcut(tr("Ctrl+]"));
+	action->setStatusTip(tr("Find symbol definition"));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(quickDefinition()));
+	action->setEnabled(false);
+	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
+	        SLOT(setEnabled(bool)));
+	menu->addAction(action);
+
+	menu->addSeparator();
 
 	// A group for all query actions.
-	// This group is enabled only when there is an active project.
+	// Handles all of these actions with a single slot.
 	group = new QActionGroup(this);
 	connect(group, SIGNAL(triggered(QAction*)), this, SLOT(query(QAction*)));
-	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), group,
-	        SLOT(setEnabled(bool)));
-	group->setEnabled(false);
 
 	// Query references.
 	action = new QAction(tr("&References"), this);
@@ -251,9 +278,9 @@ void Actions::setup()
 	menu->addAction(action);
 	group->addAction(action);
 
+#if 0
 	menu->addSeparator();
 
-#if 0
 	// Call graph.
 	// TODO: Implement.
 	action = new QAction(tr("Call &Graph"), this);
@@ -349,6 +376,14 @@ void Actions::openProject()
 	}
 }
 
+/**
+ * Handler for the "Project->Close" action.
+ */
+void Actions::closeProject()
+{
+	ProjectManager::close();
+}
+
 void Actions::projectFiles()
 {
 	ProjectFilesDialog dlg(mainWnd());
@@ -377,6 +412,10 @@ void Actions::projectProperties()
 	// TODO: Update project properties.
 }
 
+/**
+ * A common handler for query menu actions.
+ * @param  action  The triggered action
+ */
 void Actions::query(QAction* action)
 {
 	Core::Query::Type type;

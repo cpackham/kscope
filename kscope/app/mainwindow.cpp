@@ -28,6 +28,7 @@
 #include "queryresultdock.h"
 #include "editor.h"
 #include "projectmanager.h"
+#include "queryresultdialog.h"
 
 namespace KScope
 {
@@ -86,7 +87,7 @@ MainWindow::~MainWindow()
  */
 void MainWindow::promptQuery(Core::Query::Type type)
 {
-	QueryDialog dlg(type);
+	QueryDialog dlg(type, this);
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
@@ -100,6 +101,60 @@ void MainWindow::promptQuery(Core::Query::Type type)
 
 	// Start a query with results shown in a view inside the query dock.
 	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()));
+}
+
+/**
+ * Implements a definition query that does not display its results in the
+ * query dock.
+ * If the query results in a single location, this location is immediately
+ * displayed in the editor container. Otherwise, the user is prompted for the
+ * location, using a results dialogue.
+ */
+void MainWindow::quickDefinition()
+{
+	QString symbol;
+
+	// Get the default pattern from the text under the cursor on the active
+	// editor (if any).
+	Editor* editor = editCont_->currentEditor();
+	if (editor)
+		symbol = editor->currentSymbol();
+
+	// TODO: Is this the right behaviour, or should we prompt for a symbol?
+	if (symbol.isEmpty()) {
+		QMessageBox::warning(this, tr("No Symbol"),
+		                     tr("Please select a symbol in the editor"));
+		return;
+	}
+
+	// Create a query view dialogue.
+	QueryResultDialog* dlg = new QueryResultDialog(this);
+	dlg->setModal(true);
+
+	// Automatically select a single result.
+	Core::QueryView* view = dlg->view();
+	view->setAutoSelectSingleResult(true);
+
+	// When a selection is made in the dialogue, forward it to the editor
+	// container and close the dialogue.
+	connect(view, SIGNAL(locationRequested(const Core::Location&)),
+	        editCont_, SLOT(gotoLocation(const Core::Location&)));
+	connect(view, SIGNAL(locationRequested(const Core::Location&)), dlg,
+	        SLOT(accept()));
+
+	// Only show the dialogue if needed.
+	connect(view, SIGNAL(needToShow()), dlg, SLOT(show()));
+
+	try {
+		// Run the query.
+		ProjectManager::engine().query(view,
+		                               Core::Query(Core::Query::Definition,
+		                                           symbol));
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 /**
@@ -121,7 +176,7 @@ void MainWindow::buildProject()
 		}
 
 		// Start the build process.
-		ProjectManager::engine().build(buildProgress_);
+		ProjectManager::engine().build(&buildProgress_);
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();
