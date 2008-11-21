@@ -57,23 +57,8 @@ signals:
 	void locationRequested(const Core::Location& loc);
 
 private:
-	/**
-	 * Converts a query type into a string.
-	 * Used to create titles for the query views.
-	 */
-	QMap<Core::Query::Type, QString> titleMap_;
-
 	inline StackWidget* tabWidget() {
 		return static_cast<StackWidget*>(widget());
-	}
-
-	/**
-	 * Generates a title for a query view.
-	 * @param  query  Query parameters
-	 * @return The query view title
-	 */
-	inline QString tabTitle(const Core::Query& query) {
-		return titleMap_[query.type_].arg(query.pattern_);
 	}
 
 	Core::QueryView* addView(const QString&, Core::QueryView::Type);

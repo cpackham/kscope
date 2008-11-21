@@ -38,7 +38,7 @@ QueryView::QueryView(QWidget* parent, Type type)
 	  autoSelectSingleResult_(false)
 {
 	// Set tree view properties.
-	setRootIsDecorated(false);
+	setRootIsDecorated(type_ == Tree);
 	setUniformRowHeights(true);
 
 	// Create an ordered list of columns.

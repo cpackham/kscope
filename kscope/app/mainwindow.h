@@ -55,6 +55,7 @@ public:
 public slots:
 	void promptQuery(Core::Query::Type type = Core::Query::References);
 	void quickDefinition();
+	void promptCallTree();
 	void buildProject();
 
 protected:

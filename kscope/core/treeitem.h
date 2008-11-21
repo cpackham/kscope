@@ -44,7 +44,7 @@ public:
 	 * Creates a parent-less tree node.
 	 * @param  data   Node data
 	 */
-	TreeItem(DataT data = DataT()) : data_(data), parent_(NULL), index_(-1) {}
+	TreeItem(DataT data = DataT()) : data_(data), parent_(NULL), index_(0) {}
 
 	/**
 	 * Class destructor.
@@ -125,10 +125,8 @@ public:
 	 * Recursively removes all children nodes.
 	 */
 	void clear() {
-		SelfT child;
-
-		foreach (child, childList_)
-			child.clear();
+		for (int i = 0; i < childList_.size(); i++)
+			childList_[i].clear();
 
 		childList_.clear();
 	}

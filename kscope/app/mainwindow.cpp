@@ -120,11 +120,21 @@ void MainWindow::quickDefinition()
 	if (editor)
 		symbol = editor->currentSymbol();
 
-	// TODO: Is this the right behaviour, or should we prompt for a symbol?
+	// Prompt for a symbol, if none is selected in the current editor.
 	if (symbol.isEmpty()) {
-		QMessageBox::warning(this, tr("No Symbol"),
-		                     tr("Please select a symbol in the editor"));
-		return;
+		// Create the query dialogue.
+		QueryDialog::TypeList typeList;
+		typeList << Core::Query::Definition;
+		QueryDialog dlg(typeList, Core::Query::Definition, this);
+
+		// Prompt for a symbol.
+		if (dlg.exec() != QDialog::Accepted)
+			return;
+
+		// Get the symbol from the dialogue.
+		symbol = dlg.pattern();
+		if (symbol.isEmpty())
+			return;
 	}
 
 	// Create a query view dialogue.
@@ -155,6 +165,28 @@ void MainWindow::quickDefinition()
 		e->showMessage();
 		delete e;
 	}
+}
+
+void MainWindow::promptCallTree()
+{
+	// Create the query dialogue.
+	QueryDialog::TypeList typeList;
+	typeList << Core::Query::CalledFunctions << Core::Query::CallingFunctions;
+	QueryDialog dlg(typeList, Core::Query::CalledFunctions, this);
+	dlg.setWindowTitle(tr("Call Tree"));
+
+	// Get the default pattern from the text under the cursor on the active
+	// editor (if any).
+	Editor* editor = editCont_->currentEditor();
+	if (editor)
+		dlg.setPattern(editor->currentSymbol());
+
+	// Prompt the user.
+	if (dlg.exec() != QDialog::Accepted)
+		return;
+
+	// Start a query with results shown in a view inside the query dock.
+	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()), true);
 }
 
 /**

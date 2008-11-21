@@ -20,6 +20,7 @@
 
 #include "queryresultdock.h"
 #include "projectmanager.h"
+#include "strings.h"
 
 namespace KScope
 {
@@ -36,16 +37,6 @@ QueryResultDock::QueryResultDock(QWidget* parent) :
 {
 	setObjectName("QueryResultDock");
 	setWidget(new StackWidget(this));
-
-	titleMap_[Core::Query::Text] = tr("Text search '%1'");
-	titleMap_[Core::Query::References] = tr("References to '%1'");
-	titleMap_[Core::Query::Definition] = tr("Definition of '%1'");
-	titleMap_[Core::Query::CalledFunctions]
-		= tr("Functions called by '%1'");
-	titleMap_[Core::Query::CallingFunctions]
-		= tr("Functions calling '%1'");
-	titleMap_[Core::Query::FindFile] = tr("Find file '%1'");
-	titleMap_[Core::Query::IncludingFiles] = tr("Files including '%1'");
 }
 
 /**
@@ -63,10 +54,13 @@ void QueryResultDock::query(const Core::Query& query, bool tree)
 {
 	Core::QueryView* view;
 
-	if (tree)
-		view = addView(tabTitle(query), Core::QueryView::Tree);
-	else
-		view = addView(tabTitle(query), Core::QueryView::List);
+	if (tree) {
+		QString title = tr("Call Tree: ") + Strings::toString(query);
+		view = addView(title, Core::QueryView::Tree);
+	}
+	else {
+		view = addView(Strings::toString(query), Core::QueryView::List);
+	}
 
 	// Run the query.
 	view->initQuery(query, ProjectManager::project()->rootPath());

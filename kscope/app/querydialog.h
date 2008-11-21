@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_QUERYDIALOG_H__
-#define __KSCOPE_QUERYDIALOG_H__
+#ifndef __APP_QUERYDIALOG_H__
+#define __APP_QUERYDIALOG_H__
 
 #include <QDialog>
 #include "ui_querydialog.h"
@@ -40,17 +40,23 @@ class QueryDialog : public QDialog, private Ui::QueryDialog
 	Q_OBJECT
 
 public:
+	typedef QList<Core::Query::Type> TypeList;
+
 	QueryDialog(Core::Query::Type, QWidget* parent = 0);
-	QueryDialog(QWidget* parent = 0);
+	QueryDialog(const TypeList&, Core::Query::Type, QWidget* parent = 0);
 	~QueryDialog();
 
+	void accept();
 	QString pattern();
 	void setPattern(const QString&);
 	Core::Query::Type type();
+
+private:
+	void setupUi(const TypeList&, Core::Query::Type);
 };
 
 } // namespace App
 
 } // namespace KScope
 
-#endif // __KSCOPE_QUERYDIALOG_H__
+#endif // __APP_QUERYDIALOG_H__

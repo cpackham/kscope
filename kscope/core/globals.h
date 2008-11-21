@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CORE_GLOBALS_H
-#define __CORE_GLOBALS_H
+#ifndef __CORE_GLOBALS_H__
+#define __CORE_GLOBALS_H__
 
 #include <QString>
 
@@ -68,6 +68,9 @@ struct Location
 
 typedef QList<Location> LocationList;
 
+/**
+ * Defines parameters for running queries on an engine.
+ */
 struct Query
 {
 	/**
@@ -93,32 +96,53 @@ struct Query
 		LocalTags
 	};
 
+	/**
+	 * Determines certain aspects of the query.
+	 */
 	enum Flags {
-		/** Make the search case-insensitive. */
+		/**
+		 * Make the search case-insensitive.
+		 */
 		IgnoreCase = 0x1,
-		/** The pattern is a regular expression. */
+		/**
+		 * The pattern is a regular expression.
+		 */
 		RegExp = 0x2
 	};
 
-	/** The query type. */
+	/**
+	 * The query type.
+	 */
 	Type type_;
 
-	/** The pattern to search for. */
+	/**
+	 * The pattern to search for.
+	 */
 	QString pattern_;
 
-	/** Modifiers: A bitmask of Flags. */
+	/**
+	 * Modifiers: A bitmask of Flags.
+	 */
 	uint flags_;
 
 	/**
-	 * Constructor.
+	 * Default constructor.
+	 * Creates an invalid query object.
 	 */
 	Query() : type_(Invalid) {}
+
+	/**
+	 * Struct constructor.
+	 * @param  type     The type of query
+	 * @param  pattern  The pattern to look for
+	 * @param  flags    Modifiers
+	 */
 	Query(Type type, const QString& pattern, uint flags = 0)
 		: type_(type), pattern_(pattern), flags_(flags) {}
 };
 
-}
+} // namespace Core
 
-}
+} // namespace KScope
 
-#endif // __CORE_GLOBALS_H
+#endif // __CORE_GLOBALS_H__

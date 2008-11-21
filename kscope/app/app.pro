@@ -25,7 +25,8 @@ SOURCES += findtextdialog.cpp \
     queryresultdock.cpp \
     queryresultdialog.cpp \
     addfilesdialog.cpp
-HEADERS += locationhistory.h \
+HEADERS += strings.h \
+    locationhistory.h \
     findtextdialog.h \
     projectmanager.h \
     editorconfigdialog.h \

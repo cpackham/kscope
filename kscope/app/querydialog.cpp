@@ -18,7 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QMessageBox>
 #include "querydialog.h"
+#include "strings.h"
 
 namespace KScope
 {
@@ -34,37 +36,27 @@ namespace App
 QueryDialog::QueryDialog(Core::Query::Type type, QWidget* parent)
 	: QDialog(parent), Ui::QueryDialog()
 {
-	// Generate the GUI.
-	setupUi(this);
+	// Create a list with all supported query types.
+	TypeList typeList;
+	typeList << Core::Query::Text << Core::Query::References
+	         << Core::Query::Definition << Core::Query::CalledFunctions
+	         << Core::Query::CallingFunctions << Core::Query::FindFile
+	         << Core::Query::IncludingFiles;
 
-	// Prepare the query type combo box.
-	typeCombo_->addItem(tr("Text"), Core::Query::Text);
-	typeCombo_->addItem(tr("References"), Core::Query::References);
-	typeCombo_->addItem(tr("Definition"), Core::Query::Definition);
-	typeCombo_->addItem(tr("Called Functions"),
-	                    Core::Query::CalledFunctions);
-	typeCombo_->addItem(tr("Calling Functions"),
-						Core::Query::CallingFunctions);
-	typeCombo_->addItem(tr("File"), Core::Query::FindFile);
-	typeCombo_->addItem(tr("Including Files"), Core::Query::IncludingFiles);
-
-	typeCombo_->setCurrentIndex(typeCombo_->findData(type));
+	setupUi(typeList, type);
 }
 
 /**
  * Class constructor.
- * Used for prompting for a symbol when generating a call-graph/tree.
- * @param  parent  Parent widget
+ * @param  typeList  The types to show
+ * @param  type      Default query type
+ * @param  parent    Parent widget
  */
-QueryDialog::QueryDialog(QWidget* parent) : QDialog(parent), Ui::QueryDialog()
+QueryDialog::QueryDialog(const TypeList& typeList, Core::Query::Type type,
+                         QWidget* parent)
+	: QDialog(parent), Ui::QueryDialog()
 {
-	// Generate the GUI.
-	setupUi(this);
-
-	// Prepare the query type combo box.
-	typeCombo_->addItem(tr("Call Tree"));
-	typeCombo_->addItem(tr("Calling Tree"));
-	typeCombo_->addItem(tr("Call Graph"));
+	setupUi(typeList, type);
 }
 
 /**
@@ -72,6 +64,23 @@ QueryDialog::QueryDialog(QWidget* parent) : QDialog(parent), Ui::QueryDialog()
  */
 QueryDialog::~QueryDialog()
 {
+}
+
+/**
+ * Called when the user clicks the "OK" button.
+ * Removes all white space from before and after the entered text.
+ */
+void QueryDialog::accept()
+{
+	QString text = patternEdit_->text().trimmed();
+	if (text.isEmpty()) {
+		QMessageBox::warning(this, tr("Invalid Pattern"),
+		                     tr("Please enter a non-empty pattern"));
+		return;
+	}
+
+	patternEdit_->setText(text);
+	QDialog::accept();
 }
 
 /**
@@ -105,6 +114,27 @@ Core::Query::Type QueryDialog::type()
 
 	data = typeCombo_->itemData(index);
 	return static_cast<Core::Query::Type>(data.toUInt());
+}
+
+/**
+ * Common method for both constructors.
+ * Creates the dialogue's user interface.
+ * @param  typeList  The types to show
+ * @param  type      Default query type
+ */
+void QueryDialog::setupUi(const TypeList& typeList, Core::Query::Type defType)
+{
+	// Generate the GUI.
+	Ui::QueryDialog::setupUi(this);
+
+	// Prepare the query type combo box.
+	Core::Query::Type type;
+	foreach (type, typeList)
+		typeCombo_->addItem(Strings::toString(type), type);
+
+	// Select the default type.
+	if (typeList.size() > 1)
+		typeCombo_->setCurrentIndex(typeCombo_->findData(defType));
 }
 
 } // namespace App

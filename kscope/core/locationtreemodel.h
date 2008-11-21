@@ -57,16 +57,24 @@ public:
 							  const QModelIndex& parent) const;
 	virtual QModelIndex parent(const QModelIndex& index) const;
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+	virtual bool hasChildren (const QModelIndex& parent = QModelIndex()) const;
 	virtual QVariant data(const QModelIndex&,
 	                      int role = Qt::DisplayRole) const;
 
 private:
-	typedef TreeItem<Location> NodeT;
+	struct CallTreeItem {
+		Location loc_;
+		bool queried_;
+
+		CallTreeItem(const Location& loc) : loc_(loc), queried_(false) {}
+	};
+
+	typedef TreeItem<CallTreeItem> Node;
 
 	/**
 	 * The root item of the tree.
 	 */
-	NodeT root_;
+	Node root_;
 };
 
 } // namespace Core

@@ -294,18 +294,14 @@ void Actions::setup()
 	menu->addAction(action);
 	group->addAction(action);
 
-#if 0
 	menu->addSeparator();
 
-	// Call graph.
-	// TODO: Implement.
-	action = new QAction(tr("Call &Graph"), this);
+	// Call tree.
+	action = new QAction(tr("Call &Tree"), this);
 	action->setShortcut(tr("Ctrl+\\"));
-	action->setStatusTip(tr("Show a call graph"));
-	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(promptCallGraph()));
+	action->setStatusTip(tr("Create a call tree"));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(promptCallTree()));
 	menu->addAction(action);
-	group->addAction(action);
-#endif
 
 	// Settings menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Settings"));

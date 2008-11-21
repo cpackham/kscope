@@ -33,7 +33,7 @@ namespace Core
  * @param  parent   Parent object
  */
 LocationTreeModel::LocationTreeModel(QList<Columns> colList, QObject* parent)
-	: LocationModel(colList, parent)
+	: LocationModel(colList, parent), root_(Location())
 {
 }
 
@@ -52,14 +52,14 @@ LocationTreeModel::~LocationTreeModel()
 void LocationTreeModel::add(const LocationList& locList,
                             const QModelIndex& parent)
 {
-	NodeT* node;
+	Node* node;
 
 	// Determine the node under which to add the results.
 	if (!parent.isValid()) {
 		node = &root_;
 	}
 	else {
-		node = static_cast<NodeT*>(parent.internalPointer());
+		node = static_cast<Node*>(parent.internalPointer());
 		if (node == NULL)
 			return;
 	}
@@ -108,11 +108,11 @@ bool LocationTreeModel::locationFromIndex(const QModelIndex& idx,
 	if (!idx.isValid())
 		return false;
 
-	NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	Node* node = static_cast<Node*>(idx.internalPointer());
 	if (node == NULL)
 		return false;
 
-	loc = node->data();
+	loc = node->data().loc_;
 	return true;
 }
 
@@ -123,7 +123,10 @@ bool LocationTreeModel::locationFromIndex(const QModelIndex& idx,
  */
 bool LocationTreeModel::firstLocation(Location& loc) const
 {
-	loc = root_.data();
+	if (root_.childCount() < 1)
+		return false;
+
+	loc = root_.child(0)->data().loc_;
 	return true;
 }
 
@@ -140,18 +143,17 @@ QModelIndex LocationTreeModel::nextIndex(const QModelIndex& idx) const
 		return index(0, 0, QModelIndex());
 
 	// Get the tree item for the index.
-	const NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	const Node* node = static_cast<Node*>(idx.internalPointer());
 	if (node == NULL)
 		return QModelIndex();
 
 	// Go up the tree, looking for the first immediate sibling.
-	const NodeT* parent;
+	const Node* parent;
 	while ((parent = node->parent()) != NULL) {
 		// Get the node's sibling.
-		if (node->index() < parent->childCount()) {
-			node = parent->child(node->index() + 1);
+		node = parent->child(node->index() + 1);
+		if (node != NULL)
 			return createIndex(node->index(), 0, (void*)node);
-		}
 
 		node = parent;
 	}
@@ -173,18 +175,17 @@ QModelIndex LocationTreeModel::prevIndex(const QModelIndex& idx) const
 		return index(0, 0, QModelIndex());
 
 	// Get the tree item for the index.
-	const NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	const Node* node = static_cast<Node*>(idx.internalPointer());
 	if (node == NULL)
 		return QModelIndex();
 
 	// Go up the tree, looking for the first immediate sibling.
-	const NodeT* parent;
+	const Node* parent;
 	while ((parent = node->parent()) != NULL) {
 		// Get the node's sibling.
-		if (node->index() > 0) {
-			node = parent->child(node->index() - 1);
+		node = parent->child(node->index() - 1);
+		if (node != NULL)
 			return createIndex(node->index(), 0, (void*)node);
-		}
 
 		node = parent;
 	}
@@ -202,14 +203,17 @@ QModelIndex LocationTreeModel::prevIndex(const QModelIndex& idx) const
 QModelIndex LocationTreeModel::index(int row, int column,
 									 const QModelIndex& parent) const
 {
-	// An invalid parent is given when the root index is requested.
-	if (!parent.isValid())
-		return createIndex(0, 0, (void*)&root_);
-
-	// Get the tree item for the parent.
-	const NodeT* node = static_cast<NodeT*>(parent.internalPointer());
-	if (node == NULL)
-		return QModelIndex();
+	// Extract the node object from the index.
+	const Node* node;
+	if (!parent.isValid()) {
+		node = &root_;
+	}
+	else {
+		// Get the tree item for the parent.
+		node = static_cast<Node*>(parent.internalPointer());
+		if (node == NULL)
+			return QModelIndex();
+	}
 
 	// Get the child at the row'th position.
 	node = node->child(row);
@@ -230,7 +234,7 @@ QModelIndex LocationTreeModel::parent(const QModelIndex& idx) const
 		return QModelIndex();
 
 	// Get the tree item for the index.
-	const NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	const Node* node = static_cast<Node*>(idx.internalPointer());
 	if (node == NULL)
 		return QModelIndex();
 
@@ -249,20 +253,47 @@ QModelIndex LocationTreeModel::parent(const QModelIndex& idx) const
  */
 int LocationTreeModel::rowCount(const QModelIndex& parent) const
 {
-	const NodeT* node;
-
+	const Node* node;
 	if (!parent.isValid()) {
 		// An invalid index represents the root item.
 		node = &root_;
 	}
 	else {
 		// Get the tree item for the index.
-		node = static_cast<NodeT*>(parent.internalPointer());
+		node = static_cast<Node*>(parent.internalPointer());
 		if (node == NULL)
 			return 0;
 	}
 
 	return node->childCount();
+}
+
+/**
+ * Determines whether the node at the given index has children.
+ * We return true if one of two conditions are met:
+ * 1. The node has children
+ * 2. The node represents a function that was not yet queried
+ * Case (2) will include an expansion symbol next to the function, which, when
+ * clicked, will result in a query for called/calling functions.
+ * @param  parent  The parent index
+ * @return true if the parent has children (or can have children), false
+ *         otherwise
+ */
+bool LocationTreeModel::hasChildren(const QModelIndex& parent) const
+{
+	const Node* node;
+	if (!parent.isValid()) {
+		// An invalid index represents the root item.
+		node = &root_;
+	}
+	else {
+		// Get the tree item for the index.
+		node = static_cast<Node*>(parent.internalPointer());
+		if (node == NULL)
+			return 0;
+	}
+
+	return (node->childCount() > 0) || (!node->data().queried_);
 }
 
 /**
@@ -273,20 +304,24 @@ int LocationTreeModel::rowCount(const QModelIndex& parent) const
  */
 QVariant LocationTreeModel::data(const QModelIndex& idx, int role) const
 {
-	// No data for invalid indices.
-	if (!idx.isValid())
-		return QVariant();
-
 	// Only support DisplayRole.
 	if (role != Qt::DisplayRole)
 		return QVariant();
 
+	// No data for invalid indices.
+	if (!idx.isValid()) {
+		if (idx.column() == 0)
+			return "<ROOT>";
+
+		return QVariant();
+	}
+
 	// Get the location for the index's row.
-	NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	Node* node = static_cast<Node*>(idx.internalPointer());
 	if (node == NULL)
 		return false;
 
-	Location loc = node->data();
+	Location loc = node->data().loc_;
 
 	// Get the column-specific data.
 	switch (colList_[idx.column()]) {
