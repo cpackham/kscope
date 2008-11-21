@@ -58,26 +58,18 @@ QueryResultDock::~QueryResultDock()
 /**
  * Runs a query and displays its results in a query view.
  * @param  query  The query to run
- * @param  view   If not NULL, uses this view to display the results. Otherwise,
- *                a new QueryView object is created
  */
-void QueryResultDock::query(const Core::Query& query, Core::QueryView* view)
+void QueryResultDock::query(const Core::Query& query, bool tree)
 {
-	// If a view was given, adjust its title.
-	// Otherwise, create a new view.
-	if (view) {
-		// TODO: Implement in StackWidget.
-#if 0
-		tabWidget()->setItemText(tabWidget()->indexOf(view),
-		                         tabTitle(query));
-#endif
-	}
-	else {
-		view = addView(tabTitle(query));
-	}
+	Core::QueryView* view;
+
+	if (tree)
+		view = addView(tabTitle(query), Core::QueryView::Tree);
+	else
+		view = addView(tabTitle(query), Core::QueryView::List);
 
 	// Run the query.
-	view->initQuery(query);
+	view->initQuery(query, ProjectManager::project()->rootPath());
 	try {
 		ProjectManager::engine().query(view, query);
 	}
@@ -112,19 +104,20 @@ void QueryResultDock::selectPrevResult()
 /**
  * Creates a new query view and adds it to the container widget.
  * @param  title  The title of the query view
+ * @param  type   Whether to create a list or a tree view
  * @return The created widget
  */
-Core::QueryView* QueryResultDock::addView(const QString& title)
+Core::QueryView* QueryResultDock::addView(const QString& title,
+                                          Core::QueryView::Type type)
 {
 	// Create a new query view.
-	Core::QueryView* view = new Core::QueryView(this);
+	Core::QueryView* view = new Core::QueryView(this, type);
 	connect(view, SIGNAL(locationRequested(const Core::Location&)), this,
 	        SIGNAL(locationRequested(const Core::Location&)));
 	view->setAutoSelectSingleResult(true);
 
 	// Add to the tab widget.
 	tabWidget()->addTab(view, title);
-	view->model()->setRootPath(ProjectManager::project()->rootPath());
 	return view;
 }
 

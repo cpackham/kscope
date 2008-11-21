@@ -100,7 +100,7 @@ void MainWindow::promptQuery(Core::Query::Type type)
 		return;
 
 	// Start a query with results shown in a view inside the query dock.
-	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()));
+	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()), false);
 }
 
 /**

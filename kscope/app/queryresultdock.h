@@ -43,8 +43,7 @@ public:
 	QueryResultDock(QWidget* parent = 0);
 	~QueryResultDock();
 
-	void query(const Core::Query& query, Core::QueryView* view = NULL);
-	Core::QueryView* addView(const QString&);
+	void query(const Core::Query&, bool);
 
 public slots:
 	void selectNextResult();
@@ -76,6 +75,8 @@ private:
 	inline QString tabTitle(const Core::Query& query) {
 		return titleMap_[query.type_].arg(query.pattern_);
 	}
+
+	Core::QueryView* addView(const QString&, Core::QueryView::Type);
 };
 
 } // namespace App

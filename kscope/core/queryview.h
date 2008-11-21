@@ -25,7 +25,7 @@
 #include "globals.h"
 #include "engine.h"
 #include "progressbar.h"
-#include "locationlistmodel.h"
+#include "locationmodel.h"
 
 namespace KScope
 {
@@ -38,8 +38,6 @@ namespace Core
  * Since the class implements Engine::Connection, an object of this type it can
  * be passed to an engine's query method. Progress will be displayed in the
  * form of a progress-bar at the top of the view.
- * @todo: This class only supports LocationListModel at the moment. A location
- * tree-model needs to be implemented and be supported by this view.
  * @author Elad Lahav
  */
 class QueryView : public QTreeView, public Engine::Connection
@@ -47,10 +45,15 @@ class QueryView : public QTreeView, public Engine::Connection
 	Q_OBJECT
 
 public:
-	QueryView(QWidget* parent = 0);
+	/**
+	 * The view can work in either list or tree modes.
+	 */
+	enum Type { List, Tree };
+
+	QueryView(QWidget*, Type type = List);
 	~QueryView();
 
-	void initQuery(const Query&);
+	void initQuery(const Query&, const QString&);
 
 	/**
 	 * In the case the query returns only a single location, determines whether
@@ -67,8 +70,8 @@ public:
 	virtual void onAborted();
 	virtual void onProgress(const QString&, uint, uint);
 
-	inline LocationListModel* model() {
-		return static_cast<LocationListModel*>(QTreeView::model());
+	inline LocationModel* model() {
+		return static_cast<LocationModel*>(QTreeView::model());
 	}
 
 public slots:
@@ -91,8 +94,13 @@ signals:
 
 private:
 	/**
+	 * Whether the view is in list or tree modes.
+	 */
+	Type type_;
+
+	/**
 	 * The query associated with this view.
-	 * This can be used, e.g., for re-running the querty from within the view.
+	 * This can be used, e.g., for re-running the query from within the view.
 	 */
 	Query query_;
 

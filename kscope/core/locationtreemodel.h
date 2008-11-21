@@ -18,10 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CORE_LOCATIONLISTMODEL_H__
-#define __CORE_LOCATIONLISTMODEL_H__
+#ifndef __CORE_LOCATIONTREEMODEL_H__
+#define __CORE_LOCATIONTREEMODEL_H__
 
 #include "locationmodel.h"
+#include "treeitem.h"
 
 namespace KScope
 {
@@ -30,22 +31,21 @@ namespace Core
 {
 
 /**
- * A list model for displaying locations.
- * This model should be used for all location displays that do not require
- * a tree-like structure, as its internal storage is more compact and faster
- * to update.
+ * A tree-like model for holding location results.
+ * This is suitable for creating call/calling trees. For flat result lists, use
+ * the more efficient LocationListModel.
  * @author Elad Lahav
  */
-class LocationListModel : public LocationModel
+class LocationTreeModel : public LocationModel
 {
 	Q_OBJECT
 
 public:
-	LocationListModel(QList<Columns>, QObject* parent = 0);
-	~LocationListModel();
+	LocationTreeModel(QList<Columns>, QObject* parent = 0);
+	~LocationTreeModel();
 
-	// LocationMode implementation.
-	void add(const LocationList&, const QModelIndex& index = QModelIndex());
+	// LocationModel implementation.
+	void add(const LocationList&, const QModelIndex&);
 	void clear();
 	bool locationFromIndex(const QModelIndex&, Location&) const;
 	bool firstLocation(Location&) const;
@@ -61,14 +61,16 @@ public:
 	                      int role = Qt::DisplayRole) const;
 
 private:
+	typedef TreeItem<Location> NodeT;
+
 	/**
-	 * Result list.
+	 * The root item of the tree.
 	 */
-	LocationList locList_;
+	NodeT root_;
 };
 
 } // namespace Core
 
 } // namespace KScope
 
-#endif // __CORE_LOCATIONLISTMODEL_H__
+#endif // __CORE_LOCATIONTREEMODEL_H__

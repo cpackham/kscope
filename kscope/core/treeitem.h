@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CORE_TREEITEM_H
-#define __CORE_TREEITEM_H
+#ifndef __CORE_TREEITEM_H__
+#define __CORE_TREEITEM_H__
 
 #include <QList>
 
@@ -31,8 +31,6 @@ namespace Core
 
 /**
  * A generic ordered tree structure.
- * Most of the code in this class (sans the template) was shamelessly copied
- * from the Qt QAbstractItemModel example.
  * @author  Elad Lahav
  */
 template<typename DataT>
@@ -109,15 +107,30 @@ public:
 		return index_;
 	}
 
+	/**
+	 * Locates a child node holding the given data.
+	 * @param  data  Used for finding the node
+	 * @return The found child, NULL if no such child exists
+	 */
 	SelfT* findChild(DataT data) {
-		int i;
-
-		for (i = 0; i < childList_.size(); i++) {
+		for (int i = 0; i < childList_.size(); i++) {
 			if (childList_[i].data_ == data)
 				return &childList_[i];
 		}
 
 		return NULL;
+	}
+
+	/**
+	 * Recursively removes all children nodes.
+	 */
+	void clear() {
+		SelfT child;
+
+		foreach (child, childList_)
+			child.clear();
+
+		childList_.clear();
 	}
 
 	/**
@@ -153,8 +166,8 @@ private:
 	QList<SelfT> childList_;
 };
 
-}
+} // namespace Core
 
-}
+} // namespace KScope
 
-#endif // __CORE_TREEITEM_H
+#endif // __CORE_TREEITEM_H__

@@ -20,6 +20,7 @@
 
 #include "queryview.h"
 #include "locationlistmodel.h"
+#include "locationtreemodel.h"
 
 namespace KScope
 {
@@ -30,10 +31,11 @@ namespace Core
 /**
  * Class constructor.
  * @param  parent  The parent widget
+ * @param  type    Whether the view works in list or tree modes
  */
-QueryView::QueryView(QWidget* parent) : QTreeView(parent),
-	                                    progBar_(NULL),
-	                                    autoSelectSingleResult_(false)
+QueryView::QueryView(QWidget* parent, Type type)
+	: QTreeView(parent), type_(type), progBar_(NULL),
+	  autoSelectSingleResult_(false)
 {
 	// Set tree view properties.
 	setRootIsDecorated(false);
@@ -42,12 +44,20 @@ QueryView::QueryView(QWidget* parent) : QTreeView(parent),
 	// Create an ordered list of columns.
 	QList<LocationListModel::Columns> colList;
 	colList << Core::LocationListModel::Scope
-			<< Core::LocationListModel::File
-			<< Core::LocationListModel::Line
-			<< Core::LocationListModel::Text;
+	        << Core::LocationListModel::File
+	        << Core::LocationListModel::Line
+	        << Core::LocationListModel::Text;
 
 	// Create a location model.
-	setModel(new LocationListModel(colList, this));
+	switch (type_) {
+	case List:
+		setModel(new LocationListModel(colList, this));
+		break;
+
+	case Tree:
+		setModel(new LocationTreeModel(colList, this));
+		break;
+	}
 
 	// Emit requests for locations when an item is double-clicked.
 	connect(this, SIGNAL(activated(const QModelIndex&)), this,
@@ -64,12 +74,13 @@ QueryView::~QueryView()
 /**
  * Associates a query with this view.
  * Clears the model in preparation of new results.
- * @param  query  The query to associate with this view
+ * @param  query     The query to associate with this view
+ * @param  rootPath  Common root path for displaying results
  */
-void QueryView::initQuery(const Query& query)
+void QueryView::initQuery(const Query& query, const QString& rootPath)
 {
 	query_ = query;
-	model()->clear();
+	model()->setRootPath(rootPath);
 }
 
 /**
@@ -79,7 +90,7 @@ void QueryView::initQuery(const Query& query)
  */
 void QueryView::onDataReady(const LocationList& locList)
 {
-	model()->add(locList);
+	model()->add(locList, currentIndex());
 }
 
 /**

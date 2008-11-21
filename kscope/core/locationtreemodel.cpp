@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#include <QtDebug>
-#include "locationlistmodel.h"
+#include <QDebug>
+#include "locationtreemodel.h"
 
 namespace KScope
 {
@@ -32,7 +32,7 @@ namespace Core
  * @param  colList  An ordered list of the columns to show
  * @param  parent   Parent object
  */
-LocationListModel::LocationListModel(QList<Columns> colList, QObject* parent)
+LocationTreeModel::LocationTreeModel(QList<Columns> colList, QObject* parent)
 	: LocationModel(colList, parent)
 {
 }
@@ -40,39 +40,44 @@ LocationListModel::LocationListModel(QList<Columns> colList, QObject* parent)
 /**
  * Class destructor.
  */
-LocationListModel::~LocationListModel()
+LocationTreeModel::~LocationTreeModel()
 {
 }
 
 /**
  * Appends the given list to the one held by the model.
  * @param  locList  Result information
- * @param  parent   Index under which to add the results (ignored)
+ * @param  parent   Index under which to add the results
  */
-void LocationListModel::add(const LocationList& locList,
+void LocationTreeModel::add(const LocationList& locList,
                             const QModelIndex& parent)
 {
-	(void)parent;
+	NodeT* node;
+
+	// Determine the node under which to add the results.
+	if (!parent.isValid()) {
+		node = &root_;
+	}
+	else {
+		node = static_cast<NodeT*>(parent.internalPointer());
+		if (node == NULL)
+			return;
+	}
 
 	// Determine the first and last rows for the new items.
-	int firstRow = locList_.size();
+	int firstRow = node->childCount();
 	int lastRow = firstRow + locList.size() - 1;
 	if (lastRow < firstRow)
 		return;
 
 	// Begin row insertion.
 	// This is required by QAbstractItemModel.
-	beginInsertRows(QModelIndex(), firstRow, lastRow);
+	beginInsertRows(parent, firstRow, lastRow);
 
 	// Add the entries.
-	// The condition optimises for the case where the list can be internally
-	// copied from one object to another.
-	// Not sure whether the condition is also checked by the += operator itself
-	// (probably it is, but let's be on the safe side).
-	if (locList_.isEmpty())
-		locList_ = locList;
-	else
-		locList_ += locList;
+	Location loc;
+	foreach (loc, locList)
+		node->addChild(loc);
 
 	// End row insertion.
 	// This is required by QAbstractItemModel.
@@ -80,12 +85,12 @@ void LocationListModel::add(const LocationList& locList,
 }
 
 /**
- * Removes all descriptors from the lists.
+ * Removes all tree nodes.
  * Resets the model.
  */
-void LocationListModel::clear()
+void LocationTreeModel::clear()
 {
-	locList_.clear();
+	root_.clear();
 	reset();
 }
 
@@ -94,79 +99,97 @@ void LocationListModel::clear()
  * @param  idx  The index to convert
  * @param  loc    An object to fill with the location information
  * @return true if successful, false if the index does not describe a valid
- *         position in the location list
+ *         position in the location tree
  */
-bool LocationListModel::locationFromIndex(const QModelIndex& idx,
+bool LocationTreeModel::locationFromIndex(const QModelIndex& idx,
                                           Location& loc) const
 {
 	// Make sure the index is valid.
 	if (!idx.isValid())
 		return false;
 
-	// Make sure the index is inside the list's boundaries.
-	int pos = idx.row();
-	if (pos < 0 || pos >= locList_.size())
+	NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	if (node == NULL)
 		return false;
 
-	// Copy the location descriptor.
-	loc = locList_.at(pos);
+	loc = node->data();
 	return true;
 }
 
 /**
- * Returns the location at the first position in the list.
+ * Returns the location at the root of the tree.
  * @param  loc  An object to fill with the location information
  * @return true if successful, false if the list is empty
  */
-bool LocationListModel::firstLocation(Location& loc) const
+bool LocationTreeModel::firstLocation(Location& loc) const
 {
-	if (locList_.isEmpty())
-		return false;
-
-	loc = locList_.at(0);
+	loc = root_.data();
 	return true;
 }
 
 /**
  * Finds the successor of the given index.
- * In a list, this is simply the next item.
  * @param  idx  The index for which to find a successor
  * @return The successor index
  */
-QModelIndex LocationListModel::nextIndex(const QModelIndex& idx) const
+QModelIndex LocationTreeModel::nextIndex(const QModelIndex& idx) const
 {
 	// If the given index is invalid, return the index of the first item on the
 	// list.
 	if (!idx.isValid())
 		return index(0, 0, QModelIndex());
 
-	// Do not go past the last item.
-	if (idx.row() >= (rowCount() - 1))
+	// Get the tree item for the index.
+	const NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	if (node == NULL)
 		return QModelIndex();
 
-	// Return the index of the next item.
-	return index(idx.row() + 1, 0, idx.parent());
+	// Go up the tree, looking for the first immediate sibling.
+	const NodeT* parent;
+	while ((parent = node->parent()) != NULL) {
+		// Get the node's sibling.
+		if (node->index() < parent->childCount()) {
+			node = parent->child(node->index() + 1);
+			return createIndex(node->index(), 0, (void*)node);
+		}
+
+		node = parent;
+	}
+
+	return QModelIndex();
 }
 
 /**
  * Finds the predecessor of the given index.
- * In a list, this is simply the previous item.
  * @param  idx  The index for which to find a predecessor
  * @return The predecessor index
  */
-QModelIndex LocationListModel::prevIndex(const QModelIndex& idx) const
+QModelIndex LocationTreeModel::prevIndex(const QModelIndex& idx) const
 {
-	// If the given index is invalid, return the index of the last item on the
+	// If the given index is invalid, return the index of the first item on the
 	// list.
+	// TODO: What's the best default for a previous index on an invalid index?
 	if (!idx.isValid())
-		return index(rowCount() - 1, 0, QModelIndex());
+		return index(0, 0, QModelIndex());
 
-	// Do not go before the first item.
-	if (idx.row() <= 0)
+	// Get the tree item for the index.
+	const NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	if (node == NULL)
 		return QModelIndex();
 
-	// Return the index of the next item.
-	return index(idx.row() - 1, 0, idx.parent());
+	// Go up the tree, looking for the first immediate sibling.
+	const NodeT* parent;
+	while ((parent = node->parent()) != NULL) {
+		// Get the node's sibling.
+		if (node->index() > 0) {
+			node = parent->child(node->index() - 1);
+			return createIndex(node->index(), 0, (void*)node);
+		}
+
+		node = parent;
+	}
+
+	return QModelIndex();
 }
 
 /**
@@ -176,44 +199,70 @@ QModelIndex LocationListModel::prevIndex(const QModelIndex& idx) const
  * @param  parent  Parent index
  * @return The new index, if created, an invalid index otherwise
  */
-QModelIndex LocationListModel::index(int row, int column,
+QModelIndex LocationTreeModel::index(int row, int column,
 									 const QModelIndex& parent) const
 {
-	if (parent.isValid())
+	// An invalid parent is given when the root index is requested.
+	if (!parent.isValid())
+		return createIndex(0, 0, (void*)&root_);
+
+	// Get the tree item for the parent.
+	const NodeT* node = static_cast<NodeT*>(parent.internalPointer());
+	if (node == NULL)
 		return QModelIndex();
 
-	if (row < 0 || row >= locList_.size())
+	// Get the child at the row'th position.
+	node = node->child(row);
+	if (node == NULL)
 		return QModelIndex();
 
-	return createIndex(row, column, NULL);
+	return createIndex(row, column, (void*)node);
 }
 
 /**
  * Returns an index for the parent of the given one.
- * Since this is a flat list, there are no parent indices, so an invalid index
- * is always returned.
  * @param  idx  The index for which the parent is to be returned
  * @return An invalid index
  */
-QModelIndex LocationListModel::parent(const QModelIndex& idx) const
+QModelIndex LocationTreeModel::parent(const QModelIndex& idx) const
 {
-	(void)idx;
-	return QModelIndex();
+	if (!idx.isValid())
+		return QModelIndex();
+
+	// Get the tree item for the index.
+	const NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	if (node == NULL)
+		return QModelIndex();
+
+	// Get the parent node.
+	node = node->parent();
+	if (node == NULL)
+		return QModelIndex();
+
+	return createIndex(node->index(), 0, (void*)node);
 }
 
 /**
  * Determines the number of children for the given parent index.
- * For a flat list, this is the number of items for the root (invalid) index,
- * and 0 for any other index.
  * @param  parent  The parent index
  * @return The number of child indices belonging to the parent
  */
-int LocationListModel::rowCount(const QModelIndex& parent) const
+int LocationTreeModel::rowCount(const QModelIndex& parent) const
 {
-	if (!parent.isValid())
-		return locList_.size();
+	const NodeT* node;
 
-	return 0;
+	if (!parent.isValid()) {
+		// An invalid index represents the root item.
+		node = &root_;
+	}
+	else {
+		// Get the tree item for the index.
+		node = static_cast<NodeT*>(parent.internalPointer());
+		if (node == NULL)
+			return 0;
+	}
+
+	return node->childCount();
 }
 
 /**
@@ -222,10 +271,10 @@ int LocationListModel::rowCount(const QModelIndex& parent) const
  * @param   role   The role of the data
  * @return
  */
-QVariant LocationListModel::data(const QModelIndex& index, int role) const
+QVariant LocationTreeModel::data(const QModelIndex& idx, int role) const
 {
 	// No data for invalid indices.
-	if (!index.isValid())
+	if (!idx.isValid())
 		return QVariant();
 
 	// Only support DisplayRole.
@@ -233,10 +282,14 @@ QVariant LocationListModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 
 	// Get the location for the index's row.
-	const Location& loc = locList_.at(index.row());
+	NodeT* node = static_cast<NodeT*>(idx.internalPointer());
+	if (node == NULL)
+		return false;
+
+	Location loc = node->data();
 
 	// Get the column-specific data.
-	switch (colList_[index.column()]) {
+	switch (colList_[idx.column()]) {
 	case File:
 		// File path.
 		// Replace root prefix with "$".

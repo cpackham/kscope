@@ -22,6 +22,7 @@
 #define __CORE_LOCATIONMODEL_H__
 
 #include <QAbstractItemModel>
+#include "globals.h"
 
 namespace KScope
 {
@@ -64,6 +65,13 @@ public:
 	virtual ~LocationModel();
 
 	void setRootPath(const QString&);
+
+	virtual void add(const LocationList&, const QModelIndex&) = 0;
+	virtual void clear() = 0;
+	virtual bool locationFromIndex(const QModelIndex&, Location&) const = 0;
+	virtual bool firstLocation(Location&) const = 0;
+	virtual QModelIndex nextIndex(const QModelIndex&) const = 0;
+	virtual QModelIndex prevIndex(const QModelIndex&) const = 0;
 
 	// QAsbstractItemModel implementation.
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;

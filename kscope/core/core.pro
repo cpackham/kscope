@@ -9,7 +9,8 @@ CONFIG += debug_and_release \
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 # Input
-HEADERS += locationmodel.h \
+HEADERS += locationtreemodel.h \
+    locationmodel.h \
     projectconfig.h \
     filescanner.h \
     filefilter.h \
@@ -27,7 +28,8 @@ HEADERS += locationmodel.h \
     progressbar.h \
     engine.h
 FORMS += progressbar.ui
-SOURCES += locationmodel.cpp \
+SOURCES += locationtreemodel.cpp \
+    locationmodel.cpp \
     filescanner.cpp \
     queryview.cpp \
     locationlistmodel.cpp \
