@@ -63,9 +63,9 @@ void QueryResultDock::query(const Core::Query& query, bool tree)
 	}
 
 	// Run the query.
-	view->initQuery(query, ProjectManager::project()->rootPath());
+	view->model()->setRootPath(ProjectManager::project()->rootPath());
 	try {
-		ProjectManager::engine().query(view, query);
+		view->query(query);
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();
@@ -105,7 +105,7 @@ Core::QueryView* QueryResultDock::addView(const QString& title,
                                           Core::QueryView::Type type)
 {
 	// Create a new query view.
-	Core::QueryView* view = new Core::QueryView(this, type);
+	Core::QueryView* view = new QueryView(this, type);
 	connect(view, SIGNAL(locationRequested(const Core::Location&)), this,
 	        SIGNAL(locationRequested(const Core::Location&)));
 	view->setAutoSelectSingleResult(true);

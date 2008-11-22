@@ -21,6 +21,7 @@
 #include "queryview.h"
 #include "locationlistmodel.h"
 #include "locationtreemodel.h"
+#include "exception.h"
 
 namespace KScope
 {
@@ -62,6 +63,12 @@ QueryView::QueryView(QWidget* parent, Type type)
 	// Emit requests for locations when an item is double-clicked.
 	connect(this, SIGNAL(activated(const QModelIndex&)), this,
 	        SLOT(requestLocation(const QModelIndex&)));
+
+	// Query child items when expanded (in a tree view).
+	if (type_ == Tree) {
+		connect(this, SIGNAL(expanded(const QModelIndex&)), this,
+		        SLOT(queryTreeItem(const QModelIndex&)));
+	}
 }
 
 /**
@@ -72,15 +79,26 @@ QueryView::~QueryView()
 }
 
 /**
- * Associates a query with this view.
- * Clears the model in preparation of new results.
- * @param  query     The query to associate with this view
- * @param  rootPath  Common root path for displaying results
+ * @param  query  The query to run
  */
-void QueryView::initQuery(const Query& query, const QString& rootPath)
+void QueryView::query(const Query& query)
 {
-	query_ = query;
-	model()->setRootPath(rootPath);
+	// Reset the model.
+	model()->clear();
+
+	try {
+		// Get an engine for running the query.
+		Engine* eng;
+		if ((eng = engine()) != NULL) {
+			// Run the query.
+			query_ = query;
+			eng->query(this, query_);
+		}
+	}
+	catch (Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 /**
@@ -90,7 +108,7 @@ void QueryView::initQuery(const Query& query, const QString& rootPath)
  */
 void QueryView::onDataReady(const LocationList& locList)
 {
-	model()->add(locList, currentIndex());
+	model()->add(locList, queryIndex_);
 }
 
 /**
@@ -197,6 +215,35 @@ void QueryView::requestLocation(const QModelIndex& index)
 void QueryView::stopQuery()
 {
 	stop();
+}
+
+/**
+ * Called when a tree item is expanded.
+ * If this item was not queried before, a query is performed.
+ * @param  idx  The expanded item
+ */
+void QueryView::queryTreeItem(const QModelIndex& idx)
+{
+	// TODO: DO not query twice! Need a LocationTreeModel method to determine
+	// if an item was already queried.
+
+	// Get the location information from the index.
+	Location loc;
+	if (!model()->locationFromIndex(idx, loc))
+		return;
+
+	// Run a query on this location.
+	try {
+		Engine* eng;
+		if ((eng = engine()) != NULL) {
+			queryIndex_ = idx;
+			eng->query(this, Query(query_.type_, loc.scope_));
+		}
+	}
+	catch (Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 } // namespace Core
