@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#include <QtDebug>
+#include <QDebug>
 #include "cscope.h"
 #include "exception.h"
 
@@ -176,4 +176,4 @@ void Cscope::handleFinished(int code, QProcess::ExitStatus status)
 
 } // namespace Cscope
 
-}  // namespace KScope
+} // namespace KScope

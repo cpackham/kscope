@@ -79,6 +79,9 @@ private:
 	 */
 	QueryResultDock* queryDock_;
 
+	/**
+	 * Provides progress information on an engine's build process.
+	 */
 	BuildProgress buildProgress_;
 
 	void readSettings();
