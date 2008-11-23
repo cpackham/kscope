@@ -41,6 +41,7 @@ QueryView::QueryView(QWidget* parent, Type type)
 	// Set tree view properties.
 	setRootIsDecorated(type_ == Tree);
 	setUniformRowHeights(true);
+	setExpandsOnDoubleClick(false);
 
 	// Create an ordered list of columns.
 	QList<LocationListModel::Columns> colList;
