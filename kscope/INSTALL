@@ -21,7 +21,7 @@ Build
 
 In a shell, execute
 
-  $ qmake -recursive
+  $ qmake
   $ make
 or
 
