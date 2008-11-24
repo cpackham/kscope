@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 #include "managedproject.h"
 #include "projectmanager.h"
+#include "version.h"
 
 namespace KScope
 {
@@ -40,6 +41,7 @@ Application::Application(int& argc, char** argv)
 {
 	QCoreApplication::setOrganizationName("elad_lahav@users.sourceforge.net");
 	QCoreApplication::setApplicationName("KScope");
+	QCoreApplication::setApplicationVersion(AppVersion::toString());
 }
 
 /**
@@ -70,6 +72,22 @@ int Application::run()
 	postEvent(this, new QEvent(static_cast<QEvent::Type>(AppInitEvent)));
 
 	return exec();
+}
+
+/**
+ * Displays application and version information.
+ */
+void Application::about()
+{
+	QString msg;
+	QTextStream str(&msg);
+
+	str << "Source browsing, analysis and editing\n";
+	str << "Version " << applicationVersion() << "\n";
+	str << "Copyright (c) 2007-2008 by Elad Lahav\n";
+	str << "Distributed under the terms of the GNU Public License v2";
+
+	QMessageBox::about(mainWnd_, applicationName(), msg);
 }
 
 /**

@@ -312,8 +312,18 @@ void Actions::setup()
 	        SLOT(configEditor()));
 	menu->addAction(action);
 
+	// Dynamically-created Window menu.
 	wndMenu_ = mainWnd()->menuBar()->addMenu(tr("&Window"));
 	connect(wndMenu_, SIGNAL(aboutToShow()), this, SLOT(showWindowMenu()));
+
+	// Help menu.
+	menu = mainWnd()->menuBar()->addMenu(tr("&Help"));
+
+	action = new QAction(tr("&About..."), this);
+	action->setStatusTip(tr("Show application information"));
+	connect(action, SIGNAL(triggered()), qApp, SLOT(about()));
+	menu->addAction(action);
+
 }
 
 void Actions::newProject()

@@ -18,10 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_APPLICATION_H
-#define __APP_APPLICATION_H
-
-#include <QApplication>
+#ifndef __APP_VERSION_H__
+#define __APP_VERSION_H__
 
 namespace KScope
 {
@@ -29,44 +27,55 @@ namespace KScope
 namespace App
 {
 
-class MainWindow;
-
 /**
- * The KScope application.
- * Runs the event loop and maintains the active project.
- * @author Elad Lahav
+ * Generates version information.
+ * @todo Would like to automate generation of version from external source
+ *       (e.g., SVN).
+ * @author  Elad Lahav
  */
-class Application : public QApplication
-{
-	Q_OBJECT
-
-public:
-	Application(int&, char**);
-	~Application();
-
-	enum Event { AppInitEvent = QEvent::User };
-
-	int run();
-
-public slots:
-	void about();
-
-protected:
-	void customEvent(QEvent*);
-
-private:
+template<int Major, int Minor, int Revision>
+struct Version {
 	/**
-	 * The main window.
+	 * Major version number.
 	 */
-	MainWindow* mainWnd_;
+	static const int major_ = Major;
 
-	void init();
+	/**
+	 * Minor version number.
+	 */
+	static const int minor_ = Minor;
+
+	/**
+	 * Revision number.
+	 */
+	static const int revision_ = Revision;
+
+	/**
+	 * Translates the version numbers into a string.
+	 * The string is of the form "MAJOR.MINOR.REVISION (BUILD_DATE)"
+	 * @return  The formatted version
+	 */
+	static QString toString() {
+		return QString("%1.%2.%3 (Built %4)").arg(major_).arg(minor_)
+		       .arg(revision_).arg(__DATE__);
+	}
+
+	/**
+	 * Determines whether the current version is an alpha/beta/RC release.
+	 * This is signified by an odd minor number.
+	 */
+	static bool isDevel() {
+		return (minor_ & 0x1) == 1;
+	}
 };
 
-inline Application* theApp() { return static_cast<Application*>(qApp); }
+/**
+ * Specifies the application version.
+ */
+typedef Version<1, 9, 0> AppVersion;
 
 } // namespace App
 
 } // namespace KScope
 
-#endif // __APP_APPLICATION_H
+#endif // __APP_VERSION_H__

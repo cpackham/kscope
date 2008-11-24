@@ -47,6 +47,9 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), this,
 	        SLOT(setProjectTitle(bool)));
 
+	// The main window icon.
+	setWindowIcon(QIcon(":/images/kscope"));
+
 	// Create the central widget (the editor manager).
 	editCont_ = new EditorContainer(this);
 	setCentralWidget(editCont_);

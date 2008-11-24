@@ -1,5 +1,4 @@
 include(../config)
-
 TEMPLATE = app
 TARGET = kscopeapp
 DEPENDPATH += """"". ../core ../cscope"""""
@@ -40,7 +39,8 @@ HEADERS += queryview.h \
     queryresultdialog.h \
     addfilesdialog.h \
     projectdialog.h \
-    buildprogress.h
+    buildprogress.h \
+    version.h
 FORMS += querydialog.ui \
     queryresultdialog.ui \
     stackpage.ui \
@@ -60,6 +60,5 @@ LIBS += -L../core \
     -L$${QSCI_ROOT_PATH}/lib \
     -lqscintilla2
 RESOURCES = ide.qrc
-
 target.path = $${INSTALL_PATH}/bin
 INSTALLS += target
