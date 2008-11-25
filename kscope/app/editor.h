@@ -23,6 +23,7 @@
 
 #include <qsciscintilla.h>
 #include <QSettings>
+#include "globals.h"
 
 namespace KScope
 {
@@ -98,15 +99,36 @@ public:
 	void setFocus();
 	void applyConfig(const Config&);
 	void getConfig(Config&);
+	void getCurrentLocation(Core::Location&);
 
 public slots:
 	void search();
 	void searchNext();
 
 private:
+	/**
+	 * The file being edited.
+	 */
+	QString path_;
+
+	/**
+	 * Whether a file is currently being loaded.
+	 */
 	bool isLoading_;
+
+	/**
+	 * The line to go to when loading finishes.
+	 */
 	uint onLoadLine_;
+
+	/**
+	 * The column to go to when loading finishes.
+	 */
 	uint onLoadColumn_;
+
+	/**
+	 * Whether to set the keyboard focus when loading finishes.
+	 */
 	bool onLoadFocus_;
 
 private slots:

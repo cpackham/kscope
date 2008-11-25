@@ -77,7 +77,14 @@ bool Editor::load(const QString& path)
 	connect(thread, SIGNAL(done(const QString&)), this,
 	        SLOT(loadDone(const QString&)));
 	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-	return thread->load(path);
+	if (!thread->load(path)) {
+		setText(tr("Loading failed"));
+		return false;
+	}
+
+	// Store the path.
+	path_ = path;
+	return true;
 }
 
 /**
@@ -203,6 +210,24 @@ void Editor::getConfig(Config& config)
 	config.indentTabs_ = indentationsUseTabs();
 	config.tabWidth_ = tabWidth();
 	config.hlCurLine_ = false;
+}
+
+/**
+ * Fills a Location structure with information on the current file name, line
+ * and column.
+ * @param  loc  The structure to fill
+ */
+void Editor::getCurrentLocation(Core::Location& loc)
+{
+	int line, col;
+
+	// Get the current cursor position.
+	getCursorPosition(&line, &col);
+
+	// Fill the structure.
+	loc.file_ = path_;
+	loc.line_ = line + 1;
+	loc.column_ = col + 1;
 }
 
 /**

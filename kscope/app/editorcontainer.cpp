@@ -140,8 +140,20 @@ void EditorContainer::configEditor()
  */
 void EditorContainer::gotoLocation(const Core::Location& loc)
 {
-	if (gotoLocationInternal(loc))
-		history_.add(loc);
+	// Get the current location.
+	Core::Location curLoc;
+	Editor* editor = currentEditor();
+	if (editor)
+		editor->getCurrentLocation(curLoc);
+
+	// Go to the new location.
+	if (!gotoLocationInternal(loc))
+		return;
+
+	// Add both the previous and the new locations to the history list.
+	if (editor)
+		history_.add(curLoc);
+	history_.add(loc);
 }
 
 /**
