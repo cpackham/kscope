@@ -45,14 +45,21 @@ public:
 	 * The location is added immediately after the current position. If this
 	 * is not the end of the list, all locations following the new one are
 	 * discarded.
+	 * @note   If the new location is "close" to the current one, than it just
+	 *         replaces it in the history list. This keeps the list from being
+	 *         cluttered by close moves. The current definition of close is
+	 *         being on the same file, within 5 lines of each other.
 	 * @param  loc  The descriptor to add
 	 */
 	void add(const Core::Location& loc) {
-		// Don't do anything if the location is the same as the current one.
+		// Replace the current location if it is wihtin 5 lines of new one.
 		if (pos_ >= 0) {
 			Core::Location curLoc = locList_.at(pos_);
-			if (curLoc == loc)
+			if ((curLoc.file_ == loc.file_)
+			    && (qAbs((int)curLoc.line_ - (int)loc.line_) < 5)) {
+				locList_[pos_] = loc;
 				return;
+			}
 		}
 
 		// Remove any location descriptors after the current position.
