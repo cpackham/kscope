@@ -146,6 +146,10 @@ void QueryView::onFinished()
 		progBar_ = NULL;
 	}
 
+	// Adjust all columns by content.
+	for (int i = 0; i < 4; i++)
+		resizeColumnToContents(i);
+
 	// Auto-select a single result, if required.
 	Location loc;
 	if (autoSelectSingleResult_ && model()->rowCount() == 1
