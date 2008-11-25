@@ -160,6 +160,7 @@ void MainWindow::quickDefinition()
 
 	try {
 		// Run the query.
+		view->model()->setRootPath(ProjectManager::project()->rootPath());
 		ProjectManager::engine().query(view,
 		                               Core::Query(Core::Query::Definition,
 		                                           symbol));
