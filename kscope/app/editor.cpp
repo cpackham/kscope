@@ -237,20 +237,19 @@ void Editor::getCurrentLocation(Core::Location& loc)
 void Editor::search()
 {
 	// Prompt for text to find.
-	FindTextDialog dlg(currentSymbol(), this);
-	if (dlg.exec() != QDialog::Accepted)
+	QString pattern = currentSymbol();
+	SearchOptions options;
+	if (FindTextDialog::promptPattern(pattern, options, this)
+	    != QDialog::Accepted) {
 		return;
-
-	// Get search parameters from the dialogue.
-	FindParams params;
-	dlg.getParams(params);
+	}
 
 	// Find the first occurrence of the searched text.
-	if (!QsciScintilla::findFirst(params.pattern_, params.regExp_,
-	                              params.caseSensitive_, params.wholeWordsOnly_,
-	                              params.wrap_, params.forward_)) {
+	if (!QsciScintilla::findFirst(pattern, options.regExp_,
+	                              options.caseSensitive_, options.wholeWordsOnly_,
+	                              options.wrap_, !options.backward_)) {
 		QString msg = tr("'%1' could not be found in the document")
-		              .arg(params.pattern_);
+		              .arg(pattern);
 		QMessageBox::warning(this, tr("Pattern not found"), msg);
 	}
 }

@@ -41,10 +41,22 @@ class FindTextDialog : public QDialog, public Ui::FindTextDialog
 	Q_OBJECT
 
 public:
-	FindTextDialog(const QString&, QWidget* parent = 0);
+	FindTextDialog(QWidget* parent = 0);
 	~FindTextDialog();
 
-	void getParams(Editor::FindParams&);
+	static int promptPattern(QString&, Editor::SearchOptions&,
+	                         QWidget* parent = NULL);
+
+private:
+	/**
+	 * A list of previously-searched patterns.
+	 */
+	static QStringList historyList_;
+
+	/**
+	 *
+	 */
+	static Editor::SearchOptions options_;
 };
 
 } // namespace App

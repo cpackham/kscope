@@ -58,15 +58,10 @@ public:
 	};
 
 	/**
-	 * Parameters for text searches.
+	 * Options for text searches.
 	 */
-	struct FindParams
+	struct SearchOptions
 	{
-		/**
-		 * The pattern to search for.
-		 */
-		QString pattern_;
-
 		/**
 		 * Whether the pattern represents a regular expression.
 		 */
@@ -88,9 +83,9 @@ public:
 		bool wrap_;
 
 		/**
-		 * Whether to search forward in the document.
+		 * Whether to search backward in the document.
 		 */
-		bool forward_;
+		bool backward_;
 	};
 
 	bool load(const QString&);
