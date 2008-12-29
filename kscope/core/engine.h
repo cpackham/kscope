@@ -96,6 +96,14 @@ public:
 	virtual Status status() const = 0;
 
 	/**
+	 * Returns a list of Location structure fields that are filled by the given
+	 * query type.
+	 * @param  The requested query type
+	 * @return A list of Location fields
+	 */
+	virtual QList<Location::Fields> queryFields(Query::Type type) const = 0;
+
+	/**
 	 * Abstract base class for a controllable object.
 	 * This allows an engine operation to be stopped.
 	 */

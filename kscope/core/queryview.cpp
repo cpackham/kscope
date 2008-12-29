@@ -43,21 +43,14 @@ QueryView::QueryView(QWidget* parent, Type type)
 	setUniformRowHeights(true);
 	setExpandsOnDoubleClick(false);
 
-	// Create an ordered list of columns.
-	QList<LocationListModel::Columns> colList;
-	colList << Core::LocationListModel::Scope
-	        << Core::LocationListModel::File
-	        << Core::LocationListModel::Line
-	        << Core::LocationListModel::Text;
-
 	// Create a location model.
 	switch (type_) {
 	case List:
-		setModel(new LocationListModel(colList, this));
+		setModel(new LocationListModel(this));
 		break;
 
 	case Tree:
-		setModel(new LocationTreeModel(colList, this));
+		setModel(new LocationTreeModel(this));
 		break;
 	}
 
@@ -93,6 +86,7 @@ void QueryView::query(const Query& query)
 		if ((eng = engine()) != NULL) {
 			// Run the query.
 			query_ = query;
+			model()->setColumns(eng->queryFields(query_.type_));
 			eng->query(this, query_);
 		}
 	}
@@ -242,7 +236,7 @@ void QueryView::queryTreeItem(const QModelIndex& idx)
 		Engine* eng;
 		if ((eng = engine()) != NULL) {
 			queryIndex_ = idx;
-			eng->query(this, Query(query_.type_, loc.scope_));
+			eng->query(this, Query(query_.type_, loc.tag_.scope_));
 		}
 	}
 	catch (Exception* e) {

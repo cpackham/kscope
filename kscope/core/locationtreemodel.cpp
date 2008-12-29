@@ -29,11 +29,10 @@ namespace Core
 
 /**
  * Class constructor.
- * @param  colList  An ordered list of the columns to show
  * @param  parent   Parent object
  */
-LocationTreeModel::LocationTreeModel(QList<Columns> colList, QObject* parent)
-	: LocationModel(colList, parent), root_(Location())
+LocationTreeModel::LocationTreeModel(QObject* parent)
+	: LocationModel(parent), root_(Location())
 {
 }
 
@@ -321,40 +320,8 @@ QVariant LocationTreeModel::data(const QModelIndex& idx, int role) const
 	if (node == NULL)
 		return false;
 
-	Location loc = node->data().loc_;
-
 	// Get the column-specific data.
-	switch (colList_[idx.column()]) {
-	case File:
-		// File path.
-		// Replace root prefix with "$".
-		if (!rootPath_.isEmpty() && loc.file_.startsWith(rootPath_))
-			return QString("$/") + loc.file_.mid(rootPath_.length());
-
-		return loc.file_;
-
-	case Line:
-		// Line number.
-		return loc.line_;
-
-	case Column:
-		// Column number.
-		return loc.column_;
-
-	case Tag:
-		// Tag type.
-		return loc.tag_;
-
-	case Scope:
-		// Scope.
-		return loc.scope_;
-
-	case Text:
-		// Line text.
-		return loc.text_;
-	}
-
-	return QVariant();
+	return locationData(node->data().loc_, idx.column());
 }
 
 } // namespace Core

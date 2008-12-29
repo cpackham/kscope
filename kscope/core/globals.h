@@ -30,6 +30,55 @@ namespace Core
 {
 
 /**
+ * The Tag structure provides information for a defined symbol in the code base.
+ */
+struct Tag {
+	enum Type
+	{
+		/** Default tag. */
+		UnknownTag,
+		/** Variable declaration. */
+		Variable,
+		/** Function declaration/definition. */
+		Function,
+		/** Structure. */
+		Struct,
+		/** Union. */
+		Union,
+		/** Structure/union field. */
+		Member,
+		/** Enumeration declaration. */
+		Enum,
+		/** Member in an enumeration. */
+		Enumerator,
+		/** Type definition. */
+		Typedef,
+		/** Preprocessor macro definition. */
+		Macro,
+		/** Preprocessor #include directive. */
+		Include,
+		/** Goto label. */
+		Label
+	};
+
+	/**
+	 * The name of the tag.
+	 */
+	QString name_;
+
+	/**
+	 * The tag's type, determined by its definition.
+	 */
+	Type type_;
+
+	/**
+	 * Some tags are defined within a scope (e.g., a structure member).
+	 * An empty string is used for the "Global" scope.
+	 */
+	QString scope_;
+};
+
+/**
  * A location in the code base.
  * Locations are at the heart of the browsing system offered by KScope.
  * Query results, navigation history and bookmarks are all expressed as
@@ -40,18 +89,52 @@ namespace Core
  */
 struct Location
 {
-	/** File path. */
+	/**
+	 * File path.
+	 */
 	QString file_;
-	/** Line number. */
+
+	/**
+	 * Line number.
+	 */
 	uint line_;
-	/** Column number. */
+
+	/**
+	 * Column number.
+	 */
 	uint column_;
-	/** Tag type. */
-	uint tag_;
-	/** Scope of the tag (function name, structure, global, etc.) */
-	QString scope_;
-	/** Line text. */
+
+	/**
+	 * Tag information (optional).
+	 */
+	Tag tag_;
+
+	/**
+	 * Line text.
+	 */
 	QString text_;
+
+	/**
+	 * Each member in the structure is assigned a numeric value. These can be
+	 * used for, e.g., creating lists of fields for displaying query results.
+	 */
+	enum Fields
+	{
+		/** File path. */
+		File,
+		/** Line number. */
+		Line,
+		/** Column number. */
+		Column,
+		/** Symbol name. */
+		TagName,
+		/** Tag type (function, variable, structure, etc.) */
+		TagType,
+		/** Scope of the tag (function name, structure, global, etc.) */
+		Scope,
+		/** Line text. */
+		Text
+	};
 
 	/**
 	 * Two locations are equal if and only if they refer to the same line and
@@ -66,6 +149,10 @@ struct Location
 	}
 };
 
+/**
+ * A list of locations.
+ * This is useful for passing query results around.
+ */
 typedef QList<Location> LocationList;
 
 /**
@@ -77,6 +164,7 @@ struct Query
 	 * Possible queries.
 	 */
 	enum Type {
+		/** Default type. */
 		Invalid,
 		/** Free text search. */
 		Text,
@@ -97,6 +185,11 @@ struct Query
 	};
 
 	/**
+	 * The query type.
+	 */
+	Type type_;
+
+	/**
 	 * Determines certain aspects of the query.
 	 */
 	enum Flags {
@@ -109,11 +202,6 @@ struct Query
 		 */
 		RegExp = 0x2
 	};
-
-	/**
-	 * The query type.
-	 */
-	Type type_;
 
 	/**
 	 * The pattern to search for.
@@ -137,7 +225,8 @@ struct Query
 	 * @param  pattern  The pattern to look for
 	 * @param  flags    Modifiers
 	 */
-	Query(Type type, const QString& pattern, uint flags = 0)
+	Query(Type type, const QString& pattern,
+	      uint flags = 0)
 		: type_(type), pattern_(pattern), flags_(flags) {}
 };
 

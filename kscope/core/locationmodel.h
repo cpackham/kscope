@@ -40,31 +40,11 @@ class LocationModel : public QAbstractItemModel
 	Q_OBJECT
 
 public:
-	/**
-	 * Used to choose the columns to display and their order.
-	 * Each column corresponds to a field in the Location structure.
-	 * The constructor of the model accepts a list of columns that determines
-	 * which fields are exposed to the view and in what order.
-	 */
-	enum Columns {
-		/** File path. */
-		File,
-		/** Line number. */
-		Line,
-		/** Column number. */
-		Column,
-		/** Tag type (for tag locations). */
-		Tag,
-		/** Symbol scope (for tag locations). */
-		Scope,
-		/** Line text. */
-		Text
-	};
-
-	LocationModel(QList<Columns>, QObject* parent = 0);
+	LocationModel(QObject* parent = 0);
 	virtual ~LocationModel();
 
 	void setRootPath(const QString&);
+	void setColumns(const QList<Location::Fields>&);
 
 	virtual void add(const LocationList&, const QModelIndex&) = 0;
 	virtual void clear() = 0;
@@ -82,7 +62,7 @@ protected:
 	/**
 	 * A copy of the list of columns passed to the constructor.
 	 */
-	QList<Columns> colList_;
+	QList<Location::Fields> colList_;
 
 	/**
 	 * A common root path for all files in the model.
@@ -91,7 +71,8 @@ protected:
 	 */
 	QString rootPath_;
 
-	QString columnText(Columns) const;
+	QVariant locationData(const Location&, uint) const;
+	QString columnText(Location::Fields) const;
 };
 
 } // namespace Core

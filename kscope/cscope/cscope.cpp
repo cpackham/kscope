@@ -116,6 +116,7 @@ void Cscope::query(Core::Engine::Connection* conn, const QString& path,
 	conn_->setCtrlObject(this);
 	setState(queryProgState_);
 	locList_.clear();
+	type_ = type;
 
 	// Start the process.
 	qDebug() << "Running cscope:" << args << "in" << path;

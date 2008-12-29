@@ -41,7 +41,7 @@ class LocationListModel : public LocationModel
 	Q_OBJECT
 
 public:
-	LocationListModel(QList<Columns>, QObject* parent = 0);
+	LocationListModel(QObject* parent = 0);
 	~LocationListModel();
 
 	// LocationMode implementation.

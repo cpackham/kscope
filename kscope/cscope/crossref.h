@@ -54,6 +54,8 @@ public:
 	 */
 	Status status() const { return status_; }
 
+	QList<Core::Location::Fields> queryFields(Core::Query::Type) const;
+
 public slots:
 	void query(Core::Engine::Connection*, const Core::Query&) const;
 	void build(Core::Engine::Connection*) const;

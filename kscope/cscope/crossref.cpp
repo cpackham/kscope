@@ -86,6 +86,58 @@ void Crossref::open(const QString& initString)
 }
 
 /**
+ * Builds a list of fields for each query type.
+ * The list specifies the fields that carry useful information for the given
+ * type of query.
+ * @param  type  Query type
+ * @return A list of Location structure fields
+ */
+QList<Core::Location::Fields>
+Crossref::queryFields(Core::Query::Type type) const
+{
+	QList<Core::Location::Fields> fieldList;
+
+	switch (type) {
+	case Core::Query::Text:
+	case Core::Query::FindFile:
+	case Core::Query::IncludingFiles:
+		fieldList << Core::Location::File
+		          << Core::Location::Line
+		          << Core::Location::Text;
+		break;
+
+	case Core::Query::Definition:
+		fieldList << Core::Location::TagName
+		          << Core::Location::File
+		          << Core::Location::Line
+		          << Core::Location::Text;
+		break;
+
+	case Core::Query::References:
+	case Core::Query::CalledFunctions:
+	case Core::Query::CallingFunctions:
+		fieldList << Core::Location::Scope
+		          << Core::Location::File
+		          << Core::Location::Line
+		          << Core::Location::Text;
+		break;
+
+	case Core::Query::LocalTags:
+		fieldList << Core::Location::TagType
+		          << Core::Location::TagName
+		          << Core::Location::Scope
+		          << Core::Location::Line
+		          << Core::Location::Text;
+		break;
+
+	default:
+		;
+	}
+
+	return fieldList;
+}
+
+/**
  * Starts a Cscope query.
  * Creates a new Cscope process to handle the query.
  * @param  conn  Connection object to attach to the new process

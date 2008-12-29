@@ -41,7 +41,7 @@ class LocationTreeModel : public LocationModel
 	Q_OBJECT
 
 public:
-	LocationTreeModel(QList<Columns>, QObject* parent = 0);
+	LocationTreeModel(QObject* parent = 0);
 	~LocationTreeModel();
 
 	// LocationModel implementation.

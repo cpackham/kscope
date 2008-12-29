@@ -29,11 +29,9 @@ namespace Core
 
 /**
  * Class constructor.
- * @param  colList  An ordered list of the columns to show
  * @param  parent   Parent object
  */
-LocationListModel::LocationListModel(QList<Columns> colList, QObject* parent)
-	: LocationModel(colList, parent)
+LocationListModel::LocationListModel(QObject* parent) : LocationModel(parent)
 {
 }
 
@@ -222,51 +220,18 @@ int LocationListModel::rowCount(const QModelIndex& parent) const
  * @param   role   The role of the data
  * @return
  */
-QVariant LocationListModel::data(const QModelIndex& index, int role) const
+QVariant LocationListModel::data(const QModelIndex& idx, int role) const
 {
 	// No data for invalid indices.
-	if (!index.isValid())
+	if (!idx.isValid())
 		return QVariant();
 
 	// Only support DisplayRole.
 	if (role != Qt::DisplayRole)
 		return QVariant();
 
-	// Get the location for the index's row.
-	const Location& loc = locList_.at(index.row());
-
 	// Get the column-specific data.
-	switch (colList_[index.column()]) {
-	case File:
-		// File path.
-		// Replace root prefix with "$".
-		if (!rootPath_.isEmpty() && loc.file_.startsWith(rootPath_))
-			return QString("$/") + loc.file_.mid(rootPath_.length());
-
-		return loc.file_;
-
-	case Line:
-		// Line number.
-		return loc.line_;
-
-	case Column:
-		// Column number.
-		return loc.column_;
-
-	case Tag:
-		// Tag type.
-		return loc.tag_;
-
-	case Scope:
-		// Scope.
-		return loc.scope_;
-
-	case Text:
-		// Line text.
-		return loc.text_;
-	}
-
-	return QVariant();
+	return locationData(locList_.at(idx.row()), idx.column());
 }
 
 } // namespace Core

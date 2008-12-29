@@ -28,12 +28,9 @@ namespace Core
 
 /**
  * Class constructor.
- * @param  colList  An ordered list of the columns to show
  * @param  parent   Parent object
  */
-LocationModel::LocationModel(QList<Columns> colList, QObject* parent)
-	: QAbstractItemModel(parent),
-	  colList_(colList)
+LocationModel::LocationModel(QObject* parent) : QAbstractItemModel(parent)
 {
 }
 
@@ -60,6 +57,16 @@ void LocationModel::setRootPath(const QString& path)
 		rootPath_ = actPath;
 		reset();
 	}
+}
+
+/**
+ * Determines which fields of a location structure the model supports, and in
+ * what order.
+ * @param  colList  An ordered list of location structure fields
+ */
+void LocationModel::setColumns(const QList<Location::Fields>& colList)
+{
+	colList_ = colList;
 }
 
 /**
@@ -94,29 +101,77 @@ int LocationModel::columnCount(const QModelIndex& parent) const
 }
 
 /**
+ * Extracts data from a location object, for the given column index.
+ * @param  loc  The location object
+ * @param  col  The requested column
+ * @return Matching location data, QVariant() if the column is invalid
+ */
+QVariant LocationModel::locationData(const Location& loc, uint col) const
+{
+	switch (colList_[col]) {
+	case Location::File:
+		// File path.
+		// Replace root prefix with "$".
+		if (!rootPath_.isEmpty() && loc.file_.startsWith(rootPath_))
+			return QString("$/") + loc.file_.mid(rootPath_.length());
+
+		return loc.file_;
+
+	case Location::Line:
+		// Line number.
+		return loc.line_;
+
+	case Location::Column:
+		// Column number.
+		return loc.column_;
+
+	case Location::TagName:
+		// Tag name.
+		return loc.tag_.name_;
+
+	case Location::TagType:
+		// Tag type.
+		return loc.tag_.type_;
+
+	case Location::Scope:
+		// Scope.
+		return loc.tag_.scope_;
+
+	case Location::Text:
+		// Line text.
+		return loc.text_;
+	}
+
+	return QVariant();
+}
+
+/**
  * Creates a column header title for the given column.
  * @param  col  The column for which the title is requested
  * @return A string describing the column
  */
-QString LocationModel::columnText(Columns col) const
+QString LocationModel::columnText(Location::Fields col) const
 {
 	switch (col) {
-	case File:
+	case Location::File:
 		return tr("File");
 
-	case Line:
+	case Location::Line:
 		return tr("Line");
 
-	case Column:
+	case Location::Column:
 		return tr("Column");
 
-	case Tag:
+	case Location::TagName:
 		return tr("Tag");
 
-	case Scope:
+	case Location::TagType:
+		return tr("Type");
+
+	case Location::Scope:
 		return tr("Scope");
 
-	case Text:
+	case Location::Text:
 		return tr("Text");
 	}
 
