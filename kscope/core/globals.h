@@ -33,7 +33,8 @@ namespace Core
 /**
  * The Tag structure provides information for a defined symbol in the code base.
  */
-struct Tag {
+struct Tag
+{
 	enum Type
 	{
 		/** Default tag. */
@@ -78,6 +79,12 @@ struct Tag {
 	 */
 	QString scope_;
 
+	/**
+	 * Generates an icon for a given tag type.
+	 * TODO This should probably be moved somewhere else (like an Images class)
+	 * @param  type  The type for which an icon is requested
+	 * @return The matching icon
+	 */
 	static QIcon icon(Type type) {
 		switch (type) {
 		case Variable:
