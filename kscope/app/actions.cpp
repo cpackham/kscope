@@ -294,13 +294,15 @@ void Actions::setup()
 	menu->addAction(action);
 	group->addAction(action);
 
+	// Show local tags.
 	action = new QAction(tr("Local &Tags"), this);
 	action->setShortcut(tr("Ctrl+T"));
 	action->setStatusTip(tr("List tags in the current file"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
 	        SLOT(showLocalTags()));
-	connect(mainWnd()->editCont_, SIGNAL(hasFile(bool)), action,
+	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
 	        SLOT(setEnabled(bool)));
+	action->setEnabled(false);
 	menu->addAction(action);
 
 	menu->addSeparator();
