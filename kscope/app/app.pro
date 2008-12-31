@@ -59,6 +59,6 @@ LIBS += -L../core \
     -lkscope_cscope \
     -L$${QSCI_ROOT_PATH}/lib \
     -lqscintilla2
-RESOURCES = ide.qrc
+RESOURCES = app.qrc
 target.path = $${INSTALL_PATH}/bin
 INSTALLS += target
