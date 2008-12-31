@@ -131,7 +131,7 @@ QVariant LocationModel::locationData(const Location& loc, uint col) const
 
 	case Location::TagType:
 		// Tag type.
-		return loc.tag_.type_;
+		return Tag::icon(loc.tag_.type_);
 
 	case Location::Scope:
 		// Scope.

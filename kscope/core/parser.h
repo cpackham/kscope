@@ -22,6 +22,9 @@ typedef QList<QVariant> CapList;
 template<class Exp1T, class Exp2T>
 struct Concat;
 
+template<class ExpT>
+struct Kleene;
+
 /**
  * Syntactic-sugar operators for building parsers out of the basic blocks.
  * Each parser class T should inherit from Operators<T>.
@@ -30,7 +33,9 @@ template<class ExpT>
 struct Operators
 {
 	template<class Exp2T>
-	Concat<ExpT, Exp2T> operator<<(const Exp2T& exp2) const;
+	Concat<ExpT, Exp2T> operator<<(const Exp2T&) const;
+
+	Kleene<ExpT> operator*() const;
 };
 
 /**
@@ -112,9 +117,11 @@ struct String : public Operators<String>
 {
 	/**
 	 * Class constructor.
-	 * @param  delimiter  The delimiting character
+	 * @param  delimiter   The delimiting character
+	 * @param  allowEmpty  Whether empty strings should be accepted
 	 */
-	String(QChar delimiter = 0) : delimiter_(delimiter) {}
+	String(QChar delimiter = 0, bool allowEmpty = false)
+		: delimiter_(delimiter), allowEmpty_(allowEmpty) {}
 
 	/**
 	 * Matches a string up to the object's delimiter.
@@ -132,7 +139,7 @@ struct String : public Operators<String>
 		else
 			result = input.mid(pos);
 
-		if (!result.length())
+		if (!allowEmpty_ && (result.length() == 0))
 			return false;
 
 		// Update position and captured values list.
@@ -144,6 +151,9 @@ struct String : public Operators<String>
 private:
 	/** The delimiting character. */
 	QChar delimiter_;
+
+	/** Whether empty strings should be accepted. */
+	bool allowEmpty_;
 };
 
 /**
@@ -187,12 +197,42 @@ private:
 };
 
 /**
+ * A Kleene-star closure.
+ * Matches input matched by zero or more instances of a parser.
+ */
+template<class ExpT>
+struct Kleene : public Operators< Kleene<ExpT> >
+{
+	Kleene(ExpT exp) : exp_(exp) {}
+
+	bool match(const QString& input, int& pos, CapList& caps) const {
+		while (pos < input.length()) {
+			if (!exp_.match(input, pos, caps))
+				return false;
+		}
+
+		return true;
+	}
+
+private:
+	ExpT exp_;
+};
+
+/**
  * Implements the concatenation operator (<<) for building parsers.
  */
 template<class ExpT>
 template<class Exp2T>
 Concat<ExpT, Exp2T> Operators<ExpT>::operator<<(const Exp2T& exp2) const {
 	return Concat<ExpT, Exp2T>(*static_cast<ExpT const*>(this), exp2);
+}
+
+/**
+ * Implements the Kleene-star operator (*) for building parsers.
+ */
+template<class ExpT>
+Kleene<ExpT> Operators<ExpT>::operator*() const {
+	return Kleene<ExpT>(*static_cast<ExpT const*>(this));
 }
 
 }

@@ -22,6 +22,7 @@
 #define __CORE_GLOBALS_H__
 
 #include <QString>
+#include <QIcon>
 
 namespace KScope
 {
@@ -53,8 +54,8 @@ struct Tag {
 		Enumerator,
 		/** Type definition. */
 		Typedef,
-		/** Preprocessor macro definition. */
-		Macro,
+		/** Preprocessor definition. */
+		Define,
 		/** Preprocessor #include directive. */
 		Include,
 		/** Goto label. */
@@ -76,6 +77,48 @@ struct Tag {
 	 * An empty string is used for the "Global" scope.
 	 */
 	QString scope_;
+
+	static QIcon icon(Type type) {
+		switch (type) {
+		case Variable:
+			return QIcon(":/images/variable");
+
+		case Function:
+			return QIcon(":/images/function");
+
+		case Struct:
+			return QIcon(":/images/struct");
+
+		case Union:
+			return QIcon(":/images/union");
+
+		case Member:
+			return QIcon(":/images/member");
+
+		case Enum:
+			return QIcon(":/images/enum");
+
+		case Enumerator:
+			return QIcon(":/images/enumerator");
+
+		case Typedef:
+			return QIcon(":/images/typedef");
+
+		case Define:
+			return QIcon(":/images/define");
+
+		case Include:
+			return QIcon(":/images/include");
+
+		case Label:
+			return QIcon(":/images/label");
+
+		default:
+			;
+		}
+
+		return QIcon();
+	}
 };
 
 /**

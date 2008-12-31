@@ -58,6 +58,7 @@ public slots:
 	void gotoLocation(const Core::Location&);
 	void gotoNextLocation();
 	void gotoPrevLocation();
+	void showLocalTags();
 
 signals:
 	void hasActiveEditor(bool has);

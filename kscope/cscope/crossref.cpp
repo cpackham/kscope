@@ -22,6 +22,7 @@
 #include <QFileInfo>
 #include "crossref.h"
 #include "exception.h"
+#include "ctags.h"
 
 namespace KScope
 {
@@ -126,8 +127,7 @@ Crossref::queryFields(Core::Query::Type type) const
 		fieldList << Core::Location::TagType
 		          << Core::Location::TagName
 		          << Core::Location::Scope
-		          << Core::Location::Line
-		          << Core::Location::Text;
+		          << Core::Location::Line;
 		break;
 
 	default:
@@ -181,6 +181,14 @@ void Crossref::query(Core::Engine::Connection* conn,
 	case Core::Query::IncludingFiles:
 		type = Cscope::IncludingFiles;
 		break;
+
+	case Core::Query::LocalTags:
+		{
+			Ctags* ctags = new Ctags();
+			ctags->setDeleteOnExit();
+			ctags->query(conn, query.pattern_);
+			return;
+		}
 
 	default:
 		// Query type is not supported.

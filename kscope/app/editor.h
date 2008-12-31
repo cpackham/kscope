@@ -96,6 +96,8 @@ public:
 	void getConfig(Config&);
 	void getCurrentLocation(Core::Location&);
 
+	QString path() const { return path_; }
+
 public slots:
 	void search();
 	void searchNext();

@@ -23,6 +23,7 @@
 #include <QDebug>
 #include "editorcontainer.h"
 #include "editorconfigdialog.h"
+#include "queryresultdialog.h"
 
 namespace KScope
 {
@@ -176,6 +177,42 @@ void EditorContainer::gotoPrevLocation()
 	Core::Location loc;
 	if (history_.prev(loc))
 		gotoLocationInternal(loc);
+}
+
+void EditorContainer::showLocalTags()
+{
+	Editor* editor = currentEditor();
+	if (!editor)
+		return;
+
+	// Create a query view dialogue.
+	QueryResultDialog* dlg = new QueryResultDialog(this);
+	dlg->setModal(true);
+
+	// When a selection is made in the dialogue, forward it to the editor
+	// container and close the dialogue.
+	Core::QueryView* view = dlg->view();
+	connect(view, SIGNAL(locationRequested(const Core::Location&)),
+	        this, SLOT(gotoLocation(const Core::Location&)));
+	connect(view, SIGNAL(locationRequested(const Core::Location&)), dlg,
+	        SLOT(accept()));
+
+	dlg->setWindowTitle(tr("Local Tags"));
+	dlg->show();
+
+	try {
+		// Run the query.
+		view->model()->setRootPath(ProjectManager::project()->rootPath());
+		view->model()->setColumns(ProjectManager::engine()
+			.queryFields(Core::Query::LocalTags));
+		ProjectManager::engine().query(view,
+		                               Core::Query(Core::Query::LocalTags,
+		                                           editor->path()));
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 /**

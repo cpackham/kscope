@@ -46,7 +46,7 @@ public:
 	/**
 	 * Cscope query types.
 	 * These are enumerated by the numeric value assigned to each query type
-	 * in Cscope's command-line interface (i.e., the paremeter to the -L
+	 * in Cscope's command-line interface (i.e., the parameter to the -L
 	 * option).
 	 */
 	enum QueryType {
@@ -68,11 +68,6 @@ public:
 	 * Stops a query/build process.
 	 */
 	virtual void stop() { kill(); }
-
-signals:
-	void dataReady(const Core::Location& loc);
-	void finished();
-	void progress(const QString&, uint cur, uint total);
 
 protected slots:
 	virtual void handleFinished(int, QProcess::ExitStatus);
@@ -146,7 +141,7 @@ private:
 
 		/**
 		 * Functor operator.
-		 * Provides a call-back into the owner's onProgress() method.
+		 * Provides a call-back into the connection's onProgress() method.
 		 * @param  capList  List of captured strings
 		 */
 		void operator()(const Parser::CapList& capList) const {
@@ -178,7 +173,7 @@ private:
 
 		/**
 		 * Functor operator.
-		 * Provides a call-back into the owner's onProgress() method.
+		 * Provides a call-back into the connection's onProgress() method.
 		 * @param  capList  List of captured strings
 		 */
 		void operator()(const Parser::CapList& capList) const {
@@ -252,8 +247,8 @@ private:
 	};
 };
 
-}
+} // namespace Cscope
 
-}
+} // namespace KScope
 
 #endif // __CSCOPE_CSCOPE_H

@@ -161,6 +161,8 @@ void MainWindow::quickDefinition()
 	try {
 		// Run the query.
 		view->model()->setRootPath(ProjectManager::project()->rootPath());
+		view->model()->setColumns(ProjectManager::engine()
+			.queryFields(Core::Query::Definition));
 		ProjectManager::engine().query(view,
 		                               Core::Query(Core::Query::Definition,
 		                                           symbol));

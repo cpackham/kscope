@@ -32,6 +32,7 @@ SOURCES += locationtreemodel.cpp \
     codebasemodel.cpp \
     process.cpp \
     progressbar.cpp
+RESOURCES = core.qrc
 
 target.path = $${INSTALL_PATH}/lib
 INSTALLS += target
