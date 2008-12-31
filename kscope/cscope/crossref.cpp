@@ -99,8 +99,11 @@ Crossref::queryFields(Core::Query::Type type) const
 	QList<Core::Location::Fields> fieldList;
 
 	switch (type) {
-	case Core::Query::Text:
 	case Core::Query::FindFile:
+		fieldList << Core::Location::File;
+		break;
+
+	case Core::Query::Text:
 	case Core::Query::IncludingFiles:
 		fieldList << Core::Location::File
 		          << Core::Location::Line
