@@ -71,7 +71,7 @@ protected:
 	 */
 	QString rootPath_;
 
-	QVariant locationData(const Location&, uint) const;
+	QVariant locationData(const Location&, uint, int) const;
 	QString columnText(Location::Fields) const;
 };
 

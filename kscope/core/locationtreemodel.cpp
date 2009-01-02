@@ -303,10 +303,6 @@ bool LocationTreeModel::hasChildren(const QModelIndex& parent) const
  */
 QVariant LocationTreeModel::data(const QModelIndex& idx, int role) const
 {
-	// Only support DisplayRole.
-	if (role != Qt::DisplayRole)
-		return QVariant();
-
 	// No data for invalid indices.
 	if (!idx.isValid()) {
 		if (idx.column() == 0)
@@ -321,7 +317,7 @@ QVariant LocationTreeModel::data(const QModelIndex& idx, int role) const
 		return false;
 
 	// Get the column-specific data.
-	return locationData(node->data().loc_, idx.column());
+	return locationData(node->data().loc_, idx.column(), role);
 }
 
 } // namespace Core

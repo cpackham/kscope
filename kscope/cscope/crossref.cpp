@@ -127,10 +127,10 @@ Crossref::queryFields(Core::Query::Type type) const
 		break;
 
 	case Core::Query::LocalTags:
-		fieldList << Core::Location::TagType
-		          << Core::Location::TagName
+		fieldList << Core::Location::TagName
 		          << Core::Location::Scope
-		          << Core::Location::Line;
+		          << Core::Location::Line
+		          << Core::Location::TagType;
 		break;
 
 	default:

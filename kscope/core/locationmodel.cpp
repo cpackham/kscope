@@ -106,8 +106,24 @@ int LocationModel::columnCount(const QModelIndex& parent) const
  * @param  col  The requested column
  * @return Matching location data, QVariant() if the column is invalid
  */
-QVariant LocationModel::locationData(const Location& loc, uint col) const
+QVariant LocationModel::locationData(const Location& loc, uint col,
+                                     int role) const
 {
+	switch (role) {
+	case Qt::DecorationRole:
+		if ((colList_[col] == Location::TagName)
+		    && (loc.tag_.type_ != Tag::UnknownTag)) {
+			return Tag::icon(loc.tag_.type_);
+		}
+		return QVariant();
+
+	case Qt::DisplayRole:
+		break;
+
+	default:
+		return QVariant();
+	}
+
 	switch (colList_[col]) {
 	case Location::File:
 		// File path.
@@ -131,7 +147,7 @@ QVariant LocationModel::locationData(const Location& loc, uint col) const
 
 	case Location::TagType:
 		// Tag type.
-		return Tag::icon(loc.tag_.type_);
+		return Tag::name(loc.tag_.type_);
 
 	case Location::Scope:
 		// Scope.

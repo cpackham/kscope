@@ -226,18 +226,8 @@ QVariant LocationListModel::data(const QModelIndex& idx, int role) const
 	if (!idx.isValid())
 		return QVariant();
 
-	// Only support DisplayRole.
-	if (colList_[idx.column()] == Location::TagType) {
-		if (role != Qt::DecorationRole)
-			return QVariant();
-	}
-	else {
-		if (role != Qt::DisplayRole)
-			return QVariant();
-	}
-
 	// Get the column-specific data.
-	return locationData(locList_.at(idx.row()), idx.column());
+	return locationData(locList_.at(idx.row()), idx.column(), role);
 }
 
 } // namespace Core

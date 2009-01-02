@@ -81,6 +81,54 @@ struct Tag
 
 	/**
 	 * Generates an icon for a given tag type.
+	 * TODO This should probably be moved somewhere else (like a Strings class)
+	 * @param  type  The type for which a name is requested
+	 * @return The matching name
+	 */
+	static QString name(Type type) {
+		switch (type) {
+		case Variable:
+			return "Variable";
+
+		case Function:
+			return "Function";
+
+		case Struct:
+			return "Struct";
+
+		case Union:
+			return "Union";
+
+		case Member:
+			return "Struct/Union Member";
+
+		case Enum:
+			return "Enumeration";
+
+		case Enumerator:
+			return "Enumeration Value";
+
+		case Typedef:
+			return "Type Definition";
+
+		case Define:
+			return "Preprorcessor Definition";
+
+		case Include:
+			return "#include Directive";
+
+		case Label:
+			return "Go-to Label";
+
+		default:
+			;
+		}
+
+		return QString();
+	}
+
+	/**
+	 * Generates an icon for a given tag type.
 	 * TODO This should probably be moved somewhere else (like an Images class)
 	 * @param  type  The type for which an icon is requested
 	 * @return The matching icon
