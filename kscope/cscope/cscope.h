@@ -211,6 +211,7 @@ private:
 			loc.line_ = capList[2].toUInt();
 			loc.column_ = 0;
 			loc.text_ = capList[3].toString();
+			loc.tag_.type_ = Core::Tag::UnknownTag;
 
 			// Cscope's "Scope" result field should be handled differently
 			// for each query type.
