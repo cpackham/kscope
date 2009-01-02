@@ -90,6 +90,7 @@ private:
 			loc.tag_.name_ = capList[0].toString();
 			loc.file_ = capList[1].toString();
 			loc.line_ = capList[2].toUInt();
+			loc.column_ = 0;
 
 			// Translate a Ctags type character into a tag type value.
 			switch (capList[3].toString().at(0).toLatin1()) {
