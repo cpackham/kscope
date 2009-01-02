@@ -32,17 +32,17 @@ namespace Cscope
  */
 Ctags::Ctags() : Process(), conn_(NULL)
 {
-	addRule(initState_, Parser::String('\t')               // tag name
+	addRule(initState_, Parser::String<'\t'>()               // tag name
 	                    << Parser::Whitespace()
-	                    << Parser::String('\t')            // file name
+	                    << Parser::String<'\t'>()            // file name
 	                    << Parser::Whitespace()
-	                    << Parser::Number()                // line number
+	                    << Parser::Number()                  // line number
 	                    << Parser::Literal(";\"\t")
-                        << Parser::String('\t')            // tag type
+                        << Parser::String<'\t'>()            // tag type
                         << Parser::Whitespace()
-	                    << *(Parser::String(':')           // attribute name
+	                    << *(Parser::String<':'>()           // attribute name
 	                         << Parser::Literal(":")
-	                         << Parser::String('\t', true) // attribute value
+	                         << Parser::String<'\t', true>() // attribute value
 	                         << Parser::Whitespace()),
 	        initState_, ParseAction(*this));
 }

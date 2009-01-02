@@ -67,12 +67,12 @@ Cscope::Cscope(const QStringList& baseArgs)
 	                         << Parser::Number()
 	                         << Parser::Literal(" lines"),
 	        queryResultState_, QueryEndAction(*this));
-	addRule(queryResultState_, Parser::String(' ')
+	addRule(queryResultState_, Parser::String<' '>()
 	                           << Parser::Whitespace()
-	                           << Parser::String(' ')
+	                           << Parser::String<' '>()
 	  	                       << Parser::Whitespace()
 	                           << Parser::Number()
-	                           << Parser::String(),
+	                           << Parser::String<>(),
 	        queryResultState_, QueryResultAction(*this));
 }
 

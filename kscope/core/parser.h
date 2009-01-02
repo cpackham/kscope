@@ -1,9 +1,22 @@
-/*
- * parser.h
+/***************************************************************************
+ *   Copyright (C) 2007-2008 by Elad Lahav
+ *   elad_lahav@users.sourceforge.net
  *
- *  Created on: Oct 9, 2008
- *      Author: elahav
- */
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ***************************************************************************/
 
 #ifndef __CORE_PARSER_H__
 #define __CORE_PARSER_H__
@@ -113,16 +126,9 @@ struct Number : public Operators<Number>
  * Captures a string delimited by a single character.
  * The default delimiter causes the string to match to the end of the input.
  */
-struct String : public Operators<String>
+template<char Delim = 0, bool AllowEmpty = false>
+struct String : public Operators< String<Delim, AllowEmpty> >
 {
-	/**
-	 * Class constructor.
-	 * @param  delimiter   The delimiting character
-	 * @param  allowEmpty  Whether empty strings should be accepted
-	 */
-	String(QChar delimiter = 0, bool allowEmpty = false)
-		: delimiter_(delimiter), allowEmpty_(allowEmpty) {}
-
 	/**
 	 * Matches a string up to the object's delimiter.
 	 * @param   input  The input string
@@ -134,12 +140,12 @@ struct String : public Operators<String>
 		QString result;
 
 		// Get a substring up to the object's delimiter.
-		if (delimiter_ != 0)
-			result = input.mid(pos).section(delimiter_, 0, 0);
+		if (Delim != 0)
+			result = input.mid(pos).section(QChar(Delim), 0, 0);
 		else
 			result = input.mid(pos);
 
-		if (!allowEmpty_ && (result.length() == 0))
+		if (!AllowEmpty && (result.length() == 0))
 			return false;
 
 		// Update position and captured values list.
@@ -147,13 +153,6 @@ struct String : public Operators<String>
 		caps << result;
 		return true;
 	}
-
-private:
-	/** The delimiting character. */
-	QChar delimiter_;
-
-	/** Whether empty strings should be accepted. */
-	bool allowEmpty_;
 };
 
 /**
@@ -235,8 +234,8 @@ Kleene<ExpT> Operators<ExpT>::operator*() const {
 	return Kleene<ExpT>(*static_cast<ExpT const*>(this));
 }
 
-}
+} // namespace Parser
 
-}
+} // namespace KScope
 
 #endif // __CORE_PARSER_H__
