@@ -34,6 +34,10 @@ QueryResultDialog::QueryResultDialog(QWidget* parent)
 	: QDialog(parent), Ui::QueryResultDialog()
 {
 	setupUi(this);
+
+	// Close the dialogue when a selection is made.
+	connect(view_, SIGNAL(locationRequested(const Core::Location&)), this,
+	        SLOT(accept()));
 }
 
 /**

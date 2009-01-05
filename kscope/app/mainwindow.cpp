@@ -148,12 +148,9 @@ void MainWindow::quickDefinition()
 	Core::QueryView* view = dlg->view();
 	view->setAutoSelectSingleResult(true);
 
-	// When a selection is made in the dialogue, forward it to the editor
-	// container and close the dialogue.
+	// Forward selected locations to the editor container.
 	connect(view, SIGNAL(locationRequested(const Core::Location&)),
 	        editCont_, SLOT(gotoLocation(const Core::Location&)));
-	connect(view, SIGNAL(locationRequested(const Core::Location&)), dlg,
-	        SLOT(accept()));
 
 	// Only show the dialogue if needed.
 	connect(view, SIGNAL(needToShow()), dlg, SLOT(show()));

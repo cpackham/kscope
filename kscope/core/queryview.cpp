@@ -97,6 +97,15 @@ void QueryView::query(const Query& query)
 }
 
 /**
+ * Adjusts all columns to fit the their contents.
+ */
+void QueryView::resizeColumns()
+{
+	for (int i = 0; i < model()->columnCount(); i++)
+		resizeColumnToContents(i);
+}
+
+/**
  * Called by the engine when results are available.
  * Adds the list of locations to the model.
  * @param  locList  Query results
@@ -140,9 +149,8 @@ void QueryView::onFinished()
 		progBar_ = NULL;
 	}
 
-	// Adjust all columns by content.
-	for (int i = 0; i < 4; i++)
-		resizeColumnToContents(i);
+	// Adjust column sizes.
+	resizeColumns();
 
 	// Auto-select a single result, if required.
 	Location loc;

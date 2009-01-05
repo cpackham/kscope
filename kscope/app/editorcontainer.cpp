@@ -179,6 +179,9 @@ void EditorContainer::gotoPrevLocation()
 		gotoLocationInternal(loc);
 }
 
+/**
+ * Shows a list of tags defined in the file of currently-active editor.
+ */
 void EditorContainer::showLocalTags()
 {
 	Editor* editor = currentEditor();
@@ -189,13 +192,10 @@ void EditorContainer::showLocalTags()
 	QueryResultDialog* dlg = new QueryResultDialog(this);
 	dlg->setModal(true);
 
-	// When a selection is made in the dialogue, forward it to the editor
-	// container and close the dialogue.
+	// Go to selected locations.
 	Core::QueryView* view = dlg->view();
 	connect(view, SIGNAL(locationRequested(const Core::Location&)),
 	        this, SLOT(gotoLocation(const Core::Location&)));
-	connect(view, SIGNAL(locationRequested(const Core::Location&)), dlg,
-	        SLOT(accept()));
 
 	dlg->setWindowTitle(tr("Local Tags"));
 	dlg->show();
@@ -213,6 +213,43 @@ void EditorContainer::showLocalTags()
 		e->showMessage();
 		delete e;
 	}
+}
+
+/**
+ * Shows a dialogue with the list of recently visited locations.
+ */
+void EditorContainer::browseHistory()
+{
+	// Construct the dialogue.
+	QueryResultDialog dlg(this);
+	dlg.setWindowTitle(tr("Location History"));
+
+	// Add location history entries to the model.
+	Core::QueryView* view = dlg.view();
+	view->model()->add(history_.list(), QModelIndex());
+	view->resizeColumns();
+
+	// Setup the model's displayed columns.
+	QList<Core::Location::Fields> columns;
+	columns << Core::Location::File << Core::Location::Line
+	        << Core::Location::Text;
+	view->model()->setColumns(columns);
+
+	try {
+		// Set the root path.
+		view->model()->setRootPath(ProjectManager::project()->rootPath());
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
+
+	// Go to selected locations.
+	connect(view, SIGNAL(locationRequested(const Core::Location&)),
+	        this, SLOT(gotoLocation(const Core::Location&)));
+
+	// Display the dialogue.
+	dlg.exec();
 }
 
 /**

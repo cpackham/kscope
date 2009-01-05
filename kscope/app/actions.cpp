@@ -156,6 +156,16 @@ void Actions::setup()
 	        SLOT(selectPrevResult()));
 	menu->addAction(action);
 
+	menu->addSeparator();
+
+	// Browse location history.
+	action = new QAction(tr("&History"), this);
+	action->setShortcut(tr("Ctrl+H"));
+	action->setStatusTip(tr("rowse location history"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+	        SLOT(browseHistory()));
+	menu->addAction(action);
+
 	// Project menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Project"));
 

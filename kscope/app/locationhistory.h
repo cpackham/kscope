@@ -40,6 +40,8 @@ public:
 	LocationHistory() : pos_(-1), insertItr_(locList_.end()) {}
 	~LocationHistory() {}
 
+	const Core::LocationList& list() const { return locList_; }
+
 	/**
 	 * Adds a location descriptor to the list.
 	 * The location is added immediately after the current position. If this

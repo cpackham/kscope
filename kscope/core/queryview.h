@@ -66,6 +66,7 @@ public:
 	~QueryView();
 
 	void query(const Query&);
+	void resizeColumns();
 
 	/**
 	 * In the case the query returns only a single location, determines whether

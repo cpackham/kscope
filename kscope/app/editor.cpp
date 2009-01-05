@@ -228,6 +228,7 @@ void Editor::getCurrentLocation(Core::Location& loc)
 	loc.file_ = path_;
 	loc.line_ = line + 1;
 	loc.column_ = col + 1;
+	loc.text_ = text(line).trimmed();
 }
 
 /**
@@ -246,7 +247,8 @@ void Editor::search()
 
 	// Find the first occurrence of the searched text.
 	if (!QsciScintilla::findFirst(pattern, options.regExp_,
-	                              options.caseSensitive_, options.wholeWordsOnly_,
+	                              options.caseSensitive_,
+	                              options.wholeWordsOnly_,
 	                              options.wrap_, !options.backward_)) {
 		QString msg = tr("'%1' could not be found in the document")
 		              .arg(pattern);
