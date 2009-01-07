@@ -220,6 +220,15 @@ void MainWindow::buildProject()
 }
 
 /**
+ * Opens the given file for editing.
+ * @param  path  The path of the requested file
+ */
+void MainWindow::openFile(const QString& path)
+{
+	editCont_->openFile(path);
+}
+
+/**
  * Called before the main window closes.
  * @param  event  Information on the closing event
  */
@@ -272,10 +281,8 @@ void MainWindow::readSettings()
  */
 void MainWindow::setProjectTitle(bool hasProject)
 {
-	(void)hasProject;
-
 	QString title = qApp->applicationName();
-	if (ProjectManager::project())
+	if (hasProject)
 		title += " - " + ProjectManager::project()->name();
 
 	setWindowTitle(title);

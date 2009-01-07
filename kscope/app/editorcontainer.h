@@ -54,6 +54,7 @@ public:
 public slots:
 	void newFile();
 	void openFile();
+	void openFile(const QString&);
 	void configEditor();
 	void gotoLocation(const Core::Location&);
 	void gotoNextLocation();

@@ -110,6 +110,16 @@ void EditorContainer::openFile()
 }
 
 /**
+ * Creates an editor window for editing the given file.
+ * @param  path  The path of the file to edit
+ */
+void EditorContainer::openFile(const QString& path)
+{
+	if (!path.isEmpty())
+		(void)getEditor(path, true);
+}
+
+/**
  * Displays the editor configuration dialogue.
  * Any changes to the configuration are then applied to all open editor windows.
  */

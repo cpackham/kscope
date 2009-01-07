@@ -105,13 +105,41 @@ void Application::customEvent(QEvent* event)
  */
 void Application::init()
 {
+	QString path;
+
+	// Parse command-line arguments.
+	// TODO: Need to think some more about the options.
+	QStringList args = arguments();
+	while (!args.isEmpty()) {
+		QString arg = args.takeFirst();
+		if (arg.startsWith("-")) {
+			switch (arg.at(1).toLatin1()) {
+			case 'f':
+				path = args.takeFirst();
+				mainWnd_->openFile(path);
+				return;
+
+			case 'p':
+				path = args.takeFirst();
+				try {
+					ProjectManager::load<Cscope::ManagedProject>(path);
+				}
+				catch (Core::Exception* e) {
+					e->showMessage();
+					delete e;
+				}
+				return;
+			}
+		}
+	}
+
 	// Get the path of the last active project.
-	QString lastProj = QSettings().value("Session/LastProject", "").toString();
-	if (lastProj.isEmpty())
+	path = QSettings().value("Session/LastProject", "").toString();
+	if (path.isEmpty())
 		return;
 
 	// Get the project's name.
-	QString name = Cscope::ManagedProject(lastProj).name();
+	QString name = Cscope::ManagedProject(path).name();
 
 	// Prompt the user for opening the last project.
 	// TODO: Want more options on start-up (list of last projects, create new,
@@ -121,7 +149,7 @@ void Application::init()
 	                          QMessageBox::Yes | QMessageBox::No)
 	    == QMessageBox::Yes) {
 		try {
-			ProjectManager::load<Cscope::ManagedProject>(lastProj);
+			ProjectManager::load<Cscope::ManagedProject>(path);
 		}
 		catch (Core::Exception* e) {
 			e->showMessage();
