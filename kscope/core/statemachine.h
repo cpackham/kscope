@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Elad Lahav
+ *   Copyright (C) 2007-2009 by Elad Lahav
  *   elad_lahav@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it and/or modify

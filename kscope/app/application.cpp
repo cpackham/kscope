@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Elad Lahav
+ *   Copyright (C) 2007-2009 by Elad Lahav
  *   elad_lahav@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -84,7 +84,7 @@ void Application::about()
 
 	str << "Source browsing, analysis and editing\n";
 	str << "Version " << applicationVersion() << "\n";
-	str << "Copyright (c) 2007-2008 by Elad Lahav\n";
+	str << "Copyright (c) 2007-2009 by Elad Lahav\n";
 	str << "Distributed under the terms of the GNU Public License v2";
 
 	QMessageBox::about(mainWnd_, applicationName(), msg);
