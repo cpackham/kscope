@@ -69,6 +69,8 @@ public:
 	 */
 	virtual void stop() { kill(); }
 
+	static QString execPath_;
+
 protected slots:
 	virtual void handleFinished(int, QProcess::ExitStatus);
 

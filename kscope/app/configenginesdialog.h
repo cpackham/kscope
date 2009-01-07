@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Elad Lahav
+ *   Copyright (C) 2007-2009 by Elad Lahav
  *   elad_lahav@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -18,10 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_APPLICATION_H
-#define __APP_APPLICATION_H
+#ifndef __APP_CONFIGENGINESDIALOG_H__
+#define __APP_CONFIGENGINESDIALOG_H__
 
-#include <QApplication>
+#include "ui_configenginesdialog.h"
 
 namespace KScope
 {
@@ -29,45 +29,26 @@ namespace KScope
 namespace App
 {
 
-class MainWindow;
-
 /**
- * The KScope application.
- * Runs the event loop and maintains the active project.
+ * A dialogue for configuring engines.
+ * Each engine should create a configuration widget, which is placed inside a
+ * tab container.
  * @author Elad Lahav
  */
-class Application : public QApplication
+class ConfigEnginesDialog : public QDialog, public Ui::ConfigEnginesDialog
 {
 	Q_OBJECT
 
 public:
-	Application(int&, char**);
-	~Application();
-
-	enum Event { AppInitEvent = QEvent::User };
-
-	int run();
+	ConfigEnginesDialog(QWidget* parent = NULL);
+	~ConfigEnginesDialog();
 
 public slots:
-	void about();
-
-protected:
-	void customEvent(QEvent*);
-
-private:
-	/**
-	 * The main window.
-	 */
-	MainWindow* mainWnd_;
-
-	void init();
-	void setupEngines();
+	void accept();
 };
-
-inline Application* theApp() { return static_cast<Application*>(qApp); }
 
 } // namespace App
 
-} // namespace KScope
+} // namespace Kscope
 
-#endif // __APP_APPLICATION_H
+#endif // __APP_CONFIGENGINESDIALOG_H__

@@ -27,6 +27,8 @@ namespace KScope
 namespace Cscope
 {
 
+QString Ctags::execPath_ = "/usr/bin/ctags";
+
 /**
  * Class constructor.
  */
@@ -67,9 +69,6 @@ void Ctags::query(Core::Engine::Connection* conn, const QString& file)
 	if (state() != QProcess::NotRunning || conn_ != NULL)
 		throw Core::Exception("Process already running");
 
-	// TODO: Make the Ctags path configurable.
-	QString prog = "/usr/bin/ctags";
-
 	// Prepare the argument list.
 	QStringList args;
 	args << "-n"          // use line numbers instead of patterns
@@ -84,8 +83,8 @@ void Ctags::query(Core::Engine::Connection* conn, const QString& file)
 	locList_.clear();
 
 	// Start the process.
-	qDebug() << "Running ctags:" << args;
-	start(prog, args);
+	qDebug() << "Running" << execPath_ << args;
+	start(execPath_, args);
 }
 
 /**

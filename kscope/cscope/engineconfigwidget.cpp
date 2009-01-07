@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Elad Lahav
+ *   Copyright (C) 2007-2009 by Elad Lahav
  *   elad_lahav@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -18,56 +18,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_APPLICATION_H
-#define __APP_APPLICATION_H
-
-#include <QApplication>
+#include "engineconfigwidget.h"
 
 namespace KScope
 {
 
-namespace App
+namespace Cscope
 {
 
-class MainWindow;
-
-/**
- * The KScope application.
- * Runs the event loop and maintains the active project.
- * @author Elad Lahav
- */
-class Application : public QApplication
+EngineConfigWidget::EngineConfigWidget(QWidget* parent)
+	: QWidget(parent), Ui::EngineConfigWidget()
 {
-	Q_OBJECT
+	setupUi(this);
+}
 
-public:
-	Application(int&, char**);
-	~Application();
+EngineConfigWidget::~EngineConfigWidget()
+{
+}
 
-	enum Event { AppInitEvent = QEvent::User };
-
-	int run();
-
-public slots:
-	void about();
-
-protected:
-	void customEvent(QEvent*);
-
-private:
-	/**
-	 * The main window.
-	 */
-	MainWindow* mainWnd_;
-
-	void init();
-	void setupEngines();
-};
-
-inline Application* theApp() { return static_cast<Application*>(qApp); }
-
-} // namespace App
+} // namespace Cscope
 
 } // namespace KScope
-
-#endif // __APP_APPLICATION_H

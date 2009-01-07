@@ -328,6 +328,11 @@ struct Query
 		: type_(type), pattern_(pattern), flags_(flags) {}
 };
 
+/**
+ * Parameters for configuring an engine.
+ */
+typedef QMap<QString, QVariant> KeyValuePairs;
+
 } // namespace Core
 
 } // namespace KScope

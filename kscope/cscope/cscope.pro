@@ -5,14 +5,17 @@ DEPENDPATH += ". ../core"
 CONFIG += dll
 
 # Input
-HEADERS += ctags.h \
+HEADERS += engineconfigwidget.h \
+    ctags.h \
     configwidget.h \
     managedproject.h \
     crossref.h \
     cscope.h \
     files.h
-FORMS += configwidget.ui
-SOURCES += ctags.cpp \
+FORMS += configwidget.ui \
+    engineconfigwidget.ui
+SOURCES += engineconfigwidget.cpp \
+    ctags.cpp \
     configwidget.cpp \
     managedproject.cpp \
     crossref.cpp \

@@ -28,6 +28,8 @@ namespace KScope
 namespace Cscope
 {
 
+QString Cscope::execPath_("/usr/bin/cscope");
+
 /**
  * Class constructor.
  * Creates the parser objects used for parsing Cscope output.
@@ -106,9 +108,6 @@ void Cscope::query(Core::Engine::Connection* conn, const QString& path,
 	if (state() != QProcess::NotRunning || conn_ != NULL)
 		throw Core::Exception("Process already running");
 
-	// TODO: Make the Cscope path configurable.
-	QString prog = "/usr/bin/cscope";
-
 	// Prepare the argument list.
 	QStringList args = baseArgs_;
 	args << "-d";
@@ -125,8 +124,8 @@ void Cscope::query(Core::Engine::Connection* conn, const QString& path,
 	type_ = type;
 
 	// Start the process.
-	qDebug() << "Running cscope:" << args << "in" << path;
-	start(prog, args);
+	qDebug() << "Running" << execPath_ << args << "in" << path;
+	start(execPath_, args);
 }
 
 /**

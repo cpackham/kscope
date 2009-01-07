@@ -61,6 +61,7 @@ private slots:
 	void projectProperties();
 	void query(QAction*);
 	void showWindowMenu();
+	void configEngines();
 };
 
 } // namespace App

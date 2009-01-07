@@ -190,6 +190,33 @@ public slots:
 	virtual void build(Connection*) const = 0;
 };
 
+/**
+ * A template for configuring engines.
+ * Specialise to provide custom-behaviour for specific engines.
+ */
+template<class EngineT>
+struct EngineConfig
+{
+	static QString name() { return QString(); }
+
+	static void getConfig(KeyValuePairs& confParams) {
+		(void)confParams;
+	}
+
+	static void setConfig(const KeyValuePairs& confParams) {
+		(void)confParams;
+	}
+
+	static QWidget* createConfigWidget(QWidget* parent) {
+		(void)parent;
+		return NULL;
+	}
+
+	static void configFromWidget(QWidget* widget) {
+		(void)widget;
+	}
+};
+
 } // namespace Core
 
 } // namespace KScope

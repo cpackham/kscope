@@ -105,10 +105,11 @@ void Application::customEvent(QEvent* event)
  */
 void Application::init()
 {
-	QString path;
+	setupEngines();
 
 	// Parse command-line arguments.
 	// TODO: Need to think some more about the options.
+	QString path;
 	QStringList args = arguments();
 	while (!args.isEmpty()) {
 		QString arg = args.takeFirst();
@@ -156,6 +157,32 @@ void Application::init()
 			delete e;
 		}
 	}
+}
+
+void Application::setupEngines()
+{
+	// TODO: We'd like a list of engines that can be iterated over in compile
+	// time to generate multi-engine code.
+	typedef Core::EngineConfig<Cscope::Crossref> Config;
+
+	QSettings settings;
+
+	// Prefix group with "Engine_" so that engines do not overrun application
+	// groups by accident.
+	settings.beginGroup(QString("Engine_") + Config::name());
+
+	// Add each value under the engine group to the map of configuration
+	// parameters.
+	Core::KeyValuePairs params;
+	QStringList keys = settings.allKeys();
+	QString key;
+	foreach (key, keys)
+		params[key] = settings.value(key);
+
+	settings.endGroup();
+
+	// Apply configuration to the engine.
+	Config::setConfig(params);
 }
 
 } // namespace App

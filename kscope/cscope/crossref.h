@@ -18,11 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CSCOPE_CROSSREF_H
-#define __CSCOPE_CROSSREF_H
+#ifndef __CSCOPE_CROSSREF_H__
+#define __CSCOPE_CROSSREF_H__
 
 #include "engine.h"
 #include "cscope.h"
+#include "ctags.h"
+#include "engineconfigwidget.h"
 
 namespace KScope
 {
@@ -82,8 +84,56 @@ private slots:
 	void buildProcessFinished(int, QProcess::ExitStatus);
 };
 
-}
+} // namespace Cscope
 
-}
+namespace Core
+{
 
-#endif // __CSCOPE_CROSSREF_H
+/**
+ * Provides configuration management for the Cscope/Ctags engine.
+ */
+template<>
+struct EngineConfig<Cscope::Crossref>
+{
+	static QString name() { return "Cscope"; }
+
+	static void getConfig(KeyValuePairs& confParams) {
+		confParams["CscopePath"] = Cscope::Cscope::execPath_;
+		confParams["CtagsPath"] = Cscope::Ctags::execPath_;
+	}
+
+	static void setConfig(const KeyValuePairs& confParams) {
+		QString cscopePath = confParams["CscopePath"].toString();
+		if (!cscopePath.isEmpty())
+			Cscope::Cscope::execPath_ = cscopePath;
+
+		QString ctagsPath = confParams["CtagsPath"].toString();
+		if (!ctagsPath.isEmpty())
+			Cscope::Ctags::execPath_ = ctagsPath;
+	}
+
+	static QWidget* createConfigWidget(QWidget* parent) {
+		Cscope::EngineConfigWidget* widget
+			= new Cscope::EngineConfigWidget(parent);
+		qDebug() << Cscope::Cscope::execPath_ << Cscope::Ctags::execPath_;
+		widget->cscopePathEdit_->setText(Cscope::Cscope::execPath_);
+		widget->ctagsPathEdit_->setText(Cscope::Ctags::execPath_);
+		return widget;
+	}
+
+	static void configFromWidget(QWidget* widget) {
+		Cscope::EngineConfigWidget* configWidget
+			= dynamic_cast<Cscope::EngineConfigWidget*>(widget);
+		if (configWidget == NULL)
+			return;
+
+		Cscope::Cscope::execPath_ = configWidget->cscopePath();
+		Cscope::Ctags::execPath_ = configWidget->ctagsPath();
+	}
+};
+
+} // namespace Core
+
+} // namespace KScope
+
+#endif // __CSCOPE_CROSSREF_H__

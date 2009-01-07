@@ -29,6 +29,7 @@
 #include "managedproject.h"
 #include "projectmanager.h"
 #include "queryresultdock.h"
+#include "configenginesdialog.h"
 
 namespace KScope
 {
@@ -327,10 +328,17 @@ void Actions::setup()
 	// Settings menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Settings"));
 
+	// Editor configuration.
 	action = new QAction(tr("Configure &Editor"), this);
 	action->setStatusTip(tr("Modify editor settings"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
 	        SLOT(configEditor()));
+	menu->addAction(action);
+
+	// Engine configuration.
+	action = new QAction(tr("Configure E&ngines"), this);
+	action->setStatusTip(tr("Manage engine configuration"));
+	connect(action, SIGNAL(triggered()), this, SLOT(configEngines()));
 	menu->addAction(action);
 
 	// Dynamically-created Window menu.
@@ -471,6 +479,15 @@ void Actions::showWindowMenu()
 {
 	wndMenu_->clear();
 	mainWnd()->editCont_->populateWindowMenu(wndMenu_);
+}
+
+/**
+ * Handler for the "Settings->Configure Engines" action.
+ */
+void Actions::configEngines()
+{
+	ConfigEnginesDialog dlg;
+	dlg.exec();
 }
 
 MainWindow* Actions::mainWnd()

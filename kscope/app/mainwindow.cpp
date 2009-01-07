@@ -245,18 +245,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
  */
 void MainWindow::writeSettings()
 {
-	QSettings settings;
-
 	// Store main window position and size.
+	QSettings settings;
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
 	settings.setValue("state", saveState());
-	settings.endGroup();
-
-	// Store project settings.
-	settings.beginGroup("Project");
-
 	settings.endGroup();
 }
 
@@ -265,9 +259,8 @@ void MainWindow::writeSettings()
  */
 void MainWindow::readSettings()
 {
-	QSettings settings;
-
 	// Restore main window position and size.
+	QSettings settings;
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(1000, 600)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());

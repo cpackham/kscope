@@ -19,7 +19,8 @@ SOURCES += findtextdialog.cpp \
     editor.cpp \
     queryresultdock.cpp \
     queryresultdialog.cpp \
-    addfilesdialog.cpp
+    addfilesdialog.cpp \
+    configenginesdialog.cpp
 HEADERS += queryview.h \
     strings.h \
     locationhistory.h \
@@ -40,7 +41,8 @@ HEADERS += queryview.h \
     addfilesdialog.h \
     projectdialog.h \
     buildprogress.h \
-    version.h
+    version.h \
+    configenginesdialog.h
 FORMS += querydialog.ui \
     queryresultdialog.ui \
     stackpage.ui \
@@ -48,7 +50,8 @@ FORMS += querydialog.ui \
     addfilesdialog.ui \
     projectdialog.ui \
     editorconfigdialog.ui \
-    findtextdialog.ui
+    findtextdialog.ui \
+    configenginesdialog.ui
 INCLUDEPATH += ../cscope \
     ../core \
     $${QSCI_ROOT_PATH}/include/Qsci \
