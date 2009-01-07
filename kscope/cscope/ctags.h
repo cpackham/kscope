@@ -69,6 +69,16 @@ private:
 	Core::LocationList locList_;
 
 	/**
+	 * State for parsing the single-character tag type.
+	 */
+	State tagTypeState_;
+
+	/**
+	 * State for parsing possible attributes.
+	 */
+	State attrListState_;
+
+	/**
 	 * Functor for the initial-state transition-function.
 	 */
 	struct ParseAction
@@ -130,15 +140,50 @@ private:
 				loc.tag_.type_ = Core::Tag::UnknownTag;
 			}
 
-			int i;
-			for (i = 4; i < capList.size(); i += 2) {
-				if (capList[i].toString() == "struct")
-					loc.tag_.scope_ = capList[i + 1].toString();
-			}
-
 			// Add to the list of parsed locations.
 			self_.locList_.append(loc);
 		}
+		/**
+		 * The owner Ctags object.
+		 */
+		Ctags& self_;
+	};
+
+	/**
+	 * Functor for the initial-state transition-function.
+	 */
+	struct ParseAttributeAction
+	{
+		/**
+		 * Struct constructor.
+		 * @param  self  The owner Ctags object
+		 */
+		ParseAttributeAction(Ctags& self) : self_(self) {}
+
+		/**
+		 * Functor operator.
+		 * Parses result lines.
+		 * @param  capList  List of captured strings
+		 */
+		void operator()(const Parser::CapList& capList) const {
+			Core::Location& loc = self_.locList_.last();
+
+			for (int i = 0; i < capList.size(); i++) {
+				// Get the attribute name.
+				QString attr = capList[i++].toString();
+				if (capList.size() == i)
+					break;
+
+				// Get the attribute value.
+				QString val = capList[i].toString();
+				if ((attr == "struct")
+				    || (attr == "union")
+				    || (attr == "enum")) {
+					loc.tag_.scope_ = val;
+				}
+			}
+		}
+
 		/**
 		 * The owner Ctags object.
 		 */

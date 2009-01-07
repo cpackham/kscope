@@ -42,37 +42,43 @@ Cscope::Cscope(const QStringList& baseArgs)
 	  queryProgState_("QueryProgress"),
 	  queryResultState_("QueryResults")
 {
-	addRule(buildInitState_, Parser::Literal("Building cross-reference..."),
+	addRule(buildInitState_, Parser::Literal("Building cross-reference...\n"),
 	        buildProgState_);
 	addRule(buildProgState_, Parser::Literal("> Building symbol database ")
 	                         << Parser::Number()
-	                         << Parser::Literal(" of ") << Parser::Number(),
+	                         << Parser::Literal(" of ")
+	                         << Parser::Number()
+	                         << Parser::Literal("\n"),
 	        buildProgState_, ProgAction(*this, tr("Building database...")));
 	addRule(queryProgState_, Parser::Literal("> Symbols matched ")
 	                         << Parser::Number()
 	                         << Parser::Literal(" of ")
-	                         << Parser::Number(),
+	                         << Parser::Number()
+                             << Parser::Literal("\n"),
 	        queryProgState_, ProgAction(*this, tr("Querying...")));
 	addRule(queryProgState_, Parser::Literal("> Possible references retrieved ")
 	                         << Parser::Number()
 	                         << Parser::Literal(" of ")
-	                         << Parser::Number(),
+	                         << Parser::Number()
+                             << Parser::Literal("\n"),
 		    queryProgState_, ProgAction(*this, tr("Querying...")));
 	addRule(queryProgState_, Parser::Literal("> Search ")
 	                         << Parser::Number()
 	                         << Parser::Literal(" of ")
-	                         << Parser::Number(),
+	                         << Parser::Number()
+                             << Parser::Literal("\n"),
 	        queryProgState_, ProgAction(*this, tr("Querying...")));
 	addRule(queryProgState_, Parser::Literal("cscope: ")
 	                         << Parser::Number()
-	                         << Parser::Literal(" lines"),
+	                         << Parser::Literal(" lines\n"),
 	        queryResultState_, QueryEndAction(*this));
-	addRule(queryResultState_, Parser::String<' '>()
+	addRule(queryResultState_, Parser::String<>(' ')
 	                           << Parser::Whitespace()
-	                           << Parser::String<' '>()
+	                           << Parser::String<>(' ')
 	  	                       << Parser::Whitespace()
 	                           << Parser::Number()
-	                           << Parser::String<>(),
+	                           << Parser::String<>('\n')
+	                           << Parser::Literal("\n"),
 	        queryResultState_, QueryResultAction(*this));
 }
 

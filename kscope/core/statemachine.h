@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CORE_STATEMACHINE_H
-#define __CORE_STATEMACHINE_H
+#ifndef __PARSER_STATEMACHINE_H__
+#define __PARSER_STATEMACHINE_H__
 
 #include <QDebug>
 #include "parser.h"
@@ -27,7 +27,7 @@
 namespace KScope
 {
 
-namespace Core
+namespace Parser
 {
 
 /**
@@ -68,7 +68,7 @@ public:
 	 */
 	struct NoAction
 	{
-		void operator()(const Parser::CapList& caps) const {
+		void operator()(const CapList& caps) const {
 			(void)caps;
 		}
 	};
@@ -83,11 +83,18 @@ public:
 	{
 		TransitionBase(const State& nextState) : nextState_(nextState) {}
 
-		virtual bool run(const QString& input) const = 0;
+		virtual int matches(const QString& input, int pos) const = 0;
 
 		const State& nextState_;
 	};
 
+	/**
+	 * A transition rule in a state machine.
+	 * Transitions are associated with states, and each has the form of
+	 * <parser,action,next_state>. If an input is matched by the parser, then
+	 * the action is taken and the state machine should advance to the next
+	 * state.
+	 */
 	template<class ParserT, class ActionT = NoAction>
 	struct Transition : public TransitionBase
 	{
@@ -97,18 +104,38 @@ public:
 		           ActionT action)
 			: TransitionBase(nextState), parser_(parser), action_(action) {}
 
-		bool run(const QString& input) const {
-			Parser::CapList caps;
-			int pos = 0;
+		/**
+		 * Determines if a transition should be taken.
+		 * @param  input  The input to match against
+		 * @return The number of characters matched by the parser if the input
+		 *         matches, -1 if a partial match was found, -2 on a parse
+		 *         error
+		 */
+		int matches(const QString& input, int pos) const {
+			SizedCapList<ParserT::capCount_> caps;
+			switch (parser_.match(input, pos, caps)) {
+			case NoMatch:
+				return -2;
 
-			if (!parser_.match(input, pos, caps))
-				return false;
+			case PartialMatch:
+				return -1;
 
-			action_(caps);
-			return true;
+			case FullMatch:
+				action_(caps);
+				return pos;
+			}
+
+			return 0;
 		}
 
+		/**
+		 * The parser used to match input.
+		 */
 		ParserT parser_;
+
+		/**
+		 * The action to take if input matches.
+		 */
 		ActionT action_;
 	};
 
@@ -125,30 +152,53 @@ public:
 			delete transList_.takeFirst();
 	}
 
-	bool step(const QString& input) {
+	bool parse(QString& input) {
 		QList<TransitionBase*>::ConstIterator itr;
+		bool isPartial;
 
+		// Return immediately if in an error state.
 		if (curState_->isError()) {
 			qDebug() << "Error state!";
 			return false;
 		}
 
-		// Iterate over the list of transitions.
-		for (itr = curState_->transList_.begin();
-		     itr != curState_->transList_.end();
-		     ++itr) {
-			// Check for a matching regular expression.
-			if ((*itr)->run(input)) {
-				curState_ = &(*itr)->nextState_;
-				return true;
+		int pos = 0;
+		while (!input.isEmpty()) {
+			isPartial = false;
+
+			// Iterate over the list of transitions.
+			for (itr = curState_->transList_.begin();
+				 itr != curState_->transList_.end();
+				 ++itr) {
+				// Match the input using the transition's parser.
+				int newPos = (*itr)->matches(input, pos);
+				if (newPos >= 0) {
+					// Match, consume input and move to the next state.
+					pos = newPos;
+					curState_ = &(*itr)->nextState_;
+					isPartial = false;
+					break;
+				}
+				else if (newPos == -1) {
+					// Partial match, try other rules for a full match.
+					isPartial = true;
+				}
+				else {
+					// Parse error.
+					qDebug() << "Parse error!" << curState_->name_ << input;
+					curState_ = &errorState_;
+					return false;
+				}
 			}
+
+			// Stop if only a partial match was found.
+			if (isPartial)
+				break;
 		}
 
-		qDebug() << "Parse error!" << curState_->name_ << input;
-
-		// Set the current state to NULL if matching failed.
-		curState_ = &initState_;
-		return false;
+		// Wait for more input.
+		input = input.mid(pos);
+		return true;
 	}
 
 	/**
@@ -184,11 +234,12 @@ protected:
 
 private:
 	const State* curState_;
+	State errorState_;
 	QList<TransitionBase*> transList_;
 };
 
-}
+} // namespace Parser
 
-}
+} // namespace KScope
 
-#endif // __CORE_STATEMACHINE_H
+#endif // __PARSER_STATEMACHINE_H__

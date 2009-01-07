@@ -34,7 +34,7 @@ namespace Core
  * A process with a state-machine parser.
  * @author  Elad Lahav
  */
-class Process : public QProcess, public StateMachine
+class Process : public QProcess, public Parser::StateMachine
 {
 	Q_OBJECT
 

@@ -32,19 +32,26 @@ namespace Cscope
  */
 Ctags::Ctags() : Process(), conn_(NULL)
 {
-	addRule(initState_, Parser::String<'\t'>()               // tag name
-	                    << Parser::Whitespace()
-	                    << Parser::String<'\t'>()            // file name
-	                    << Parser::Whitespace()
-	                    << Parser::Number()                  // line number
+	// Parse a line starting with the following format:
+	// TAG_NAME\tFILE_NAME\tLINE_NUMBER;"\tTAG_TYPE
+	addRule(initState_, Parser::String<>('\t')
+	                    << Parser::Literal("\t")
+	                    << Parser::String<>('\t')
+	                    << Parser::Literal("\t")
+	                    << Parser::Number()
 	                    << Parser::Literal(";\"\t")
-                        << Parser::String<'\t'>()            // tag type
-                        << Parser::Whitespace()
-	                    << *(Parser::String<':'>()           // attribute name
-	                         << Parser::Literal(":")
-	                         << Parser::String<'\t', true>() // attribute value
-	                         << Parser::Whitespace()),
-	        initState_, ParseAction(*this));
+	                    << Parser::String<QRegExp>(QRegExp("[\t\n]")),
+	        attrListState_, ParseAction(*this));
+
+	// Attribute lists:
+	// *(\tATTRIBUTE_NAME:[ATTRIBUTE_VALUE])\n
+	addRule(attrListState_, Parser::Literal("\t")
+	                        << Parser::String<>(':')
+	                        << Parser::Literal(":")
+	                        << Parser::String<QRegExp, true>(QRegExp("[\t\n]")),
+	        attrListState_, ParseAttributeAction(*this));
+	addRule(attrListState_, Parser::Literal("\n"),
+	        initState_);
 }
 
 /**
@@ -60,7 +67,7 @@ void Ctags::query(Core::Engine::Connection* conn, const QString& file)
 	if (state() != QProcess::NotRunning || conn_ != NULL)
 		throw Core::Exception("Process already running");
 
-	// TODO: Make the Cscope path configurable.
+	// TODO: Make the Ctags path configurable.
 	QString prog = "/usr/bin/ctags";
 
 	// Prepare the argument list.

@@ -49,62 +49,34 @@ void Process::setDeleteOnExit()
 
 void Process::readStandardOutput()
 {
-	QStringList lines;
-	QStringList::Iterator itr;
-
 	// Read from standard output.
 	stdOut_ += readAllStandardOutput();
 
-	// Split the standard output into lines.
-	// If the last line dos not end with a newline character, do not parse it.
-	// Instead, keep it in the stored buffer and wait for more input.
-	lines = stdOut_.split('\n', QString::SkipEmptyParts);
-	if (stdOut_.endsWith('\n'))
-		stdOut_ = "";
-	else
-		stdOut_ = lines.takeLast();
-
-	// Parse each of the complete lines received.
-	for(itr = lines.begin(); itr != lines.end(); ++itr) {
-		if (!step(*itr)) {
-			emit parseError();
-			return;
-		}
+	// Parse the text.
+	if (!parse(stdOut_)) {
+		emit parseError();
+		return;
 	}
 }
 
 void Process::readStandardError()
 {
-#ifndef QT_NO_DEBUG
 	qDebug() << readAllStandardError();
-#endif // !QT_NO_DEBUG
 }
 
 void Process::handleFinished(int code, QProcess::ExitStatus status)
 {
-#ifndef QT_NO_DEBUG
 	qDebug() << "Process finished" << code << status;
-#else
-	(void)code;
-	(void)status;
-#endif // !QT_NO_DEBUG
 }
 
 void Process::handleError(QProcess::ProcessError code)
 {
-#ifndef QT_NO_DEBUG
 	qDebug() << "Process error" << code;
-#else
-	(void)code;
-#endif // !QT_NO_DEBUG
 }
 
 void Process::handleStateChange(QProcess::ProcessState state)
 {
-#ifndef QT_NO_DEBUG
 	qDebug() << "Process state" << state;
-#endif // !QT_NO_DEBUG
-
 	if (state == QProcess::NotRunning && deleteOnExit_)
 		deleteLater();
 }
