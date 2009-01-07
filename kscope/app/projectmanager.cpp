@@ -32,6 +32,9 @@ ProjectManagerSignals ProjectManager::signals_;
 
 const Core::ProjectBase* ProjectManager::project()
 {
+	if (proj_ == NULL)
+		throw new Core::Exception("No project is currently loaded");
+
 	return proj_;
 }
 
@@ -42,7 +45,7 @@ Core::Engine& ProjectManager::engine()
 
 	Core::Engine* engine = proj_->engine();
 	if (engine == NULL)
-		throw Core::Exception("No engine is available");
+		throw new Core::Exception("No engine is available");
 
 	return *engine;
 }
@@ -50,11 +53,11 @@ Core::Engine& ProjectManager::engine()
 Core::Codebase& ProjectManager::codebase()
 {
 	if (proj_ == NULL)
-		throw Core::Exception("No project is currently loaded");
+		throw new Core::Exception("No project is currently loaded");
 
 	Core::Codebase* cbase = proj_->codebase();
 	if (cbase == NULL)
-		throw Core::Exception("No engine is available");
+		throw new Core::Exception("No engine is available");
 
 	return *cbase;
 }
