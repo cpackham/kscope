@@ -100,6 +100,11 @@ public:
 	virtual QString name() const = 0;
 
 	/**
+	 * @return The project path (where configuration files are stored)
+	 */
+	virtual QString path() const = 0;
+
+	/**
 	 * @return The root path for the code base
 	 */
 	virtual QString rootPath() const = 0;
@@ -230,6 +235,11 @@ public:
 	 * @return The name of the project
 	 */
 	virtual QString name() const { return params_.name_; }
+
+	/**
+	 * @return The project path (where configuration files are stored)
+	 */
+	virtual QString path() const { return params_.projPath_; }
 
 	/**
 	 * @return The root path for the project's code base

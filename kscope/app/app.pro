@@ -4,7 +4,8 @@ TARGET = kscopeapp
 DEPENDPATH += """"". ../core ../cscope"""""
 
 # Input
-SOURCES += findtextdialog.cpp \
+SOURCES += session.cpp \
+    findtextdialog.cpp \
     projectmanager.cpp \
     editorconfigdialog.cpp \
     projectdialog.cpp \
@@ -21,7 +22,8 @@ SOURCES += findtextdialog.cpp \
     queryresultdialog.cpp \
     addfilesdialog.cpp \
     configenginesdialog.cpp
-HEADERS += queryview.h \
+HEADERS += session.h \
+    queryview.h \
     strings.h \
     locationhistory.h \
     findtextdialog.h \
