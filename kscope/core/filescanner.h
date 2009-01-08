@@ -98,7 +98,7 @@ private:
 	QString progressMessage_;
 	QSet<QString> visitedDirs_;
 
-	bool scan(const QDir&, bool);
+	bool scan(const QDir&, bool, bool);
 };
 
 }

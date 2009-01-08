@@ -47,20 +47,16 @@ class FileFilter
 public:
 	/**
 	 * Default constructor.
-	 * Creates a filter that accepts all files.
 	 */
-	FileFilter() : defMatch_(true) {}
+	FileFilter() {}
 
 	/**
 	 * Class constructor.
 	 * Creates a filter out of the given semicolon-delimited string.
 	 * @param  filter    The filter string
-	 * @param  defMatch  Whether to accept (true) or reject (false) paths with
-	 *                   no rule match
 	 * @return
 	 */
-	FileFilter(const QString& filter, bool defMatch = false)
-		: defMatch_(defMatch) {
+	FileFilter(const QString& filter) {
 		parse(filter);
 	}
 
@@ -69,10 +65,12 @@ public:
 	 * Iterates over the list of rules. The first rule whose pattern matches
 	 * the path name is used to determine whether the path is accepted
 	 * (including rule) or rejected (excluding rule).
-	 * @param  path  The path name to check
+	 * @param  path           The path name to check
+	 * @param  noMatchResult  The value to return in case no rule matches the
+	 *                        path
 	 * @return true if the path is accepted by the filter, false otherwise
 	 */
-	bool match(const QString& path) const {
+	bool match(const QString& path, bool noMatchResult) const {
 		QList<Rule>::ConstIterator itr;
 
 		for (itr = ruleList_.begin(); itr != ruleList_.end(); ++itr) {
@@ -80,7 +78,7 @@ public:
 				return (((*itr).type_ == Rule::Include) ? true : false);
 		}
 
-		return defMatch_;
+		return noMatchResult;
 	}
 
 	/**
@@ -141,12 +139,6 @@ private:
 	 * The filter, represented as an ordered list of rules.
 	 */
 	QList<Rule> ruleList_;
-
-	/**
-	 * Default behaviour.
-	 * Determines which value match() should return in case no rule matches.
-	 */
-	bool defMatch_;
 
 	/**
 	 * Converts a semicolon-delimited string into a list of rules.

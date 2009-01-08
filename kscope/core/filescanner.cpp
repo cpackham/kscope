@@ -59,7 +59,15 @@ bool FileScanner::scan(const QDir& dir, const FileFilter& filter,
 	filter_ = filter;
 	stop_ = false;
 
-	return scan(dir, recursive);
+	// In a recursive scan, add only files under directories matching the filter
+	// (starting with this one).
+	QString path = dir.path();
+	if (!path.endsWith("/"))
+		path += "/";
+
+	bool addFiles = recursive ? filter_.match(path, true) : true;
+	qDebug() << "Scanning" << path << recursive << addFiles;
+	return scan(dir, recursive, addFiles);
 }
 
 /**
@@ -68,7 +76,7 @@ bool FileScanner::scan(const QDir& dir, const FileFilter& filter,
  * @param recursive  true for recursive scan, false otherwise
  * @return true if successful, false if the scan was aborted
  */
-bool FileScanner::scan(const QDir& dir, bool recursive)
+bool FileScanner::scan(const QDir& dir, bool recursive, bool addFiles)
 {
 	// Get a list of all entries in the directory.
 	QFileInfoList infos = dir.entryInfoList(QDir::Files | QDir::Dirs
@@ -100,19 +108,11 @@ bool FileScanner::scan(const QDir& dir, bool recursive)
 		}
 
 		// Get the file's path.
-		// Add a trailing "/" to directory names, so that the filter can
-		// distinguish those from regular files.
 		QString path = (*itr).filePath();
-		if ((*itr).isDir() && !path.endsWith("/"))
-			path += "/";
-
-		// Match the name against the filter.
-		if (!filter_.match(path))
-			continue;
-
 		if ((*itr).isDir()) {
 			// Directory: scan recursively, if needed.
 			if (recursive) {
+				// Handle symbolic links.
 				if ((*itr).isSymLink()) {
 					qDebug() << __func__ << (*itr).absoluteFilePath();
 
@@ -124,14 +124,32 @@ bool FileScanner::scan(const QDir& dir, bool recursive)
 					}
 				}
 
+				// Change directory.
 				QDir childDir(dir);
-				if (childDir.cd((*itr).fileName()) && !scan(childDir, true))
+				if (!childDir.cd((*itr).fileName()))
+					continue;
+
+				// Add a trailing "/" to directory names, so that the filter can
+				// distinguish those from regular files.
+				if (!path.endsWith('/'))
+					path += "/";
+
+				// Scan recursively.
+				// Filter behaviour for sub-directories:
+				// 1. If an inclusion rule is matched, add files.
+				// 2. If an exclusion rule is matched, do not add files.
+				// 3. If no rule is matched, inherit the behaviour of the
+				//    current directory.
+				if (!scan(childDir, true, filter_.match(path, addFiles)))
 					return false;
 			}
 		}
-		else {
-			// File: add to the file list.
-			fileList_.append(path);
+		else if (addFiles) {
+			// File: add to the file list if the path matches the filter.
+			// The default match is set to false, so that files not matched by
+			// any rule will not be added.
+			if (filter_.match(path, false))
+				fileList_.append(path);
 		}
 	}
 

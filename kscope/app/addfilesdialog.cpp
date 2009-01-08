@@ -72,7 +72,7 @@ protected:
 			name += "/";
 
 		// Query the filter.
-		return filter_.match(name);
+		return filter_.match(name, true);
 	}
 
 private:
@@ -210,10 +210,13 @@ void AddFilesDialog::deleteSelectedFiles()
 bool AddFilesDialog::getFiles(QFileDialog::FileMode mode, QStringList& list)
 {
 	QFileDialog dlg(this);
-	FileFilterProxy* proxy = new FileFilterProxy(filterEdit_->text());
-
 	dlg.setFileMode(mode);
+
+	// TODO: Re-enable when the proxy bug in QFileDialog gets fixed.
+#if 0
+	FileFilterProxy* proxy = new FileFilterProxy(filterEdit_->text());
 	dlg.setProxyModel(proxy);
+#endif
 
 	if (dlg.exec() == QDialog::Rejected)
 		return false;
@@ -249,11 +252,11 @@ void AddFilesDialog::addTree(bool recursive)
 	        SLOT(setLabelText(const QString&)));
 	dlg.show();
 
+	QString filter = filterEdit_->text();
+
 	// Scan for files.
-	if (scanner.scan(list.first(), Core::FileFilter(filterEdit_->text()),
-	                                                recursive)) {
+	if (scanner.scan(list.first(), Core::FileFilter(filter), recursive))
 		fileList_->addItems(scanner.matchedFiles());
-	}
 }
 
 }
