@@ -68,6 +68,7 @@ private:
 class ProjectManager
 {
 public:
+	static bool hasProject() { return proj_ != NULL; }
 	static const Core::ProjectBase* project();
 	static Core::Engine& engine();
 	static Core::Codebase& codebase();
