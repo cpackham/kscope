@@ -81,7 +81,7 @@ public:
 	/**
 	 * Opens the project.
 	 */
-	virtual void open() = 0;
+	virtual void open(Callback<>* cb) = 0;
 
 	/**
 	 * Creates a new project.
@@ -130,6 +130,8 @@ template<class EngineT, class CodebaseT>
 class Project : public ProjectBase
 {
 public:
+	typedef Project<EngineT, CodebaseT> SelfT;
+
 	/**
 	 * Class constructor.
 	 * Attempts to read the name of the project from the given configuration
@@ -141,7 +143,11 @@ public:
 	 *                       file (may be empty for new projects)
 	 */
 	Project(const QString& configFileName, const QString& projPath = QString())
-		: configFileName_(configFileName), loaded_(false), open_(false) {
+		: configFileName_(configFileName),
+		  loaded_(false),
+		  open_(false),
+		  engineOpenCB_(*this),
+		  codebaseOpenCB_(*this) {
 		load(projPath);
 	}
 
@@ -157,7 +163,7 @@ public:
 	 * constructor, or by a call to create(), for this method to succeed.
 	 * @throw Exception
 	 */
-	virtual void open() {
+	virtual void open(Callback<>* cb) {
 		// Nothing to do if the project is already open.
 		if (open_)
 			return;
@@ -166,20 +172,20 @@ public:
 		if (!loaded_)
 			throw new Exception("Project parameters were not loaded");
 
+		openCB_ = cb;
+		engineOpen_ = false;
+		codebaseOpen_ = false;
+
 		try {
 			// Prepare the engine.
-			engine_.open(params_.engineString_);
+			engine_.open(params_.engineString_, &engineOpenCB_);
 
-			// Load the code base.
-			codebase_.load(params_.codebaseString_);
+			// Open the code base.
+			codebase_.open(params_.codebaseString_, &codebaseOpenCB_);
 		}
 		catch (Exception* e) {
 			throw e;
 		}
-
-		open_ = true;
-		qDebug() << "Project opened (EngineString='" << params_.engineString_
-		         << "' CodebaseString='" << params_.codebaseString_ << "')";
 	}
 
 	/**
@@ -293,9 +299,50 @@ protected:
 	EngineT engine_;
 
 	/**
+	 * Whether the engine was opened.
+	 */
+	bool engineOpen_;
+
+	/**
 	 * The code base.
 	 */
 	CodebaseT codebase_;
+
+	/**
+	 * Whether the code base was opened.
+	 */
+	bool codebaseOpen_;
+
+	/**
+	 * Callback object passed to open().
+	 */
+	Callback<>* openCB_;
+
+	struct EngineOpenCB : public Callback<>
+	{
+		SelfT& self_;
+
+		EngineOpenCB(SelfT& self) : self_(self) {}
+
+		void call() {
+			self_.engineOpen_ = true;
+			if (self_.codebaseOpen_)
+				self_.finishOpen();
+		}
+	} engineOpenCB_;
+
+	struct CodebaseOpenCB : public Callback<>
+	{
+		SelfT& self_;
+
+		CodebaseOpenCB(SelfT& self) : self_(self) {}
+
+		void call() {
+			self_.codebaseOpen_ = true;
+			if (self_.engineOpen_)
+				self_.finishOpen();
+		}
+	} codebaseOpenCB_;
 
 	/**
 	 * Reads project settings from the configuration file.
@@ -325,6 +372,12 @@ protected:
 
 		loaded_ = true;
 		qDebug() << "Project loaded (name='" << params_.name_ << "')";
+	}
+
+	void finishOpen() {
+		open_ = true;
+		if (openCB_)
+			openCB_->call();
 	}
 
 	inline QString configPath() {

@@ -63,9 +63,10 @@ void Files::create(const QString& path)
 
 	path_ = dir.filePath("cscope.files");
 	writable_ = true;
+	empty_ = true;
 }
 
-void Files::load(const QString& path)
+void Files::open(const QString& path, Core::Callback<>* cb)
 {
 	// Make sure the directory exists.
 	QDir dir(path);
@@ -81,6 +82,7 @@ void Files::load(const QString& path)
 
 		path_ = dir.filePath("cscope.files");
 		writable_ = fi.isWritable();
+		empty_ = (fi.size() == 0);
 	}
 	else {
 		// No, create a new file.
@@ -92,15 +94,16 @@ void Files::load(const QString& path)
 		}
 	}
 
-	emit loaded();
+	if (cb)
+		cb->call();
 }
 
-void Files::store(const QString& path)
+void Files::save(const QString& path)
 {
 	(void)path;
 }
 
-void Files::getFiles(Callback& cb) const
+void Files::getFiles(Core::Callback<const QString&>& cb) const
 {
 	QFile file(path_);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -108,7 +111,7 @@ void Files::getFiles(Callback& cb) const
 
 	QTextStream strm(&file);
 	while (!strm.atEnd())
-		cb(strm.readLine());
+		cb.call(strm.readLine());
 }
 
 void Files::setFiles(const QStringList& fileList)
@@ -122,7 +125,7 @@ void Files::setFiles(const QStringList& fileList)
 	for (itr = fileList.begin(); itr != fileList.end(); ++itr)
 		strm << *itr << endl;
 
-	emit modified();
+	empty_ = fileList.isEmpty();
 }
 
 } // namespace Cscope

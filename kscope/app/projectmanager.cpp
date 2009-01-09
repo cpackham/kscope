@@ -79,6 +79,21 @@ void ProjectManager::close()
 		signals_.emitHasProject(false);
 }
 
+void ProjectManager::finishLoad()
+{
+	// Signal the availability of a project.
+	ProjectManager::signals_.emitHasProject(true);
+
+	// Does the database need to be rebuilt?
+	Core::Engine* engine = proj_->engine();
+	if (engine) {
+		if ((engine->status() == Core::Engine::Build)
+		     || (engine->status() == Core::Engine::Rebuild)) {
+			signals_.emitBuildProject();
+		}
+	}
+}
+
 } // namespace App
 
 } // namespace KScope

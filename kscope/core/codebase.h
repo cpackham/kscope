@@ -18,10 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CORE_CODEBASE_H
-#define __CORE_CODEBASE_H
+#ifndef __CORE_CODEBASE_H__
+#define __CORE_CODEBASE_H__
 
 #include <QStringList>
+#include "globals.h"
 
 namespace KScope
 {
@@ -48,16 +49,12 @@ public:
 	Codebase(QObject* parent = 0) : QObject(parent) {}
 	~Codebase() {}
 
-	struct Callback
-	{
-		virtual void operator()(const QString& file) = 0;
-	};
-
-	virtual void load(const QString& initString) = 0;
-	virtual void store(const QString& initString) = 0;
-	virtual void getFiles(Callback& cb) const = 0;
+	virtual void open(const QString& initString, Callback<>* cb) = 0;
+	virtual void save(const QString& initString) = 0;
+	virtual void getFiles(Callback<const QString&>& cb) const = 0;
 	virtual void setFiles(const QStringList& fileList) = 0;
 	virtual bool canModify() = 0;
+	virtual bool needFiles() { return false; }
 
 signals:
 	void loaded();
@@ -68,4 +65,4 @@ signals:
 
 }
 
-#endif // __CORE_CODEBASE_H
+#endif // __CORE_CODEBASE_H__

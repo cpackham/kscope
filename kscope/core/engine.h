@@ -87,7 +87,7 @@ public:
 	 * Makes the database available for querying.
 	 * @param  initString  Implementation-specific string
 	 */
-	virtual void open(const QString& initString) = 0;
+	virtual void open(const QString& initString, Callback<>* cb) = 0;
 
 	/**
 	 * Determines the status of the database: whether a build is required and

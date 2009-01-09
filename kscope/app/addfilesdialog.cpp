@@ -26,6 +26,7 @@
 #include "addfilesdialog.h"
 #include "filefilter.h"
 #include "filescanner.h"
+#include "projectmanager.h"
 
 namespace KScope
 {
@@ -210,6 +211,7 @@ void AddFilesDialog::deleteSelectedFiles()
 bool AddFilesDialog::getFiles(QFileDialog::FileMode mode, QStringList& list)
 {
 	QFileDialog dlg(this);
+	dlg.setDirectory(ProjectManager::project()->rootPath());
 	dlg.setFileMode(mode);
 
 	// TODO: Re-enable when the proxy bug in QFileDialog gets fixed.

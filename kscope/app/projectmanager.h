@@ -83,7 +83,7 @@ public:
 		// Create and open a project.
 		try {
 			proj_ = new ProjectT(projPath);
-			proj_->open();
+			proj_->open(new OpenCallback());
 		}
 		catch (Core::Exception* e) {
 			throw e;
@@ -91,23 +91,6 @@ public:
 
 		// Save the project path.
 		QSettings().setValue("Session/LastProject", projPath);
-
-		// Signal the availability of a project.
-		signals_.emitHasProject(true);
-
-#if 0
-		// TODO: Consider auto-rebuilds on startup. This feature is disabled
-		// for the time being.
-
-		// Does the database need to be rebuilt?
-		Core::Engine* engine = proj_->engine();
-		if (engine) {
-			if ((engine->status() == Core::Engine::Build)
-			     || (engine->status() == Core::Engine::Rebuild)) {
-				signals_.emitBuildProject();
-			}
-		}
-#endif
 	}
 
 	static void close();
@@ -115,6 +98,16 @@ public:
 private:
 	static Core::ProjectBase* proj_;
 	static ProjectManagerSignals signals_;
+
+	static void finishLoad();
+
+	struct OpenCallback : public Core::Callback<>
+	{
+		void call() {
+			ProjectManager::finishLoad();
+			delete this;
+		}
+	};
 };
 
 } // namespace App

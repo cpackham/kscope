@@ -135,6 +135,8 @@ void Application::init()
 
 	// Get the project's name.
 	QString name = Cscope::ManagedProject(path).name();
+	if (name.isEmpty())
+		return;
 
 	// Prompt the user for opening the last project.
 	// TODO: Want more options on start-up (list of last projects, create new,

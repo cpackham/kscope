@@ -88,9 +88,10 @@ private:
 
 	void readSettings();
 	void writeSettings();
+	void setWindowTitle(bool);
 
 private slots:
-	void setProjectTitle(bool);
+	void projectOpenedClosed(bool);
 };
 
 } // namespace App

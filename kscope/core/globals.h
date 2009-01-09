@@ -333,6 +333,20 @@ struct Query
  */
 typedef QMap<QString, QVariant> KeyValuePairs;
 
+struct Void {};
+
+template<class T = Void>
+struct Callback
+{
+	virtual void call(T t) = 0;
+};
+
+template<>
+struct Callback<Void>
+{
+	virtual void call() = 0;
+};
+
 } // namespace Core
 
 } // namespace KScope

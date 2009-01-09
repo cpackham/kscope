@@ -46,11 +46,12 @@ public:
 	void create(const QString&);
 
 	// Core::Codebase implementation.
-	virtual void load(const QString&);
-	virtual void store(const QString&);
-	virtual void getFiles(Callback&) const;
-	virtual void setFiles(const QStringList&);
-	virtual bool canModify() { return writable_; }
+	void open(const QString&, Core::Callback<>*);
+	void save(const QString&);
+	void getFiles(Core::Callback<const QString&>&) const;
+	void setFiles(const QStringList&);
+	bool canModify() { return writable_; }
+	bool needFiles() { return writable_ && empty_; }
 
 private:
 	/**
@@ -62,6 +63,11 @@ private:
 	 * Whether the file can be written to.
 	 */
 	bool writable_;
+
+	/**
+	 * Whether the file contains any data.
+	 */
+	bool empty_;
 };
 
 } // namespace Cscope

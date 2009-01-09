@@ -67,13 +67,13 @@ private:
 		return static_cast<ItemT*>(index.internalPointer());
 	}
 
-	struct AddFilesCallback : public Codebase::Callback
+	struct AddFilesCallback : public Core::Callback<const QString&>
 	{
 		CodebaseModel* model_;
 
 		AddFilesCallback(CodebaseModel* model) : model_(model) {}
 
-		void operator()(const QString& file) {
+		void call(const QString& file) {
 			model_->addFile(file);
 		}
 	};

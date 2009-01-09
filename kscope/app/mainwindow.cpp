@@ -45,9 +45,7 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 {
 	// Set the window title.
 	// This changes whenever a project is opened/closed.
-	setProjectTitle(false);
-	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), this,
-	        SLOT(setProjectTitle(bool)));
+	setWindowTitle(false);
 
 	// The main window icon.
 	setWindowIcon(QIcon(":/images/kscope"));
@@ -72,6 +70,10 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 
 	// Apply saved window settings.
 	readSettings();
+
+	// Perform actions when a project is opened or closed.
+	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), this,
+	        SLOT(projectOpenedClosed(bool)));
 
 	// Rebuild the project when signalled by the project manager.
 	connect(ProjectManager::signalProxy(), SIGNAL(buildProject()), this,
@@ -325,13 +327,32 @@ void MainWindow::readSettings()
  * Changes the window title to reflect the availability of a project.
  * @param  hasProject  true if a project is currently open, false otherwise
  */
-void MainWindow::setProjectTitle(bool hasProject)
+void MainWindow::setWindowTitle(bool hasProject)
 {
 	QString title = qApp->applicationName();
 	if (hasProject)
 		title += " - " + ProjectManager::project()->name();
 
-	setWindowTitle(title);
+	QMainWindow::setWindowTitle(title);
+}
+
+void MainWindow::projectOpenedClosed(bool opened)
+{
+	// Adjust the window title.
+	setWindowTitle(opened);
+
+	// Nothing else to to if a project was closed.
+	if (!opened)
+		return;
+
+	try {
+		if (ProjectManager::codebase().needFiles())
+			actions_.projectFiles();
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 } // namespace App

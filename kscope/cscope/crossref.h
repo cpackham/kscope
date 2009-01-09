@@ -49,7 +49,7 @@ public:
 	Crossref(QObject* parent = 0);
 	~Crossref();
 
-	void open(const QString&);
+	void open(const QString&, Core::Callback<>*);
 
 	/**
 	 * @return The current status of the database.

@@ -68,6 +68,7 @@ public:
 		else {
 			// New project dialogue.
 			setWindowTitle(tr("New Project"));
+			projectPathEdit_->setText(QDir::home().path());
 		}
 
 		// Add a project-specific configuration page.

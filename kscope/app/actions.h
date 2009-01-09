@@ -48,12 +48,7 @@ public:
 
 	void setup();
 
-private:
-	QMenu* wndMenu_;
-
-	inline MainWindow* mainWnd();
-
-private slots:
+public slots:
 	void newProject();
 	void openProject();
 	void closeProject();
@@ -62,6 +57,11 @@ private slots:
 	void query(QAction*);
 	void showWindowMenu();
 	void configEngines();
+
+private:
+	QMenu* wndMenu_;
+
+	inline MainWindow* mainWnd();
 };
 
 } // namespace App

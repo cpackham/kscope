@@ -56,7 +56,7 @@ Crossref::~Crossref()
  * @param  initString  The initialisation string
  * @throw  Exception
  */
-void Crossref::open(const QString& initString)
+void Crossref::open(const QString& initString, Core::Callback<>* cb)
 {
 	// Parse the initialisation string.
 	QStringList args = initString.split(":", QString::SkipEmptyParts);
@@ -79,11 +79,14 @@ void Crossref::open(const QString& initString)
 	else if (!fi.isReadable())
 		throw new Core::Exception("Cannot read the 'cscope.out' file");
 	else
-		status_ = Rebuild;
+		status_ = Ready;
 
 	// Store arguments for running Cscope.
 	path_ = path;
 	args_ = args;
+
+	if (cb)
+		cb->call();
 }
 
 /**

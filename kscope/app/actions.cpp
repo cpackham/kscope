@@ -394,16 +394,12 @@ void Actions::newProject()
 		delete e;
 		return;
 	}
-
-	// Prompt for files.
-	// TODO: What happens if a project is loaded asynchronously?
-	projectFiles();
 }
 
 void Actions::openProject()
 {
 	// If an active project exists, it needs to be closed first.
-	if (ProjectManager::project()) {
+	if (ProjectManager::hasProject()) {
 		QString msg = tr("The active project needs to be closed.\n"
                          "Would you like to close it now?");
 		int result = QMessageBox::question(mainWnd(),
