@@ -58,6 +58,7 @@ public slots:
 	void promptCallTree();
 	void buildProject();
 	void openFile(const QString&);
+	void loadProject(const QString&);
 
 protected:
 	virtual void closeEvent(QCloseEvent*);

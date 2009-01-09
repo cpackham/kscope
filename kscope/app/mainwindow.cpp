@@ -29,6 +29,8 @@
 #include "editor.h"
 #include "projectmanager.h"
 #include "queryresultdialog.h"
+#include "session.h"
+#include "managedproject.h"
 
 namespace KScope
 {
@@ -228,6 +230,31 @@ void MainWindow::openFile(const QString& path)
 	editCont_->openFile(path);
 }
 
+void MainWindow::loadProject(const QString& path)
+{
+	QString projPath;
+
+	try {
+		// Load the project.
+		qDebug() << __func__ << path;
+		ProjectManager::load<Cscope::ManagedProject>(path);
+
+		// Get tne project path.
+		projPath = ProjectManager::project()->path();
+		if (!projPath.endsWith('/'))
+			projPath += '/';
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
+
+	// Restore the session.
+	Session session(projPath + "session.conf");
+	session.load();
+	editCont_->loadSession(session);
+}
+
 /**
  * Called before the main window closes.
  * @param  event  Information on the closing event
@@ -235,8 +262,34 @@ void MainWindow::openFile(const QString& path)
 void MainWindow::closeEvent(QCloseEvent* event)
 {
 	// TODO: Check all editors for unsaved changes.
+	if (!editCont_->canClose()) {
+		event->ignore();
+		return;
+	}
 
+	if (ProjectManager::hasProject()) {
+		QString projPath;
+		try {
+			// Get tne project path.
+			projPath = ProjectManager::project()->path();
+			if (!projPath.endsWith('/'))
+				projPath += '/';
+		}
+		catch (Core::Exception* e) {
+			e->showMessage();
+			delete e;
+		}
+
+		// Store session information.
+		Session session(projPath + "session.conf");
+		editCont_->saveSession(session);
+		session.save();
+	}
+
+	// Save main-window geometry.
 	writeSettings();
+
+	// Close the main window and terminate the application.
 	event->accept();
 }
 

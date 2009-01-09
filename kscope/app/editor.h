@@ -89,6 +89,8 @@ public:
 	};
 
 	bool load(const QString&);
+	bool save();
+	bool canClose();
 	void setCursorPosition(uint, uint);
 	QString currentSymbol() const;
 	void setFocus();
@@ -101,6 +103,12 @@ public:
 public slots:
 	void search();
 	void searchNext();
+
+signals:
+	void closed(const QString& path);
+
+protected:
+	void closeEvent(QCloseEvent*);
 
 private:
 	/**

@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QDebug>
 #include "session.h"
 #include "projectmanager.h"
 #include "exception.h"
@@ -28,17 +29,27 @@ namespace KScope
 namespace App
 {
 
+/**
+ * Class constructor.
+ * @param  path  Path to the session file
+ */
 Session::Session(const QString& path) : path_(path)
 {
 }
 
+/**
+ * Class destructor.
+ */
 Session::~Session()
 {
 }
 
+/**
+ * Reads session information from the configuration file.
+ */
 void Session::load()
 {
-	QSettings settings(path_);
+	QSettings settings(path_, QSettings::IniFormat);
 
 	// Get a list of files being edited, along with the location of the
 	// cursor on each one.
@@ -59,9 +70,12 @@ void Session::load()
 	activeEditor_ = settings.value("ActiveEditor").toString();
 }
 
+/**
+ * Writes session information to the configuration file.
+ */
 void Session::save()
 {
-	QSettings settings(path_);
+	QSettings settings(path_, QSettings::IniFormat);
 
 	// Get a list of files being edited, along with the location of the
 	// cursor on each one.
@@ -73,8 +87,6 @@ void Session::save()
 		settings.setValue("Path", loc.file_);
 		settings.setValue("Line", loc.line_);
 		settings.setValue("Column", loc.column_);
-
-		editorList_.append(loc);
 	}
 	settings.endArray();
 

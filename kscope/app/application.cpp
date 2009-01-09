@@ -122,13 +122,7 @@ void Application::init()
 
 			case 'p':
 				path = args.takeFirst();
-				try {
-					ProjectManager::load<Cscope::ManagedProject>(path);
-				}
-				catch (Core::Exception* e) {
-					e->showMessage();
-					delete e;
-				}
+				mainWnd_->loadProject(path);
 				return;
 			}
 		}
@@ -149,13 +143,7 @@ void Application::init()
 	                          tr("Would you like to reload '%1'?").arg(name),
 	                          QMessageBox::Yes | QMessageBox::No)
 	    == QMessageBox::Yes) {
-		try {
-			ProjectManager::load<Cscope::ManagedProject>(path);
-		}
-		catch (Core::Exception* e) {
-			e->showMessage();
-			delete e;
-		}
+		mainWnd_->loadProject(path);
 	}
 }
 

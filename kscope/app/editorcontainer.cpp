@@ -79,15 +79,78 @@ Editor* EditorContainer::currentEditor() const
  */
 void EditorContainer::populateWindowMenu(QMenu* wndMenu) const
 {
-	QMap<QString, QMdiSubWindow*>::ConstIterator itr;
-
 	// Add an entry for each open sub-window.
+	QMap<QString, QMdiSubWindow*>::ConstIterator itr;
 	for (itr = fileMap_.begin(); itr != fileMap_.end(); ++itr)
 		wndMenu->addAction(itr.key());
 
 	// Activate a sub-window when its menu entry is selected.
 	connect(wndMenu, SIGNAL(triggered(QAction*)), this,
 	        SLOT(handleWindowAction(QAction*)));
+}
+
+/**
+ * Checks for any unsaved-changes in the currently open editors.
+ * @return true if the application can terminate, false if the user cancels
+ *         the operation due to unsaved changes
+ */
+bool EditorContainer::canClose()
+{
+	// TODO: Saving a file may take too long (e.g., for NFS-mounted files).
+	// In this case, the application should not terminate until the file has
+	// been saved. The current behaviour may lead to data loss!
+
+	// Iterate over all editor windows.
+	foreach (QMdiSubWindow* window, fileMap_) {
+		Editor* editor = static_cast<Editor*>(window->widget());
+		if (!editor->canClose())
+			return false;
+	}
+
+	return true;
+}
+
+/**
+ * Stores the locations of all editors in a session object.
+ * @param  session  The session object to use
+ */
+void EditorContainer::saveSession(Session& session)
+{
+	Core::LocationList locList;
+
+	// Create a list of locations for the open editors.
+	foreach (QMdiSubWindow* window, fileMap_) {
+		Editor* editor = static_cast<Editor*>(window->widget());
+
+		Core::Location loc;
+		editor->getCurrentLocation(loc);
+		locList.append(loc);
+	}
+
+	session.setEditorList(locList);
+
+	// Store the path of the currently active editor.
+	if (activeEditor_ != NULL)
+		session.setActiveEditor(activeEditor_->path());
+}
+
+/**
+ * Opens editors based on the locations stored in a session object.
+ * @param  session  The session object to use
+ */
+void EditorContainer::loadSession(Session& session)
+{
+	const Core::LocationList& locList = session.editorList();
+	Core::LocationList::ConstIterator itr;
+
+	// Open an editor for each location.
+	for (itr = locList.begin(); itr != locList.end(); ++itr)
+		gotoLocationInternal(*itr);
+
+	// Activate the previously-active editor.
+	QString activeEditor = session.activeEditor();
+	if (!activeEditor.isEmpty())
+		(void)getEditor(activeEditor, true);
 }
 
 /**
@@ -300,6 +363,8 @@ QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 	}
 
 	editor->applyConfig(config_);
+	connect(editor, SIGNAL(closed(const QString&)), this,
+	        SLOT(editorClosed(const QString&)));
 
 	// Create a new sub window for the editor.
 	QMdiSubWindow* window = addSubWindow(editor);
@@ -386,6 +451,16 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 			emit hasActiveEditor(false);
 		}
 	}
+}
+
+/**
+ * Removes an editor from the file map when its window is closed.
+ * @param  path  The path of the file edited in the closed window
+ */
+void EditorContainer::editorClosed(const QString& path)
+{
+	fileMap_.remove(path);
+	qDebug() << path << "removed";
 }
 
 } // namespace App

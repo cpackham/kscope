@@ -417,19 +417,14 @@ void Actions::openProject()
 	}
 
 	// Show the "Open Project" dialogue.
+	// TODO: Handle different project files in either visible or hidden
+	// directories.
 	QString path = QFileDialog::getOpenFileName(mainWnd(), tr("Open Project"),
-	                                            QString(), "cscope.proj");
+	                                            QString(), "project.conf");
 	if (path.isEmpty())
 		return;
 
-	try {
-		// Load the project.
-		ProjectManager::load<Cscope::ManagedProject>(QFileInfo(path).path());
-	}
-	catch (Core::Exception* e) {
-		e->showMessage();
-		delete e;
-	}
+	mainWnd()->loadProject(path);
 }
 
 /**

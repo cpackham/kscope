@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QMessageBox>
+#include <QCloseEvent>
 #include <QDebug>
 #include <qscilexercpp.h>
 #include "editor.h"
@@ -61,8 +62,6 @@ Editor::~Editor()
  */
 bool Editor::load(const QString& path)
 {
-	FileIoThread* thread;
-
 	// Indicate that loading is in progress.
 	isLoading_ = true;
 	setEnabled(false);
@@ -73,7 +72,7 @@ bool Editor::load(const QString& path)
 	setLexer(new QsciLexerCPP(this));
 
 	// Create and start the loading thread.
-	thread = new FileIoThread(this);
+	FileIoThread* thread = new FileIoThread(this);
 	connect(thread, SIGNAL(done(const QString&)), this,
 	        SLOT(loadDone(const QString&)));
 	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -84,6 +83,72 @@ bool Editor::load(const QString& path)
 
 	// Store the path.
 	path_ = path;
+	return true;
+}
+
+/**
+ * Writes the contents of the editor back to the file.
+ * @note The current implementation is synchronous, which may cause KScope to
+ *       hang if the saving process takes too long (e.g., for NFS-mounted
+ *       files). This should be fixed at some point.
+ * @return true if successful, false otherwise
+ */
+bool Editor::save()
+{
+	// Nothing to do if the contents did not change since the last save.
+	if (!isModified())
+		return true;
+
+	// TODO: Provide an asynchronous implementation.
+	QFile file(path_);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		QString msg = tr("Failed to save '%1'").arg(path_);
+		QMessageBox::critical(this, tr("File Error"), msg);
+		return false;
+	}
+
+	// Save the file's contents.
+	QTextStream strm(&file);
+	strm << text();
+
+	return true;
+}
+
+/**
+ * Determines whether the editor can be safely closed.
+ * This is the case if the contents are not modified, the user saves the changes
+ * or the user decides that the contents should not be saved.
+ * @return true if the editor can be closed, false otherwise
+ */
+bool Editor::canClose()
+{
+	if (isModified()) {
+		// Prompt the user for unsaved changes.
+		QString msg = tr("The file '%1' was modified.\n"
+		                 "Would you like to save it?")
+		              .arg(path_);
+		QMessageBox::StandardButtons buttons = QMessageBox::Yes
+		                                       | QMessageBox::No
+		                                       | QMessageBox::Cancel;
+		switch (QMessageBox::question(0, tr("Unsaved Changes"), msg,
+		                              buttons)) {
+		case QMessageBox::Yes:
+			// Save the contents of the editor.
+			if (!save())
+				return false;
+			break;
+
+		case QMessageBox::No:
+			// Ignore changes.
+			setModified(false);
+			break;
+
+		default:
+			// Stop the close operation.
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -269,6 +334,22 @@ void Editor::searchNext()
 }
 
 /**
+ * Called before the editor window is closed.
+ * Checks whether the editor can be closed, and if so, accepts the event.
+ * @param  event  The close event
+ */
+void Editor::closeEvent(QCloseEvent* event)
+{
+	if (canClose()) {
+		emit closed(path_);
+		event->accept();
+	}
+	else {
+		event->ignore();
+	}
+}
+
+/**
  * Loads editor configuration parameters.
  * @param  settings  The QSettings object to use for loading
  */
@@ -304,6 +385,7 @@ void Editor::Config::store(QSettings& settings)
 void Editor::loadDone(const QString& text)
 {
 	setText(text);
+	setModified(false);
 	isLoading_ = false;
 	setCursorPosition(onLoadLine_, onLoadColumn_);
 	setEnabled(true);

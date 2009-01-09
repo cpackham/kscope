@@ -27,6 +27,7 @@
 #include "globals.h"
 #include "editor.h"
 #include "locationhistory.h"
+#include "session.h"
 
 namespace KScope
 {
@@ -50,6 +51,9 @@ public:
 
 	Editor* currentEditor() const;
 	void populateWindowMenu(QMenu*) const;
+	bool canClose();
+	void saveSession(Session&);
+	void loadSession(Session&);
 
 public slots:
 	void newFile();
@@ -81,6 +85,7 @@ private:
 private slots:
 	void handleWindowAction(QAction*);
 	void windowActivated(QMdiSubWindow*);
+	void editorClosed(const QString&);
 };
 
 } // namespace App
