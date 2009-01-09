@@ -27,7 +27,7 @@ namespace Cscope
 {
 
 ManagedProject::ManagedProject(const QString& projPath)
-	: Core::Project<Crossref, Files>("cscope.proj", projPath)
+	: Core::Project<Crossref, Files>("project.conf", projPath)
 {
 }
 
