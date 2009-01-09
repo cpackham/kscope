@@ -79,7 +79,7 @@
           <item>
            <widget class="QRadioButton" name="namedDirButton_" >
             <property name="text" >
-             <string>Use a named directory</string>
+             <string>Use a named directory under the following path:</string>
             </property>
             <property name="checked" >
              <bool>true</bool>
