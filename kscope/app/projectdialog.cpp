@@ -61,28 +61,23 @@ void ProjectDialog::browseProjectPath()
 		projectPathEdit_->setText(dir);
 }
 
-void ProjectDialog::setUseHiddenProjectDir(bool enable)
-{
-	if (enable) {
-		connect(rootPathEdit_, SIGNAL(textChanged(const QString&)),
-		        this, SLOT(updateProjectPath(const QString&)));
-		updateProjectPath(rootPathEdit_->text());
-	}
-	else {
-		disconnect(rootPathEdit_, SIGNAL(textChanged(const QString&)),
-		           this, SLOT(updateProjectPath(const QString&)));
-	}
-}
-
-void ProjectDialog::updateProjectPath(const QString& rootPath)
+void ProjectDialog::updateProjectPath()
 {
 	QString path;
-	if (!rootPath.endsWith("/"))
-		path = rootPath + "/" + ".cscope";
-	else
-		path = rootPath + ".cscope";
+	if (namedDirButton_->isChecked()) {
+		path = projectPathEdit_->text();
+		if (!path.endsWith('/'))
+			path += '/';
+		path += nameEdit_->text();
+	}
+	else {
+		path = rootPathEdit_->text();
+		if (!path.endsWith('/'))
+			path += '/';
+		path += ".kscope";
+	}
 
-	projectPathEdit_->setText(path);
+	projectPathLabel_->setText(path);
 }
 
 } // namespace App

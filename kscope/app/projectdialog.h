@@ -54,8 +54,7 @@ public:
 		if (proj) {
 			// Display properties for an existing project.
 			setWindowTitle(tr("Project Properties"));
-			projectPathWidget_->setEnabled(false);
-			hiddenProjDirCheck_->setEnabled(false);
+			projectPathGroup_->setEnabled(false);
 
 			// Get the current project properties.
 			Core::ProjectBase::Params params;
@@ -64,7 +63,7 @@ public:
 			// Update dialogue controls.
 			nameEdit_->setText(params.name_);
 			rootPathEdit_->setText(params.rootPath_);
-			projectPathEdit_->setText(params.projPath_);
+			projectPathLabel_->setText(params.projPath_);
 		}
 		else {
 			// New project dialogue.
@@ -86,7 +85,7 @@ public:
 	template <class ProjectT>
 	void getParams(Core::ProjectBase::Params& params) {
 		// Fill parameters from the main page.
-		params.projPath_ = projectPathEdit_->text();
+		params.projPath_ = projectPathLabel_->text();
 		params.name_ = nameEdit_->text();
 		params.rootPath_ = rootPathEdit_->text();
 
@@ -100,8 +99,7 @@ public:
 protected slots:
 	void browseRootPath();
 	void browseProjectPath();
-	void setUseHiddenProjectDir(bool);
-	void updateProjectPath(const QString&);
+	void updateProjectPath();
 
 private:
 	QWidget* confWidget_;
