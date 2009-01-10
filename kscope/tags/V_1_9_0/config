@@ -1,0 +1,20 @@
+# Common configuration options for all project files.
+
+# -------------------------- BEGIN: EDIT ME -----------------------------------
+
+# Change this value to the installation root path.
+# Executables will be installed under INSTALL_PATH/bin, libraries under
+# INSTALL_PATH/lib, etc.
+INSTALL_PATH = /usr/local
+
+# The root path of the QScintilla installation.
+# KScope expects to find QScintilla's include files under 
+# QSCI_ROOT_PATH/include/Qsci and the library under QSCI_ROOT_PATH/lib.
+QSCI_ROOT_PATH = /usr
+
+# --------------------------- END: EDIT ME ------------------------------------
+
+# The following lines should normally not be edited.
+CONFIG += debug_and_release \
+    warn_all 
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
