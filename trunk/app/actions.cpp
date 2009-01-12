@@ -420,7 +420,7 @@ void Actions::openProject()
 	if (path.isEmpty())
 		return;
 
-	mainWnd()->loadProject(path);
+	mainWnd()->loadProject(QFileInfo(path).path());
 }
 
 /**
