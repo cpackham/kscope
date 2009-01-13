@@ -396,6 +396,9 @@ void Actions::newProject()
 	}
 }
 
+/**
+ * Handler for the "Project->Open" action.
+ */
 void Actions::openProject()
 {
 	// If an active project exists, it needs to be closed first.
@@ -406,10 +409,8 @@ void Actions::openProject()
 		                                   tr("Close Project"),
 		                                   msg,
 		                                   QMessageBox::Yes | QMessageBox::No);
-		if (result == QMessageBox::No)
+		if (result == QMessageBox::No || !closeProject())
 			return;
-
-		ProjectManager::close();
 	}
 
 	// Show the "Open Project" dialogue.
@@ -420,15 +421,19 @@ void Actions::openProject()
 	if (path.isEmpty())
 		return;
 
-	mainWnd()->loadProject(QFileInfo(path).path());
+	ProjectManager::load<Cscope::ManagedProject>(QFileInfo(path).path());
 }
 
 /**
  * Handler for the "Project->Close" action.
  */
-void Actions::closeProject()
+bool Actions::closeProject()
 {
+	if (!mainWnd()->closeSession())
+		return false;
+
 	ProjectManager::close();
+	return true;
 }
 
 /**

@@ -51,7 +51,7 @@ public:
 public slots:
 	void newProject();
 	void openProject();
-	void closeProject();
+	bool closeProject();
 	void projectFiles();
 	void projectProperties();
 	void query(QAction*);

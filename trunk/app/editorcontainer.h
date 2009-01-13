@@ -65,6 +65,7 @@ public slots:
 	void gotoPrevLocation();
 	void showLocalTags();
 	void browseHistory();
+	void closeAll();
 
 signals:
 	void hasActiveEditor(bool has);

@@ -379,6 +379,22 @@ QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 }
 
 /**
+ * Closes all editor windows.
+ */
+void EditorContainer::closeAll()
+{
+	// Prompt the user for unsaved changes.
+	if (!canClose())
+		return;
+
+	// Iterate over all editor windows.
+	foreach (QMdiSubWindow* window, fileMap_)
+		delete window;
+
+	fileMap_.clear();
+}
+
+/**
  * Makes the given window the active one.
  * Shows the window and sets the focus to the editor.
  * @param  window  The window to activate

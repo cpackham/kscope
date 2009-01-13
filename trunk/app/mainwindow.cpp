@@ -88,6 +88,35 @@ MainWindow::~MainWindow()
 }
 
 /**
+ * Terminates the current session.
+ * Closes all editor windows, and saves the session (if it is part of a
+ * project).
+ * @return true if the session was closed, false if the user aborts the
+ *         operation (e.g., chooses to cancel when prompted to save a modified
+ *         editor)
+ */
+bool MainWindow::closeSession()
+{
+	// Check all editors for unsaved changes.
+	if (!editCont_->canClose())
+		return false;
+
+	if (ProjectManager::hasProject()) {
+		// Get tne project path.
+		QString projPath = ProjectManager::project()->path();
+
+		// Store session information.
+		Session session(QDir(projPath).filePath("session.conf"));
+		editCont_->saveSession(session);
+		session.save();
+	}
+
+	// Close open editor windows.
+	editCont_->closeAll();
+	return true;
+}
+
+/**
  * Prompts the user for query information, and starts a query with the entered
  * parameters.
  * @param  type  The default query type to use
@@ -232,60 +261,15 @@ void MainWindow::openFile(const QString& path)
 	editCont_->openFile(path);
 }
 
-void MainWindow::loadProject(const QString& path)
-{
-	QString projPath;
-
-	try {
-		// Load the project.
-		qDebug() << __func__ << path;
-		ProjectManager::load<Cscope::ManagedProject>(path);
-
-		// Get tne project path.
-		projPath = ProjectManager::project()->path();
-		if (!projPath.endsWith('/'))
-			projPath += '/';
-	}
-	catch (Core::Exception* e) {
-		e->showMessage();
-		delete e;
-	}
-
-	// Restore the session.
-	Session session(projPath + "session.conf");
-	session.load();
-	editCont_->loadSession(session);
-}
-
 /**
  * Called before the main window closes.
  * @param  event  Information on the closing event
  */
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-	// TODO: Check all editors for unsaved changes.
-	if (!editCont_->canClose()) {
+	if (!closeSession()) {
 		event->ignore();
 		return;
-	}
-
-	if (ProjectManager::hasProject()) {
-		QString projPath;
-		try {
-			// Get tne project path.
-			projPath = ProjectManager::project()->path();
-			if (!projPath.endsWith('/'))
-				projPath += '/';
-		}
-		catch (Core::Exception* e) {
-			e->showMessage();
-			delete e;
-		}
-
-		// Store session information.
-		Session session(projPath + "session.conf");
-		editCont_->saveSession(session);
-		session.save();
 	}
 
 	// Save main-window geometry.
@@ -336,6 +320,12 @@ void MainWindow::setWindowTitle(bool hasProject)
 	QMainWindow::setWindowTitle(title);
 }
 
+/**
+ * Performs actions following the opening or closing of a project.
+ * This slot is connected to the hasProject() signal emitted by the project
+ * manager.
+ * @param  opened  true if a project was opened, false if a project was closed
+ */
 void MainWindow::projectOpenedClosed(bool opened)
 {
 	// Adjust the window title.
@@ -345,7 +335,17 @@ void MainWindow::projectOpenedClosed(bool opened)
 	if (!opened)
 		return;
 
+	// Get the project path.
+	QString projPath = ProjectManager::project()->path();
+
+	// Restore the session.
+	Session session(QDir(projPath).filePath("session.conf"));
+	session.load();
+	editCont_->loadSession(session);
+
 	try {
+		// Show the project files dialogue if files need to be added to the
+		// project.
 		if (ProjectManager::codebase().needFiles())
 			actions_.projectFiles();
 	}
