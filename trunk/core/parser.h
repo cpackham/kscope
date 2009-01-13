@@ -195,7 +195,7 @@ struct Literal : public Operators<Literal>
 		(void)caps;
 
 #ifdef DEBUG_PARSER
-		qDebug() << "Literal::match" << input.mid(pos);
+		qDebug() << "Literal::match" << input.mid(pos) << str_;
 #endif
 
 		// If the input is shorter than the expected string, that it can be at
@@ -213,7 +213,7 @@ struct Literal : public Operators<Literal>
 			return FullMatch;
 		}
 
-		return PartialMatch;
+		return NoMatch;
 	}
 
 	static const int capCount_ = 0;
@@ -310,7 +310,7 @@ struct String : public Operators< String<DelimT, AllowEmpty> >
 
 		// Update position and captured values list.
 #ifdef DEBUG_PARSER
-		qDebug() << result;
+		qDebug() << input.mid(pos, delimPos - pos);
 #endif
 		caps << input.mid(pos, delimPos - pos);
 		pos = delimPos;

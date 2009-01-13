@@ -152,10 +152,15 @@ public:
 			delete transList_.takeFirst();
 	}
 
+	/**
+	 * Parses the given input using the state machine.
+	 * When the method returns, the input string is adjusted to contain only
+	 * the part of the input that was not parsed (in case of a partial parse
+	 * match).
+	 * @param  input  The input to parse
+	 * @return true if parsing was successful, false otherwise
+	 */
 	bool parse(QString& input) {
-		QList<TransitionBase*>::ConstIterator itr;
-		bool isPartial;
-
 		// Return immediately if in an error state.
 		if (curState_->isError()) {
 			qDebug() << "Error state!";
@@ -163,10 +168,11 @@ public:
 		}
 
 		int pos = 0;
-		while (!input.isEmpty()) {
-			isPartial = false;
+		while (pos < input.length()) {
+			ParseResult result = NoMatch;
 
 			// Iterate over the list of transitions.
+			QList<TransitionBase*>::ConstIterator itr;
 			for (itr = curState_->transList_.begin();
 				 itr != curState_->transList_.end();
 				 ++itr) {
@@ -176,23 +182,29 @@ public:
 					// Match, consume input and move to the next state.
 					pos = newPos;
 					curState_ = &(*itr)->nextState_;
-					isPartial = false;
+					result = FullMatch;
+#ifdef DEBUG_PARSER
+					qDebug() << "Parse match, next state is"
+					         << curState_->name_;
+#endif
 					break;
 				}
 				else if (newPos == -1) {
 					// Partial match, try other rules for a full match.
-					isPartial = true;
-				}
-				else {
-					// Parse error.
-					qDebug() << "Parse error!" << curState_->name_ << input;
-					curState_ = &errorState_;
-					return false;
+					result = PartialMatch;
 				}
 			}
 
+			// Abort if no rule matched.
+			if (result == NoMatch) {
+				qDebug() << "Parse error!" << curState_->name_
+				         << input.mid(pos);
+				curState_ = &errorState_;
+				return false;
+			}
+
 			// Stop if only a partial match was found.
-			if (isPartial)
+			if (result == PartialMatch)
 				break;
 		}
 
