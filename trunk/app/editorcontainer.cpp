@@ -36,7 +36,10 @@ namespace App
  * @param  parent  Parent widget
  */
 EditorContainer::EditorContainer(QWidget* parent)
-	: QMdiArea(parent), activeEditor_(NULL), newFileIndex_(1)
+	: QMdiArea(parent),
+	  activeEditor_(NULL),
+	  blockWindowActivation_(false),
+	  newFileIndex_(1)
 {
 	// Load editor configuration settings.
 	QSettings settings;
@@ -54,23 +57,6 @@ EditorContainer::EditorContainer(QWidget* parent)
  */
 EditorContainer::~EditorContainer()
 {
-}
-
-/**
- * Returns the editor widget of the active sub-window.
- * @return  The active editor widget, NULL if there are no open editors
- */
-Editor* EditorContainer::currentEditor() const
-{
-	QMdiSubWindow* window;
-
-	// Get the active sub-window.
-	window = activeSubWindow();
-	if (window == NULL)
-		return NULL;
-
-	// Return the editor widget.
-	return static_cast<Editor*>(window->widget());
 }
 
 /**
@@ -143,9 +129,15 @@ void EditorContainer::loadSession(Session& session)
 	const Core::LocationList& locList = session.editorList();
 	Core::LocationList::ConstIterator itr;
 
+	// Do not handle changes to the active editor while loading.
+	blockWindowActivation_ = true;
+
 	// Open an editor for each location.
 	for (itr = locList.begin(); itr != locList.end(); ++itr)
 		gotoLocationInternal(*itr);
+
+	// Re-enable handling of changes to active windows.
+	blockWindowActivation_ = false;
 
 	// Activate the previously-active editor.
 	QString activeEditor = session.activeEditor();
@@ -216,16 +208,18 @@ void EditorContainer::gotoLocation(const Core::Location& loc)
 {
 	// Get the current location.
 	Core::Location curLoc;
-	Editor* editor = currentEditor();
-	if (editor)
-		editor->getCurrentLocation(curLoc);
+	bool addCurrent = false;
+	if (activeEditor_) {
+		activeEditor_->getCurrentLocation(curLoc);
+		addCurrent = true;
+	}
 
 	// Go to the new location.
 	if (!gotoLocationInternal(loc))
 		return;
 
 	// Add both the previous and the new locations to the history list.
-	if (editor)
+	if (addCurrent)
 		history_.add(curLoc);
 	history_.add(loc);
 }
@@ -257,8 +251,7 @@ void EditorContainer::gotoPrevLocation()
  */
 void EditorContainer::showLocalTags()
 {
-	Editor* editor = currentEditor();
-	if (!editor)
+	if (!activeEditor_)
 		return;
 
 	// Create a query view dialogue.
@@ -280,7 +273,7 @@ void EditorContainer::showLocalTags()
 			.queryFields(Core::Query::LocalTags));
 		ProjectManager::engine().query(view,
 		                               Core::Query(Core::Query::LocalTags,
-		                                           editor->path()));
+		                                           activeEditor_->path()));
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();
@@ -387,11 +380,20 @@ void EditorContainer::closeAll()
 	if (!canClose())
 		return;
 
-	// Iterate over all editor windows.
+	// Do not handle changes to the active editor while closing.
+	blockWindowActivation_ = true;
+
+	// Delete all editor windows.
 	foreach (QMdiSubWindow* window, fileMap_)
 		delete window;
-
 	fileMap_.clear();
+
+	// No active editor.
+	activeEditor_ = NULL;
+	emit hasActiveEditor(false);
+
+	// Re-enable handling of changes to active windows.
+	blockWindowActivation_ = false;
 }
 
 /**
@@ -441,31 +443,42 @@ void EditorContainer::handleWindowAction(QAction* action)
 
 /**
  * Emits the hasActiveEditor() signal whenever the active window changes.
- * @param  window  The new active window, or NULL if there is no such window
+ * Note that this slot is activated whenever the active sub-window changes,
+ * which includes cases where the application or MDI-area lose focus. However,
+ * this method is only concerned with changes to the current editor, so the
+ * parameter is ignored, and instead the method invokes currentSubWindow() to
+ * check if the current window has indeed changed.
+ * @param  window  Ignored
  */
 void EditorContainer::windowActivated(QMdiSubWindow* window)
 {
+	if (blockWindowActivation_)
+		return;
+
 	// Get the new active editor widget, if any.
-	Editor* editor = window ?  static_cast<Editor*>(window->widget()) : NULL;
-	if (editor != activeEditor_) {
-		// Stop forwarding signals to the active editor.
-		if (activeEditor_)
-			disconnect(activeEditor_);
+	window = currentSubWindow();
+	Editor* editor = window ? static_cast<Editor*>(window->widget()) : NULL;
+	if (editor == activeEditor_)
+		return;
 
-		// Update the active editor.
-		activeEditor_ = editor;
+	// Stop forwarding signals to the active editor.
+	if (activeEditor_)
+		disconnect(activeEditor_);
 
-		if (activeEditor_) {
-			// Forward signals.
-			connect(this, SIGNAL(find()), activeEditor_, SLOT(search()));
-			connect(this, SIGNAL(findNext()), activeEditor_,
-			        SLOT(searchNext()));
+	// Update the active editor.
+	activeEditor_ = editor;
+	qDebug() << "Active editor" << (activeEditor_ ? activeEditor_->path() : "");
 
-			emit hasActiveEditor(true);
-		}
-		else {
-			emit hasActiveEditor(false);
-		}
+	if (activeEditor_) {
+		// Forward signals.
+		connect(this, SIGNAL(find()), activeEditor_, SLOT(search()));
+		connect(this, SIGNAL(findNext()), activeEditor_,
+		        SLOT(searchNext()));
+
+		emit hasActiveEditor(true);
+	}
+	else {
+		emit hasActiveEditor(false);
 	}
 }
 

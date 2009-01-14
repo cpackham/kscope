@@ -127,7 +127,7 @@ void MainWindow::promptQuery(Core::Query::Type type)
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->currentEditor();
+	Editor* editor = editCont_->activeEditor();
 	if (editor)
 		dlg.setPattern(editor->currentSymbol());
 
@@ -152,7 +152,7 @@ void MainWindow::quickDefinition()
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->currentEditor();
+	Editor* editor = editCont_->activeEditor();
 	if (editor)
 		symbol = editor->currentSymbol();
 
@@ -213,7 +213,7 @@ void MainWindow::promptCallTree()
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->currentEditor();
+	Editor* editor = editCont_->activeEditor();
 	if (editor)
 		dlg.setPattern(editor->currentSymbol());
 

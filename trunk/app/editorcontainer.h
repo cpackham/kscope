@@ -49,11 +49,12 @@ public:
 	EditorContainer(QWidget* parent = 0);
 	~EditorContainer();
 
-	Editor* currentEditor() const;
 	void populateWindowMenu(QMenu*) const;
 	bool canClose();
 	void saveSession(Session&);
 	void loadSession(Session&);
+
+	Editor* activeEditor() const { return activeEditor_; }
 
 public slots:
 	void newFile();
@@ -74,6 +75,7 @@ signals:
 
 private:
 	Editor* activeEditor_;
+	bool blockWindowActivation_;
 	QMap<QString, QMdiSubWindow*> fileMap_;
 	uint newFileIndex_;
 	Editor::Config config_;
