@@ -22,6 +22,7 @@
 #define __APP_LOCATIONHISTORY_H__
 
 #include <QList>
+#include <QDebug>
 #include "globals.h"
 
 namespace KScope
@@ -37,7 +38,7 @@ namespace App
 class LocationHistory
 {
 public:
-	LocationHistory() : pos_(-1), insertItr_(locList_.end()) {}
+	LocationHistory() : pos_(-1) {}
 	~LocationHistory() {}
 
 	const Core::LocationList& list() const { return locList_; }
@@ -54,7 +55,9 @@ public:
 	 * @param  loc  The descriptor to add
 	 */
 	void add(const Core::Location& loc) {
-		// Replace the current location if it is wihtin 5 lines of new one.
+		qDebug() << "Add history" << loc.file_ << loc.line_;
+
+		// Replace the current location if it is within 5 lines of new one.
 		if (pos_ >= 0) {
 			Core::Location curLoc = locList_.at(pos_);
 			if ((curLoc.file_ == loc.file_)
@@ -65,13 +68,12 @@ public:
 		}
 
 		// Remove any location descriptors after the current position.
-		if (insertItr_ != locList_.end())
-			locList_.erase(insertItr_, locList_.end());
+		while (pos_ < (locList_.size() - 1))
+			locList_.removeLast();
 
 		// Add the new descriptor.
 		locList_.append(loc);
 		pos_++;
-		insertItr_ = locList_.end();
 	}
 
 	/**
@@ -80,12 +82,11 @@ public:
 	 * @return true if successful, false if already at the end of the list
 	 */
 	bool next(Core::Location& loc) {
-		if (insertItr_ == locList_.end())
+		if (pos_ == (locList_.size() - 1))
 			return false;
 
 		// Update the current position.
 		++pos_;
-		++insertItr_;
 
 		// Get the new current descriptor.
 		Q_ASSERT(pos_ >= 0 && pos_ < locList_.size());
@@ -105,7 +106,6 @@ public:
 
 		// Update the current position.
 		--pos_;
-		--insertItr_;
 
 		// Get the new current descriptor.
 		Q_ASSERT(pos_ >= 0 && pos_ < locList_.size());
@@ -123,12 +123,6 @@ private:
 	 * The current position in the history.
 	 */
 	int pos_;
-
-	/**
-	 * An iterator pointing to the place where new entries should be added.
-	 * This should always be one ahead of the current position.
-	 */
-	QList<Core::Location>::Iterator insertItr_;
 };
 
 } // namespace App
