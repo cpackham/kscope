@@ -33,11 +33,9 @@ QString Cscope::execPath_("/usr/bin/cscope");
 /**
  * Class constructor.
  * Creates the parser objects used for parsing Cscope output.
- * @param  baseArgs Command-line arguments for Cscope
  */
-Cscope::Cscope(const QStringList& baseArgs)
+Cscope::Cscope()
 	: Process(),
-	  baseArgs_(baseArgs),
 	  conn_(NULL),
 	  buildInitState_("BuildInit"),
 	  buildProgState_("BuildProgress"),
@@ -109,7 +107,7 @@ void Cscope::query(Core::Engine::Connection* conn, const QString& path,
 		throw Core::Exception("Process already running");
 
 	// Prepare the argument list.
-	QStringList args = baseArgs_;
+	QStringList args;
 	args << "-d";
 	args << "-v";
 	args << QString("-L%1").arg(type);
@@ -130,11 +128,13 @@ void Cscope::query(Core::Engine::Connection* conn, const QString& path,
 
 /**
  * Starts a Cscope build process.
- * @param  conn     A connection object used for reporting progress and data
- * @param  path     The directory to execute under
+ * @param  conn      A connection object used for reporting progress and data
+ * @param  path      The directory to execute under
+ * @param  buildArgs Command-line arguments for building the database
  * @throw  Exception
  */
-void Cscope::build(Core::Engine::Connection* conn, const QString& path)
+void Cscope::build(Core::Engine::Connection* conn, const QString& path,
+                   const QStringList& buildArgs)
 {
 	// Abort if a process is already running.
 	if (state() != QProcess::NotRunning || conn_ != NULL)
@@ -144,7 +144,7 @@ void Cscope::build(Core::Engine::Connection* conn, const QString& path)
 	QString prog = "/usr/bin/cscope";
 
 	// Prepare the argument list.
-	QStringList args = baseArgs_;
+	QStringList args = buildArgs;
 	args << "-b";
 	args << "-v";
 	setWorkingDirectory(path);

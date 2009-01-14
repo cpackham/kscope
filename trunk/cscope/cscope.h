@@ -40,7 +40,7 @@ namespace Cscope
 class Cscope : public Core::Process, public Core::Engine::Controlled
 {
 public:
-	Cscope(const QStringList&);
+	Cscope();
 	~Cscope();
 
 	/**
@@ -62,7 +62,7 @@ public:
 
 	void query(Core::Engine::Connection*, const QString&, QueryType,
 	           const QString&);
-	void build(Core::Engine::Connection*, const QString&);
+	void build(Core::Engine::Connection*, const QString&, const QStringList&);
 
 	/**
 	 * Stops a query/build process.
@@ -75,11 +75,6 @@ protected slots:
 	virtual void handleFinished(int, QProcess::ExitStatus);
 
 private:
-	/**
-	 * Command-line arguments common to both querying and building the database.
-	 */
-	QStringList baseArgs_;
-
 	/**
 	 * The current connection object, used to communicate progress and result
 	 * information.

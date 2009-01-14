@@ -52,7 +52,7 @@ Crossref::~Crossref()
  * The initialisation string should be colon-delimited, where the first section
  * is the project path (includes the cscope.out and cscope.files files),
  * followed by command-line arguments to Cscope (only the ones that apply to
- * both querying and building).
+ * building the database).
  * @param  initString  The initialisation string
  * @throw  Exception
  */
@@ -204,7 +204,7 @@ void Crossref::query(Core::Engine::Connection* conn,
 	}
 
 	// Create a new Cscope process object, and start the query.
-	Cscope* cscope = new Cscope(args_);
+	Cscope* cscope = new Cscope();
 	cscope->setDeleteOnExit();
 	cscope->query(conn, path_, type, query.pattern_);
 }
@@ -216,7 +216,7 @@ void Crossref::query(Core::Engine::Connection* conn,
 void Crossref::build(Core::Engine::Connection* conn) const
 {
 	// Create the Cscope process object.
-	Cscope* cscope = new Cscope(args_);
+	Cscope* cscope = new Cscope();
 	cscope->setDeleteOnExit();
 
 	// Need to update the status upon successful termination.
@@ -224,7 +224,7 @@ void Crossref::build(Core::Engine::Connection* conn) const
 	        SLOT(buildProcessFinished(int, QProcess::ExitStatus)));
 
 	// Start the build process.
-	cscope->build(conn, path_);
+	cscope->build(conn, path_, args_);
 }
 
 void Crossref::buildProcessFinished(int code, QProcess::ExitStatus status)
