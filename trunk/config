@@ -18,3 +18,4 @@ QSCI_ROOT_PATH = /usr
 CONFIG += debug_and_release \
     warn_all 
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
+QT += xml

@@ -22,6 +22,8 @@
 #define __CORE_LOCATIONMODEL_H__
 
 #include <QAbstractItemModel>
+#include <QDomDocument>
+#include <QDomElement>
 #include "globals.h"
 
 namespace KScope
@@ -45,6 +47,8 @@ public:
 
 	void setRootPath(const QString&);
 	void setColumns(const QList<Location::Fields>&);
+	void toXML(QDomDocument&, QDomElement&, const QModelIndex&) const;
+	void fromXML(const QDomElement&, const QModelIndex&);
 
 	virtual void add(const LocationList&, const QModelIndex&) = 0;
 	virtual void clear() = 0;
