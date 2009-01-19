@@ -77,15 +77,30 @@ public:
 		autoSelectSingleResult_ = select;
 	}
 
+	/**
+	 * @return  The type of the view
+	 */
+	Type type() const { return type_; }
+
+	/**
+	 * @return The location model for this view
+	 */
+	inline LocationModel* model() {
+		return static_cast<LocationModel*>(QTreeView::model());
+	}
+
+	/**
+	 * @return The location model for this view
+	 */
+	const LocationModel* model() const {
+		return static_cast<const LocationModel*>(QTreeView::model());
+	}
+
 	// Engine::Connection implementation.
 	virtual void onDataReady(const LocationList&);
 	virtual void onFinished();
 	virtual void onAborted();
 	virtual void onProgress(const QString&, uint, uint);
-
-	inline LocationModel* model() {
-		return static_cast<LocationModel*>(QTreeView::model());
-	}
 
 public slots:
 	void selectNext();

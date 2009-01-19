@@ -29,12 +29,17 @@ namespace KScope
 namespace App
 {
 
-StackPage::StackPage(QWidget* widget, const QString& title, QWidget* parent)
+/**
+ * Class constructor.
+ * @param  widget  The widget to display
+ * @param  parent  Parent widget
+ */
+StackPage::StackPage(QWidget* widget, QWidget* parent)
 	: QWidget(parent), Ui::StackPage(), widget_(widget)
 {
 	// Create the UI.
 	setupUi(this);
-	label_->setText(title);
+	label_->setText(widget->windowTitle());
 	layout()->addWidget(widget);
 
 	// Handle title bar button clicks.
@@ -42,27 +47,43 @@ StackPage::StackPage(QWidget* widget, const QString& title, QWidget* parent)
 	connect(closeButton_, SIGNAL(clicked()), this, SLOT(remove()));
 }
 
+/**
+ * Class destructor.
+ */
 StackPage::~StackPage()
 {
 }
 
+/**
+ * Displays the widget.
+ */
 void StackPage::showWidget()
 {
 	widget_->show();
 	emit activated(this);
 }
 
+/**
+ * Hides the widget, leaving only the title bar visible.
+ */
 void StackPage::hideWidget()
 {
 	widget_->hide();
 }
 
+/**
+ * Destroys the page.
+ */
 void StackPage::remove()
 {
 	emit removed(this);
 	deleteLater();
 }
 
+/**
+ * Class constructor.
+ * @param  parent Parent widget
+ */
 StackWidget::StackWidget(QWidget* parent) : QWidget(parent), activePage_(NULL)
 {
 	layout_ = new QVBoxLayout;
@@ -71,14 +92,21 @@ StackWidget::StackWidget(QWidget* parent) : QWidget(parent), activePage_(NULL)
 	setLayout(layout_);
 }
 
+/**
+ * Class destructor.
+ */
 StackWidget::~StackWidget()
 {
 }
 
-void StackWidget::addTab(QWidget* widget, const QString& title)
+/**
+ * Creates a new stack page that holds the given widget.
+ * @param  widget The widget to add
+ */
+void StackWidget::addWidget(QWidget* widget)
 {
 	// Create a new page.
-	StackPage* page = new StackPage(widget, title, this);
+	StackPage* page = new StackPage(widget, this);
 	pageList_.append(page);
 	connect(page, SIGNAL(activated(StackPage*)), this,
 	        SLOT(setActivePage(StackPage*)));
@@ -91,6 +119,27 @@ void StackWidget::addTab(QWidget* widget, const QString& title)
 	setActivePage(page);
 }
 
+/**
+ * Creates a list of all widgets managed by the stack.
+ * @return A list containing all widgets in the stack
+ */
+QList<QWidget*> StackWidget::widgets() const
+{
+	QList<QWidget*> widgetList;
+	QLinkedList<StackPage*>::ConstIterator itr;
+
+	for (itr = pageList_.begin(); itr != pageList_.end(); ++itr)
+		widgetList.append((*itr)->widget());
+
+	return widgetList;
+}
+
+/**
+ * Changes the active page in the stack.
+ * This slot is called when a page shows its widget and emits the activated()
+ * signal. The method needs to hide the widget on the previously active page.
+ * @param  page The newly activated page
+ */
 void StackWidget::setActivePage(StackPage* page)
 {
 	// Nothing to do if this is already the active page.
@@ -105,6 +154,12 @@ void StackWidget::setActivePage(StackPage* page)
 	activePage_ = page;
 }
 
+/**
+ * Removes a page from the stack.
+ * This slot is called when a page is closed and emits the removed() signal. If
+ * it is the currently active page, a new active page is selected.
+ * @param  page The page to remove
+ */
 void StackWidget::removePage(StackPage* page)
 {
 	// Remove from the list of pages.

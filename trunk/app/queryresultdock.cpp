@@ -52,7 +52,7 @@ QueryResultDock::~QueryResultDock()
  */
 void QueryResultDock::query(const Core::Query& query, bool tree)
 {
-	Core::QueryView* view;
+	QueryView* view;
 
 	if (tree) {
 		QString title = tr("Call Tree: ") + Strings::toString(query);
@@ -73,13 +73,31 @@ void QueryResultDock::query(const Core::Query& query, bool tree)
 	}
 }
 
+void QueryResultDock::saveSession(Session& session)
+{
+	QList<QWidget*> widgetList = tabWidget()->widgets();
+	foreach (QWidget* widget, widgetList) {
+		QueryView* view = static_cast<QueryView*>(widget);
+		session.addQueryView(view);
+	}
+}
+
+void QueryResultDock::loadSession(Session& session)
+{
+	for (Session::QueryViewIterator itr = session.beginQueryIteration();
+	     !itr.isAtEnd();
+	     ++itr) {
+		QueryView* view = addView(itr.title(), itr.type());
+		itr.load(view);
+	}
+}
+
 /**
  * Selects the next location in the current view.
  */
 void QueryResultDock::selectNextResult()
 {
-	Core::QueryView* view
-		= static_cast<Core::QueryView*>(tabWidget()->currentWidget());
+	QueryView* view	= static_cast<QueryView*>(tabWidget()->currentWidget());
 	if (view != NULL)
 		view->selectNext();
 }
@@ -89,8 +107,7 @@ void QueryResultDock::selectNextResult()
  */
 void QueryResultDock::selectPrevResult()
 {
-	Core::QueryView* view
-		= static_cast<Core::QueryView*>(tabWidget()->currentWidget());
+	QueryView* view	= static_cast<QueryView*>(tabWidget()->currentWidget());
 	if (view != NULL)
 		view->selectPrev();
 }
@@ -101,17 +118,18 @@ void QueryResultDock::selectPrevResult()
  * @param  type   Whether to create a list or a tree view
  * @return The created widget
  */
-Core::QueryView* QueryResultDock::addView(const QString& title,
-                                          Core::QueryView::Type type)
+QueryView* QueryResultDock::addView(const QString& title,
+                                    Core::QueryView::Type type)
 {
 	// Create a new query view.
-	Core::QueryView* view = new QueryView(this, type);
+	QueryView* view = new QueryView(this, type);
+	view->setWindowTitle(title);
 	connect(view, SIGNAL(locationRequested(const Core::Location&)), this,
 	        SIGNAL(locationRequested(const Core::Location&)));
 	view->setAutoSelectSingleResult(true);
 
 	// Add to the tab widget.
-	tabWidget()->addTab(view, title);
+	tabWidget()->addWidget(view);
 	return view;
 }
 

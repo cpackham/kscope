@@ -24,6 +24,7 @@
 #include <QDockWidget>
 #include "stackwidget.h"
 #include "queryview.h"
+#include "session.h"
 
 namespace KScope
 {
@@ -44,6 +45,8 @@ public:
 	~QueryResultDock();
 
 	void query(const Core::Query&, bool);
+	void saveSession(Session&);
+	void loadSession(Session&);
 
 public slots:
 	void selectNextResult();
@@ -61,7 +64,7 @@ private:
 		return static_cast<StackWidget*>(widget());
 	}
 
-	Core::QueryView* addView(const QString&, Core::QueryView::Type);
+	QueryView* addView(const QString&, Core::QueryView::Type);
 };
 
 } // namespace App

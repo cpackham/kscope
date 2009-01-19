@@ -47,8 +47,8 @@ public:
 
 	void setRootPath(const QString&);
 	void setColumns(const QList<Location::Fields>&);
-	void toXML(QDomDocument&, QDomElement&, const QModelIndex&) const;
-	void fromXML(const QDomElement&, const QModelIndex&);
+	void toXML(QDomDocument&, QDomElement&) const;
+	void fromXML(const QDomElement&);
 
 	virtual void add(const LocationList&, const QModelIndex&) = 0;
 	virtual void clear() = 0;
@@ -77,6 +77,9 @@ protected:
 
 	QVariant locationData(const Location&, uint, int) const;
 	QString columnText(Location::Fields) const;
+
+	void locationToXML(QDomDocument&, QDomElement&, const QModelIndex&) const;
+	void locationFromXML(const QDomElement&, const QModelIndex&);
 };
 
 } // namespace Core

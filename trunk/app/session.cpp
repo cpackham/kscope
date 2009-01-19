@@ -31,9 +31,10 @@ namespace App
 
 /**
  * Class constructor.
- * @param  path  Path to the session file
+ * @param  path  The path of the configuration directory
  */
-Session::Session(const QString& path) : path_(path)
+Session::Session(const QString& path)
+	: path_(path), queryViewDoc_("QueryViews")
 {
 }
 
@@ -49,7 +50,7 @@ Session::~Session()
  */
 void Session::load()
 {
-	QSettings settings(path_, QSettings::IniFormat);
+	QSettings settings(configFile(), QSettings::IniFormat);
 
 	// Get a list of files being edited, along with the location of the
 	// cursor on each one.
@@ -68,6 +69,11 @@ void Session::load()
 
 	// Get the path of the active editor.
 	activeEditor_ = settings.value("ActiveEditor").toString();
+
+	// Load the query XML file.
+	QFile xmlFile(queryViewFile());
+	if (xmlFile.open(QIODevice::ReadOnly))
+		queryViewDoc_.setContent(xmlFile.readAll());
 }
 
 /**
@@ -75,7 +81,7 @@ void Session::load()
  */
 void Session::save()
 {
-	QSettings settings(path_, QSettings::IniFormat);
+	QSettings settings(configFile(), QSettings::IniFormat);
 
 	// Get a list of files being edited, along with the location of the
 	// cursor on each one.
@@ -92,6 +98,44 @@ void Session::save()
 
 	// Get the path of the active editor.
 	settings.setValue("ActiveEditor", activeEditor_);
+
+	// Save the query view XML document.
+	QFile xmlFile(queryViewFile());
+	if (xmlFile.open(QIODevice::WriteOnly))
+		xmlFile.write(queryViewDoc_.toByteArray());
+}
+
+void Session::addQueryView(const QueryView* view)
+{
+	// Get the root element.
+	// Create one if it does not exists.
+	QDomElement root = queryViewDoc_.documentElement();
+	if (root.isNull()) {
+		root = 	queryViewDoc_.createElement("Queries");
+		queryViewDoc_.appendChild(root);
+	}
+
+	// Create an element for storing the view.
+	QDomElement elem = queryViewDoc_.createElement("Query");
+	elem.setAttribute("name", view->windowTitle());
+	elem.setAttribute("type", QString::number(view->type()));
+
+	// Put location information under the element.
+	view->model()->toXML(queryViewDoc_, elem);
+
+	root.appendChild(elem);
+}
+
+Session::QueryViewIterator Session::beginQueryIteration() const
+{
+	QueryViewIterator itr;
+
+	QDomElement root = queryViewDoc_.documentElement();
+	itr.queryNodeList_ = root.elementsByTagName("Query");
+	itr.listPos_ = -1;
+	++itr;
+
+	return itr;
 }
 
 } // namespace App

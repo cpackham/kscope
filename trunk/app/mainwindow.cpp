@@ -102,12 +102,10 @@ bool MainWindow::closeSession()
 		return false;
 
 	if (ProjectManager::hasProject()) {
-		// Get tne project path.
-		QString projPath = ProjectManager::project()->path();
-
 		// Store session information.
-		Session session(QDir(projPath).filePath("session.conf"));
+		Session session(ProjectManager::project()->path());
 		editCont_->saveSession(session);
+		queryDock_->saveSession(session);
 		session.save();
 	}
 
@@ -335,13 +333,11 @@ void MainWindow::projectOpenedClosed(bool opened)
 	if (!opened)
 		return;
 
-	// Get the project path.
-	QString projPath = ProjectManager::project()->path();
-
 	// Restore the session.
-	Session session(QDir(projPath).filePath("session.conf"));
+	Session session(ProjectManager::project()->path());
 	session.load();
 	editCont_->loadSession(session);
+	queryDock_->loadSession(session);
 
 	try {
 		// Show the project files dialogue if files need to be added to the

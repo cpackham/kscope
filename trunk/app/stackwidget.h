@@ -42,7 +42,7 @@ class StackPage : public QWidget, public Ui::StackPage
 	Q_OBJECT
 
 public:
-	StackPage(QWidget*, const QString&, QWidget* parent = 0);
+	StackPage(QWidget*, QWidget* parent = 0);
 	~StackPage();
 
 	/**
@@ -91,7 +91,8 @@ public:
 	StackWidget(QWidget* parent = 0);
 	~StackWidget();
 
-	void addTab(QWidget*, const QString&);
+	void addWidget(QWidget*);
+	QList<QWidget*> widgets() const;
 
 	/**
 	 * @return The widget of the active page, NULL if no page exists
