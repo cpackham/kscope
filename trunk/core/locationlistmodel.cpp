@@ -78,6 +78,16 @@ void LocationListModel::add(const LocationList& locList,
 }
 
 /**
+ * Marks the given index as having no children.
+ * TODO: Currently does nothing. We may want to add a "No Results" dummy item.
+ * @param  index The index to mark
+ */
+void LocationListModel::setEmpty(const QModelIndex& index)
+{
+	(void)index;
+}
+
+/**
  * Removes all descriptors from the lists.
  * Resets the model.
  */

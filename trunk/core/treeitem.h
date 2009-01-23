@@ -55,6 +55,12 @@ public:
 	 * Data accessor.
 	 * @return The node's data
 	 */
+	DataT& data() { return data_; }
+
+	/**
+	 * Data accessor (const version).
+	 * @return The node's data
+	 */
 	const DataT& data() const { return data_; }
 
 	/**

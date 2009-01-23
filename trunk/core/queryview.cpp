@@ -215,7 +215,7 @@ void QueryView::onProgress(const QString& text, uint cur, uint total)
 		progBar_->show();
 	}
 
-	// Update progress information in the progres bar.
+	// Update progress information in the progress bar.
 	progBar_->setLabel(text);
 	progBar_->setProgress(cur, total);
 
@@ -228,6 +228,10 @@ void QueryView::onProgress(const QString& text, uint cur, uint total)
  */
 void QueryView::onFinished()
 {
+	// Handle an empty result set.
+	if (model()->rowCount(queryIndex_) == 0)
+		model()->setEmpty(queryIndex_);
+
 	// Destroy the progress-bar, if it exists.
 	if (progBar_) {
 		delete progBar_;
@@ -239,7 +243,7 @@ void QueryView::onFinished()
 
 	// Auto-select a single result, if required.
 	Location loc;
-	if (autoSelectSingleResult_ && model()->rowCount() == 1
+	if (autoSelectSingleResult_ && model()->rowCount(queryIndex_) == 1
 	                            && model()->firstLocation(loc)) {
 		emit locationRequested(loc);
 	}
@@ -372,6 +376,7 @@ void QueryView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
 	// Create an element list using the index's children.
 	if (model()->hasChildren(idx)) {
 		QDomElement locListElem = doc.createElement("LocationList");
+		elem.setAttribute("expanded", isExpanded(idx) ? "1" : "0");
 		elem.appendChild(locListElem);
 		for (int i = 0; i < model()->rowCount(idx); i++)
 			locationToXML(doc, locListElem, model()->index(i, 0, idx));
@@ -442,8 +447,13 @@ void QueryView::locationFromXML(const QDomElement& locListElem,
 
 	// Load any sub-lists encountered earlier.
 	QMap<int, QDomElement>::Iterator itr;
-	for (itr = childLists.begin(); itr != childLists.end(); ++itr)
-		locationFromXML(itr.value(), model()->index(itr.key(), 0, parentIndex));
+	for (itr = childLists.begin(); itr != childLists.end(); ++itr) {
+		QDomElement elem = itr.value();
+		QModelIndex index = model()->index(itr.key(), 0, parentIndex);
+		locationFromXML(elem, index);
+		if (elem.attribute("expanded").toUInt())
+			expand(index);
+	}
 }
 
 /**

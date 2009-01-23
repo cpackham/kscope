@@ -46,6 +46,7 @@ public:
 
 	// LocationMode implementation.
 	void add(const LocationList&, const QModelIndex& index = QModelIndex());
+	void setEmpty(const QModelIndex&);
 	void clear();
 	bool locationFromIndex(const QModelIndex&, Location&) const;
 	bool firstLocation(Location&) const;

@@ -61,12 +61,58 @@ public:
 		return colList_;
 	}
 
-	virtual void add(const LocationList&, const QModelIndex&) = 0;
+	/**
+	 * Adds a list of locations under the given index
+	 * @param  list   The list of locations
+	 * @param  parent The index under which locations should be added
+	 */
+	virtual void add(const LocationList& list, const QModelIndex& parent) = 0;
+
+	/**
+	 * Marks the given index as having no children.
+	 * This is useful for distinguishing items that are the parents for queries
+	 * that resulted in no locations from items that were not yet queried.
+	 * @param  index The index to mark
+	 */
+	virtual void setEmpty(const QModelIndex& index) = 0;
+
+	/**
+	 * Deletes all locations in the model.
+	 */
 	virtual void clear() = 0;
-	virtual bool locationFromIndex(const QModelIndex&, Location&) const = 0;
-	virtual bool firstLocation(Location&) const = 0;
-	virtual QModelIndex nextIndex(const QModelIndex&) const = 0;
-	virtual QModelIndex prevIndex(const QModelIndex&) const = 0;
+
+	/**
+	 * Converts a model index into a location structure.
+	 * @param  index The index to convert
+	 * @param  loc   The structure to fill
+	 * @return true if the index represents a valid location, false otherwise
+	 */
+	virtual bool locationFromIndex(const QModelIndex& index,
+	                               Location& loc) const = 0;
+
+	/**
+	 * Fills a location structure with the information stored in the first
+	 * index.
+	 * @param  loc The structure to fill
+	 * @return true if a valid index was located, false otherwise
+	 */
+	virtual bool firstLocation(Location& loc) const = 0;
+
+	/**
+	 * Finds the next index in the model.
+	 * The definition of "next" is implementation-dependent.
+	 * @param  index The index to start the search from
+	 * @return The next index in the model
+	 */
+	virtual QModelIndex nextIndex(const QModelIndex& index) const = 0;
+
+	/**
+	 * Finds the previous index in the model.
+	 * The definition of "previous" is implementation-dependent.
+	 * @param  index The index to start the search from
+	 * @return The previous index in the model
+	 */
+	virtual QModelIndex prevIndex(const QModelIndex& index) const = 0;
 
 	// QAsbstractItemModel implementation.
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;

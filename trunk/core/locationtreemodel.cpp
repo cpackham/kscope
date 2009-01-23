@@ -63,6 +63,9 @@ void LocationTreeModel::add(const LocationList& locList,
 			return;
 	}
 
+	// Mark the item as queried.
+	node->data().queried_ = true;
+
 	// Determine the first and last rows for the new items.
 	int firstRow = node->childCount();
 	int lastRow = firstRow + locList.size() - 1;
@@ -81,6 +84,25 @@ void LocationTreeModel::add(const LocationList& locList,
 	// End row insertion.
 	// This is required by QAbstractItemModel.
 	endInsertRows();
+}
+
+/**
+ * Marks the given index as having no children.
+ * @param  index The index to mark
+ */
+void LocationTreeModel::setEmpty(const QModelIndex& index)
+{
+	// Nothing to do for the root.
+	if (!index.isValid())
+		return;
+
+	Node* node = static_cast<Node*>(index.internalPointer());
+	if (node == NULL)
+		return;
+
+	// Mark the item as queried.
+	// TODO: Is there a way to force the view to repaint this item?
+	node->data().queried_ = true;
 }
 
 /**
@@ -292,7 +314,7 @@ bool LocationTreeModel::hasChildren(const QModelIndex& parent) const
 			return 0;
 	}
 
-	return (node->childCount() > 0) || (!node->data().queried_);
+	return ((!node->data().queried_) || (node->childCount() > 0));
 }
 
 /**
