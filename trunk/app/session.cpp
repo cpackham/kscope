@@ -105,6 +105,13 @@ void Session::save()
 		xmlFile.write(queryViewDoc_.toByteArray());
 }
 
+/**
+ * Creates an XML representation of a query view.
+ * The representation is rooted at a "QueryView" element, which holds a
+ * "Query" element for query information, and "Location" elements for query
+ * results.
+ * @param view
+ */
 void Session::addQueryView(const QueryView* view)
 {
 	// Get the root element.
@@ -115,27 +122,35 @@ void Session::addQueryView(const QueryView* view)
 		queryViewDoc_.appendChild(root);
 	}
 
-	// Create an element for storing the view.
-	QDomElement elem = queryViewDoc_.createElement("Query");
-	elem.setAttribute("name", view->windowTitle());
-	elem.setAttribute("type", QString::number(view->type()));
-
 	// Put location information under the element.
-	view->model()->toXML(queryViewDoc_, elem);
-
+	QDomElement elem = view->toXML(queryViewDoc_);
 	root.appendChild(elem);
 }
 
+/**
+ * Creates an iterator that is used for loading query views from an XML
+ * representation.
+ * Once an iterator has been created, a view object can use its load() method
+ * to get the query information and locations.
+ * @return
+ */
 Session::QueryViewIterator Session::beginQueryIteration() const
 {
 	QueryViewIterator itr;
 
 	QDomElement root = queryViewDoc_.documentElement();
-	itr.queryNodeList_ = root.elementsByTagName("Query");
+	itr.queryNodeList_ = root.elementsByTagName("QueryView");
 	itr.listPos_ = -1;
 	++itr;
 
 	return itr;
+}
+
+void Session::QueryViewIterator::load(QueryView* view)
+{
+	// Ensure the iterator's XML element is valid.
+	if (!elem_.isNull())
+		view->fromXML(elem_);
 }
 
 } // namespace App

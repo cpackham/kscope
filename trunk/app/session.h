@@ -45,12 +45,7 @@ public:
 
 	struct QueryViewIterator
 	{
-		void load(QueryView* view) {
-			if (!elem_.isNull()) {
-				view->model()->fromXML(elem_);
-				view->resizeColumns();
-			}
-		}
+		void load(QueryView*);
 
 		bool isAtEnd() { return listPos_ == queryNodeList_.size(); }
 

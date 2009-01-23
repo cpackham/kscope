@@ -22,8 +22,6 @@
 #define __CORE_LOCATIONMODEL_H__
 
 #include <QAbstractItemModel>
-#include <QDomDocument>
-#include <QDomElement>
 #include "globals.h"
 
 namespace KScope
@@ -46,9 +44,22 @@ public:
 	virtual ~LocationModel();
 
 	void setRootPath(const QString&);
-	void setColumns(const QList<Location::Fields>&);
-	void toXML(QDomDocument&, QDomElement&) const;
-	void fromXML(const QDomElement&);
+
+	/**
+	 * Determines which fields of a location structure the model supports, and
+	 * in what order.
+	 * @param  colList  An ordered list of location structure fields
+	 */
+	void setColumns(const QList<Location::Fields>& colList) {
+		colList_ = colList;
+	}
+
+	/**
+	 * @return The list of query fields presented by the model as columns
+	 */
+	const QList<Location::Fields>& columns() const {
+		return colList_;
+	}
 
 	virtual void add(const LocationList&, const QModelIndex&) = 0;
 	virtual void clear() = 0;
@@ -64,7 +75,7 @@ public:
 
 protected:
 	/**
-	 * A copy of the list of columns passed to the constructor.
+	 * The list of query fields presented by the model as columns.
 	 */
 	QList<Location::Fields> colList_;
 
@@ -77,9 +88,6 @@ protected:
 
 	QVariant locationData(const Location&, uint, int) const;
 	QString columnText(Location::Fields) const;
-
-	void locationToXML(QDomDocument&, QDomElement&, const QModelIndex&) const;
-	void locationFromXML(const QDomElement&, const QModelIndex&);
 };
 
 } // namespace Core

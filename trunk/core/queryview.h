@@ -22,6 +22,8 @@
 #define __CORE_QUERYVIEW_H__
 
 #include <QTreeView>
+#include <QDomDocument>
+#include <QDomElement>
 #include "globals.h"
 #include "engine.h"
 #include "progressbar.h"
@@ -67,6 +69,8 @@ public:
 
 	void query(const Query&);
 	void resizeColumns();
+	QDomElement toXML(QDomDocument&) const;
+	void fromXML(const QDomElement&);
 
 	/**
 	 * In the case the query returns only a single location, determines whether
@@ -160,6 +164,9 @@ private:
 	 * @param  select  true to select a single result, false otherwise
 	 */
 	bool autoSelectSingleResult_;
+
+	void locationToXML(QDomDocument&, QDomElement&, const QModelIndex&) const;
+	void locationFromXML(const QDomElement&, const QModelIndex&);
 
 private slots:
 	void requestLocation(const QModelIndex&);

@@ -140,9 +140,14 @@ void EditorContainer::loadSession(Session& session)
 	blockWindowActivation_ = false;
 
 	// Activate the previously-active editor.
+	// We have to call windowActivated() explicitly, in the case the active
+	// window is the last one to be loaded. In that case, the signal will not
+	// be emitted.
 	QString activeEditor = session.activeEditor();
-	if (!activeEditor.isEmpty())
-		(void)getEditor(activeEditor, true);
+	if (!activeEditor.isEmpty()) {
+		QMdiSubWindow* window = getEditor(activeEditor, true);
+		windowActivated(window);
+	}
 }
 
 /**

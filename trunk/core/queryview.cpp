@@ -106,6 +106,91 @@ void QueryView::resizeColumns()
 }
 
 /**
+ * Creates an XML representation of the view, which can be used for storing the
+ * model's data in a file.
+ * The representation is rooted at a <QueryView> element, which holds a <Query>
+ * element for the query information, a <Columns> element with a list of
+ * columns, and a <LocationList> element that describes the list or tree of
+ * locations.
+ * @param  doc    The XML document object to use
+ * @return The root element of the view's representation
+ */
+QDomElement QueryView::toXML(QDomDocument& doc) const
+{
+	// Create an element for storing the view.
+	QDomElement viewElem = doc.createElement("QueryView");
+	viewElem.setAttribute("name", windowTitle());
+	viewElem.setAttribute("type", QString::number(type_));
+
+	// Store query information.
+	QDomElement queryElem = doc.createElement("Query");
+	queryElem.setAttribute("type", QString::number(query_.type_));
+	queryElem.setAttribute("flags", QString::number(query_.flags_));
+	queryElem.appendChild(doc.createCDATASection(query_.pattern_));
+	viewElem.appendChild(queryElem);
+
+	// Create a "Columns" element.
+	QDomElement colsElem = doc.createElement("Columns");
+	viewElem.appendChild(colsElem);
+
+	// Add an element for each column.
+	foreach (Location::Fields field, model()->columns()) {
+		QDomElement colElem = doc.createElement("Column");
+		colElem.setAttribute("field", QString::number(field));
+		colsElem.appendChild(colElem);
+	}
+
+	// Add locations.
+	locationToXML(doc, viewElem, QModelIndex());
+
+	return viewElem;
+}
+
+/**
+ * Loads a query view from an XML representation.
+ * @param  root The root element for the query's XML representation
+ */
+void QueryView::fromXML(const QDomElement& viewElem)
+{
+	// Get query information.
+	QDomElement queryElem = viewElem.elementsByTagName("Query").at(0).toElement();
+	if (queryElem.isNull())
+		return;
+
+	query_.type_ = static_cast<Core::Query::Type>
+	              (queryElem.attribute("type").toUInt());
+	query_.flags_ = queryElem.attribute("flags").toUInt();
+	query_.pattern_ = queryElem.childNodes().at(0).toCDATASection().data();
+
+	// Reset the model.
+	model()->clear();
+
+	// TODO: Is there a guarantee of order?
+	QDomNodeList columnNodes = viewElem.elementsByTagName("Column");
+	QList<Location::Fields> colList;
+	for (int i = 0; i < columnNodes.size(); i++) {
+		QDomElement elem = columnNodes.at(i).toElement();
+		if (elem.isNull())
+			continue;
+
+		colList.append(static_cast<Location::Fields>
+		               (elem.attribute("field").toUInt()));
+	}
+	model()->setColumns(colList);
+
+	// Find the <LocationList> element that is a child of the root element.
+	QDomNodeList childNodes = viewElem.childNodes();
+	for (int i = 0; i < childNodes.size(); i++) {
+		QDomElement elem = childNodes.at(i).toElement();
+		if (elem.isNull() || elem.tagName() != "LocationList")
+			continue;
+
+		// Load locations.
+		locationFromXML(elem, QModelIndex());
+	}
+}
+
+/**
  * Called by the engine when results are available.
  * Adds the list of locations to the model.
  * @param  locList  Query results
@@ -201,6 +286,164 @@ void QueryView::selectPrev()
 	Location loc;
 	if (model()->locationFromIndex(selIndex, loc))
 		emit locationRequested(loc);
+}
+
+/**
+ * Recursively transforms the location hierarchy stored in the model to an XML
+ * sub-tree.
+ * The XML representation of locations is composed of a <LocationList> element
+ * holding a list of <Location> elements. For a tree model, <Location> elements
+ * may in turn hold a <LocationList> sub-element, and so on.
+ * @param  doc        The XML document object to use
+ * @param  parentElem XML element under which new location elements should be
+ *                    created
+ * @param  idx        The index to store (along with its children)
+ */
+void QueryView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
+                              const QModelIndex& idx) const
+{
+	QDomElement elem;
+
+	if (idx.isValid()) {
+		// A non-root index.
+		// Translate the index into a location information structure.
+		Location loc;
+		if (!model()->locationFromIndex(idx, loc))
+			return;
+
+		// Create an XML element for the location.
+		elem = doc.createElement("Location");
+		parentElem.appendChild(elem);
+
+		// Add a text node for each structure member.
+		const QList<Location::Fields>& colList = model()->columns();
+		foreach (Location::Fields field, colList) {
+			QString name;
+			QDomNode node;
+
+			switch (field) {
+			case Location::File:
+				name = "File";
+				node = doc.createTextNode(loc.file_);
+				break;
+
+			case Location::Line:
+				name = "Line";
+				node = doc.createTextNode(QString::number(loc.line_));
+				break;
+
+			case Location::Column:
+				name = "Column";
+				node = doc.createTextNode(QString::number(loc.column_));
+				break;
+
+			case Location::TagName:
+				name = "TagName";
+				node = doc.createTextNode(loc.tag_.name_);
+				break;
+
+			case Location::TagType:
+				name = "TagType";
+				node = doc.createTextNode(QString::number(loc.tag_.type_));
+				break;
+
+			case Location::Scope:
+				name = "Scope";
+				node = doc.createTextNode(loc.tag_.scope_);
+				break;
+
+			case Location::Text:
+				name = "Text";
+				node = doc.createCDATASection(loc.text_);
+				break;
+			}
+
+			QDomElement child = doc.createElement(name);
+			child.appendChild(node);
+			elem.appendChild(child);
+		}
+	}
+	else {
+		// For the root index, use the given parent element as the parent of
+		// the location list created by top-level items.
+		elem = parentElem;
+	}
+
+	// Create an element list using the index's children.
+	if (model()->hasChildren(idx)) {
+		QDomElement locListElem = doc.createElement("LocationList");
+		elem.appendChild(locListElem);
+		for (int i = 0; i < model()->rowCount(idx); i++)
+			locationToXML(doc, locListElem, model()->index(i, 0, idx));
+	}
+}
+
+/**
+ * Loads a hierarchy of locations from an XML document into the model.
+ * See locationToXML() for the XML format.
+ * @param  locListElem A <LocationList> XML element
+ * @param  parentIndex The model index under which locations should be added
+ */
+void QueryView::locationFromXML(const QDomElement& locListElem,
+                                const QModelIndex& parentIndex)
+{
+	// Get a list of location elements.
+	QDomNodeList nodes = locListElem.childNodes();
+
+	// Translate elements into a list of location objects.
+	// The map is used to store sub-lists encountered inside the location
+	// element. These will be loaded later. It's better to first construct the
+	// list of locations for the current level, rather than follow the XML
+	// tree depth-first, due to the behaviour of the add() method.
+	LocationList locList;
+	QMap<int, QDomElement> childLists;
+	for (int i = 0; i < nodes.size(); i++) {
+		// Get the current location element.
+		QDomElement elem = nodes.at(i).toElement();
+		if (elem.isNull() || elem.tagName() != "Location")
+			continue;
+
+		// Iterate over the sub-elements, which represent either location
+		// properties, or nested location lists. We expect at most one of the
+		// latter.
+		Location loc;
+		QDomNodeList childNodes = elem.childNodes();
+		for (int j = 0; j < childNodes.size(); j++) {
+			// Has to be an element.
+			QDomElement child = childNodes.at(j).toElement();
+			if (child.isNull())
+				continue;
+
+			// Extract location data from the element.
+			if (child.tagName() == "File")
+				loc.file_ = child.text();
+			else if (child.tagName() == "Line")
+				loc.line_ = child.text().toUInt();
+			else if (child.tagName() == "Column")
+				loc.column_ = child.text().toUInt();
+			else if (child.tagName() == "TagName")
+				loc.tag_.name_ = child.text();
+			else if (child.tagName() == "TagType")
+				loc.tag_.type_ = static_cast<Tag::Type>(child.text().toUInt());
+			else if (child.tagName() == "Scope")
+				loc.tag_.scope_ = child.text();
+			else if (child.tagName() == "Text")
+				loc.text_ = child.firstChild().toCDATASection().data();
+			else if (child.tagName() == "LocationList")
+				childLists[i] = child;
+		}
+
+		// Add to the location list.
+		locList.append(loc);
+	}
+
+	// Store locations in the model.
+	model()->add(locList, parentIndex);
+
+	// Load any sub-lists encountered earlier.
+	QMap<int, QDomElement>::Iterator itr;
+	for (itr = childLists.begin(); itr != childLists.end(); ++itr)
+		locationFromXML(itr.value(), model()->index(itr.key(), 0, parentIndex));
 }
 
 /**
