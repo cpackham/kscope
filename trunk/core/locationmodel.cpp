@@ -90,6 +90,7 @@ int LocationModel::columnCount(const QModelIndex& parent) const
 	return 0;
 }
 
+#ifndef QT_NO_DEBUG
 /**
  * Debugging facility.
  * Ensures the correctness of the model.
@@ -103,6 +104,7 @@ void LocationModel::verify(const QModelIndex& parentIndex) const
 		verify(childIndex);
 	}
 }
+#endif
 
 /**
  * Extracts data from a location object, for the given column index.
