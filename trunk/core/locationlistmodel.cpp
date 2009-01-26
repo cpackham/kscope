@@ -31,7 +31,8 @@ namespace Core
  * Class constructor.
  * @param  parent   Parent object
  */
-LocationListModel::LocationListModel(QObject* parent) : LocationModel(parent)
+LocationListModel::LocationListModel(QObject* parent)
+	: LocationModel(parent), locationsAdded_(false)
 {
 }
 
@@ -51,6 +52,8 @@ void LocationListModel::add(const LocationList& locList,
                             const QModelIndex& parent)
 {
 	(void)parent;
+
+	locationsAdded_ = true;
 
 	// Determine the first and last rows for the new items.
 	int firstRow = locList_.size();
@@ -78,13 +81,17 @@ void LocationListModel::add(const LocationList& locList,
 }
 
 /**
- * Marks the given index as having no children.
- * TODO: Currently does nothing. We may want to add a "No Results" dummy item.
- * @param  index The index to mark
+ * Determines whether the index has children, and if not, for what reason.
+ * @param  index The index to check
+ * @return See LocationModel::IsEmptyResult
  */
-void LocationListModel::setEmpty(const QModelIndex& index)
+LocationModel::IsEmptyResult
+LocationListModel::isEmpty(const QModelIndex& index) const
 {
-	(void)index;
+	if (index.isValid() || !locationsAdded_)
+		return Unknown;
+
+	return locList_.isEmpty() ? Empty : Full;
 }
 
 /**
@@ -94,6 +101,7 @@ void LocationListModel::setEmpty(const QModelIndex& index)
 void LocationListModel::clear()
 {
 	locList_.clear();
+	locationsAdded_ = false;
 	reset();
 }
 

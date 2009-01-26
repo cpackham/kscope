@@ -188,6 +188,10 @@ void QueryView::fromXML(const QDomElement& viewElem)
 		// Load locations.
 		locationFromXML(elem, QModelIndex());
 	}
+
+#ifndef QT_NO_DEBUG
+	model()->verify();
+#endif
 }
 
 /**
@@ -230,7 +234,7 @@ void QueryView::onFinished()
 {
 	// Handle an empty result set.
 	if (model()->rowCount(queryIndex_) == 0)
-		model()->setEmpty(queryIndex_);
+		model()->add(LocationList(), queryIndex_);
 
 	// Destroy the progress-bar, if it exists.
 	if (progBar_) {
@@ -374,10 +378,17 @@ void QueryView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
 	}
 
 	// Create an element list using the index's children.
-	if (model()->hasChildren(idx)) {
+	// A <LocationList> element is created for queried items (whether there
+	// were any results or not). An element is not created for non-queried
+	// items, so that locationFromXML() does not call add() for such items,
+	// correctly restoring their status.
+	if (model()->isEmpty(idx) != LocationModel::Unknown) {
+		// Create the element.
 		QDomElement locListElem = doc.createElement("LocationList");
-		elem.setAttribute("expanded", isExpanded(idx) ? "1" : "0");
+		locListElem.setAttribute("expanded", isExpanded(idx) ? "1" : "0");
 		elem.appendChild(locListElem);
+
+		// Add child locations.
 		for (int i = 0; i < model()->rowCount(idx); i++)
 			locationToXML(doc, locListElem, model()->index(i, 0, idx));
 	}
@@ -396,12 +407,12 @@ void QueryView::locationFromXML(const QDomElement& locListElem,
 	QDomNodeList nodes = locListElem.childNodes();
 
 	// Translate elements into a list of location objects.
-	// The map is used to store sub-lists encountered inside the location
+	// The list is used to store sub-lists encountered inside the location
 	// element. These will be loaded later. It's better to first construct the
 	// list of locations for the current level, rather than follow the XML
 	// tree depth-first, due to the behaviour of the add() method.
 	LocationList locList;
-	QMap<int, QDomElement> childLists;
+	QList< QPair<int, QDomElement> > childLists;
 	for (int i = 0; i < nodes.size(); i++) {
 		// Get the current location element.
 		QDomElement elem = nodes.at(i).toElement();
@@ -435,7 +446,7 @@ void QueryView::locationFromXML(const QDomElement& locListElem,
 			else if (child.tagName() == "Text")
 				loc.text_ = child.firstChild().toCDATASection().data();
 			else if (child.tagName() == "LocationList")
-				childLists[i] = child;
+				childLists.append(QPair<int, QDomElement>(i, child));
 		}
 
 		// Add to the location list.
@@ -446,14 +457,15 @@ void QueryView::locationFromXML(const QDomElement& locListElem,
 	model()->add(locList, parentIndex);
 
 	// Load any sub-lists encountered earlier.
-	QMap<int, QDomElement>::Iterator itr;
+	QList< QPair<int, QDomElement> >::Iterator itr;
 	for (itr = childLists.begin(); itr != childLists.end(); ++itr) {
-		QDomElement elem = itr.value();
-		QModelIndex index = model()->index(itr.key(), 0, parentIndex);
-		locationFromXML(elem, index);
-		if (elem.attribute("expanded").toUInt())
-			expand(index);
+		locationFromXML((*itr).second,
+		                model()->index((*itr).first, 0, parentIndex));
 	}
+
+	// Expand the item if required.
+	if (locListElem.attribute("expanded").toUInt())
+		expand(parentIndex);
 }
 
 /**
@@ -484,8 +496,13 @@ void QueryView::stopQuery()
  */
 void QueryView::queryTreeItem(const QModelIndex& idx)
 {
-	// TODO: DO not query twice! Need a LocationTreeModel method to determine
-	// if an item was already queried.
+	// Do not query if the item already has children.
+	// An item has no children if it was not yet queried, or if the query
+	// returned no results. The assumption is that the "expand" button is
+	// removed in the latter case, so that this method is called for a
+	// child-less item only if it was never queried.
+	if (model()->rowCount(idx) > 0)
+		return;
 
 	// Get the location information from the index.
 	Location loc;

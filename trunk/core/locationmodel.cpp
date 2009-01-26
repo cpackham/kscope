@@ -91,6 +91,20 @@ int LocationModel::columnCount(const QModelIndex& parent) const
 }
 
 /**
+ * Debugging facility.
+ * Ensures the correctness of the model.
+ * @param  parentIndex The root index to verify
+ */
+void LocationModel::verify(const QModelIndex& parentIndex) const
+{
+	for (int i = 0; i < rowCount(parentIndex); i++) {
+		QModelIndex childIndex = index(i, 0, parentIndex);
+		Q_ASSERT(parent(childIndex) == parentIndex);
+		verify(childIndex);
+	}
+}
+
+/**
  * Extracts data from a location object, for the given column index.
  * @param  loc  The location object
  * @param  col  The requested column

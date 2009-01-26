@@ -46,7 +46,7 @@ public:
 
 	// LocationModel implementation.
 	void add(const LocationList&, const QModelIndex&);
-	void setEmpty(const QModelIndex&);
+	IsEmptyResult isEmpty(const QModelIndex&) const;
 	void clear();
 	bool locationFromIndex(const QModelIndex&, Location&) const;
 	bool firstLocation(Location&) const;
@@ -63,14 +63,31 @@ public:
 	                      int role = Qt::DisplayRole) const;
 
 private:
-	struct CallTreeItem {
+	/**
+	 * Data stored in a single node in the tree.
+	 */
+	struct LocationTreeItem
+	{
+		/**
+		 * Location information.
+		 */
 		Location loc_;
-		bool queried_;
 
-		CallTreeItem(const Location& loc) : loc_(loc), queried_(false) {}
+		/**
+		 * Whether add() was called on index for this item.
+		 * Required by isEmpty().
+		 */
+		bool locationsAdded_;
+
+		/**
+		 * Struct constructor.
+		 * @param  loc The location to store
+		 */
+		LocationTreeItem(const Location& loc)
+			: loc_(loc), locationsAdded_(false) {}
 	};
 
-	typedef TreeItem<CallTreeItem> Node;
+	typedef TreeItem<LocationTreeItem> Node;
 
 	/**
 	 * The root item of the tree.

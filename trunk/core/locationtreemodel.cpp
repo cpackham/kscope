@@ -63,8 +63,9 @@ void LocationTreeModel::add(const LocationList& locList,
 			return;
 	}
 
-	// Mark the item as queried.
-	node->data().queried_ = true;
+	// Mark the item for use with isEmpty().
+	// TODO: Is there a way to force the view to repaint this item?
+	node->data().locationsAdded_ = true;
 
 	// Determine the first and last rows for the new items.
 	int firstRow = node->childCount();
@@ -77,8 +78,7 @@ void LocationTreeModel::add(const LocationList& locList,
 	beginInsertRows(parent, firstRow, lastRow);
 
 	// Add the entries.
-	Location loc;
-	foreach (loc, locList)
+	foreach (Location loc, locList)
 		node->addChild(loc);
 
 	// End row insertion.
@@ -87,22 +87,31 @@ void LocationTreeModel::add(const LocationList& locList,
 }
 
 /**
- * Marks the given index as having no children.
- * @param  index The index to mark
+ * Determines whether the index has children, and if not, for what reason.
+ * @param  index The index to check
+ * @return See LocationModel::IsEmptyResult
  */
-void LocationTreeModel::setEmpty(const QModelIndex& index)
+LocationModel::IsEmptyResult
+LocationTreeModel::isEmpty(const QModelIndex& index) const
 {
-	// Nothing to do for the root.
-	if (!index.isValid())
-		return;
+	const Node* node;
 
-	Node* node = static_cast<Node*>(index.internalPointer());
-	if (node == NULL)
-		return;
+	// Get the node from the index.
+	if (!index.isValid()) {
+		node = &root_;
+	}
+	else {
+		node = static_cast<Node*>(index.internalPointer());
+		if (node == NULL)
+			return Unknown;
+	}
 
-	// Mark the item as queried.
-	// TODO: Is there a way to force the view to repaint this item?
-	node->data().queried_ = true;
+	// Return Unknown if locations were never added under this item.
+	if (!node->data().locationsAdded_)
+		return Unknown;
+
+	// Return Empty or Full, based on the existence of children.
+	return node->childCount() == 0 ? Empty : Full;
 }
 
 /**
@@ -261,7 +270,7 @@ QModelIndex LocationTreeModel::parent(const QModelIndex& idx) const
 
 	// Get the parent node.
 	node = node->parent();
-	if (node == NULL)
+	if ((node == NULL) || (node == &root_))
 		return QModelIndex();
 
 	return createIndex(node->index(), 0, (void*)node);
@@ -314,7 +323,7 @@ bool LocationTreeModel::hasChildren(const QModelIndex& parent) const
 			return 0;
 	}
 
-	return ((!node->data().queried_) || (node->childCount() > 0));
+	return ((!node->data().locationsAdded_) || (node->childCount() > 0));
 }
 
 /**

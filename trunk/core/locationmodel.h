@@ -69,12 +69,27 @@ public:
 	virtual void add(const LocationList& list, const QModelIndex& parent) = 0;
 
 	/**
-	 * Marks the given index as having no children.
-	 * This is useful for distinguishing items that are the parents for queries
-	 * that resulted in no locations from items that were not yet queried.
-	 * @param  index The index to mark
+	 * Possible return values for the isEmpty() method.
 	 */
-	virtual void setEmpty(const QModelIndex& index) = 0;
+	enum IsEmptyResult {
+		/** add() was called on this index, but no children were created. */
+		Empty,
+		/** add() was called on this index and it has children. */
+		Full,
+		/** add() was not called on this index. */
+		Unknown
+	};
+
+	/**
+	 * Determines whether the given index has children, and if not, whether this
+	 * is because add() was called with no locations or add() was never called
+	 * for this index.
+	 * This method is useful for distinguishing queried-but-empty indices from
+	 * non-queried ones in a lazy-query view.
+	 * @param  index The required index
+	 * @return See IsEmptyResult
+	 */
+	virtual IsEmptyResult isEmpty(const QModelIndex& index) const = 0;
 
 	/**
 	 * Deletes all locations in the model.
@@ -118,6 +133,10 @@ public:
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 	virtual QVariant headerData(int, Qt::Orientation,
 	                            int role = Qt::DisplayRole) const;
+
+#ifndef QT_NO_DEBUG
+	void verify(const QModelIndex& parentIndex = QModelIndex()) const;
+#endif
 
 protected:
 	/**

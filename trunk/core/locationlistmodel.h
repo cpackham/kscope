@@ -46,7 +46,7 @@ public:
 
 	// LocationMode implementation.
 	void add(const LocationList&, const QModelIndex& index = QModelIndex());
-	void setEmpty(const QModelIndex&);
+	IsEmptyResult isEmpty(const QModelIndex&) const;
 	void clear();
 	bool locationFromIndex(const QModelIndex&, Location&) const;
 	bool firstLocation(Location&) const;
@@ -66,6 +66,12 @@ private:
 	 * Result list.
 	 */
 	LocationList locList_;
+
+	/**
+	 * Whether add() was called.
+	 * Required by the locationsAdded() method.
+	 */
+	bool locationsAdded_;
 };
 
 } // namespace Core
