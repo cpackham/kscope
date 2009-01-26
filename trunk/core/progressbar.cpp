@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#include <QLayout>
 #include "progressbar.h"
 
 namespace KScope
@@ -31,7 +30,7 @@ namespace Core
  * Class constructor.
  * @param  parent  Parent widget
  */
-ProgressBar::ProgressBar(QWidget* parent) : QFrame(parent)
+ProgressBar::ProgressBar(QWidget* parent) : QFrame(parent), Ui::ProgressBar()
 {
 	// Setup user interface.
 	setFrameShape(QFrame::StyledPanel);

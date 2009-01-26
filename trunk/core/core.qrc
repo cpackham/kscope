@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images" >
+        <file alias="cancel" >images/cancel.gif</file>
         <file alias="define" >images/define.gif</file>
         <file alias="enum" >images/enum.gif</file>
         <file alias="enumerator" >images/enumerator.gif</file>

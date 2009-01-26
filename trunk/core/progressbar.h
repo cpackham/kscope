@@ -31,7 +31,7 @@ namespace Core
 {
 
 /**
- * An stand-alone progress bar with a label and cancel button.
+ * A stand-alone progress bar with a label and cancel button.
  * @author Elad Lahav
  */
 class ProgressBar : public QFrame, private Ui::ProgressBar
