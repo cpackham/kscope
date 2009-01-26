@@ -118,6 +118,10 @@ void EditorContainer::saveSession(Session& session)
 	// Store the path of the currently active editor.
 	if (activeEditor_ != NULL)
 		session.setActiveEditor(activeEditor_->path());
+
+	// Store the state of the active window.
+	QMdiSubWindow* window = currentSubWindow();
+	session.setMaxActiveEditor(window ? window->isMaximized() : false);
 }
 
 /**
@@ -144,10 +148,20 @@ void EditorContainer::loadSession(Session& session)
 	// window is the last one to be loaded. In that case, the signal will not
 	// be emitted.
 	QString activeEditor = session.activeEditor();
+	QMdiSubWindow* window;
 	if (!activeEditor.isEmpty()) {
-		QMdiSubWindow* window = getEditor(activeEditor, true);
+		window = getEditor(activeEditor, true);
+		setActiveSubWindow(window);
+	}
+	else {
+		// No active window was set, choose the current one.
+		window = currentSubWindow();
 		windowActivated(window);
 	}
+
+	// Maximise the active window, if required.
+	if (session.maxActiveEditor())
+		window->showMaximized();
 }
 
 /**
@@ -332,12 +346,13 @@ void EditorContainer::browseHistory()
  */
 QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 {
+	qDebug() << __func__ << path << activate;
 
 	// Try to find an existing editor window, based on the path.
 	QMap<QString, QMdiSubWindow*>::Iterator itr = fileMap_.find(path);
 	if (itr != fileMap_.end()) {
 		if (activate)
-			activateEditor(*itr);
+			setActiveSubWindow(*itr);
 
 		return *itr;
 	}
@@ -368,10 +383,11 @@ QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
 	QMdiSubWindow* window = addSubWindow(editor);
 	window->setAttribute(Qt::WA_DeleteOnClose);
 	window->setWindowTitle(name);
+	window->show();
 	fileMap_[name] = window;
 
 	if (activate)
-		activateEditor(window);
+		setActiveSubWindow(window);
 
 	return window;
 }
@@ -399,17 +415,6 @@ void EditorContainer::closeAll()
 
 	// Re-enable handling of changes to active windows.
 	blockWindowActivation_ = false;
-}
-
-/**
- * Makes the given window the active one.
- * Shows the window and sets the focus to the editor.
- * @param  window  The window to activate
- */
-void EditorContainer::activateEditor(QMdiSubWindow* window)
-{
-	window->show();
-	static_cast<Editor*>(window->widget())->setFocus();
 }
 
 /**
@@ -475,6 +480,9 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 	qDebug() << "Active editor" << (activeEditor_ ? activeEditor_->path() : "");
 
 	if (activeEditor_) {
+		// Acquire the keyboard focus.
+		activeEditor_->setFocus();
+
 		// Forward signals.
 		connect(this, SIGNAL(find()), activeEditor_, SLOT(search()));
 		connect(this, SIGNAL(findNext()), activeEditor_,

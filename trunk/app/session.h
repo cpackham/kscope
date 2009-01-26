@@ -81,27 +81,31 @@ public:
 	void addQueryView(const QueryView*);
 	QueryViewIterator beginQueryIteration() const;
 
-	const Core::LocationList& editorList() const { return editorList_; }
-	const QString& activeEditor() const { return activeEditor_; }
+#define PROPERTY(type, name, get, set) \
+	private: type name; \
+	public: type get() const { return name; } \
+	public: void set(type val) { name = val; }
 
-	void setEditorList(const Core::LocationList& list) { editorList_ = list; }
-	void setActiveEditor(const QString& editor) { activeEditor_ = editor; }
+	/**
+	 * A list of locations representing open editor windows.
+	 */
+	PROPERTY(Core::LocationList, editorList_, editorList, setEditorList);
+
+	/**
+	 * The path of the file in the active editor.
+	 */
+	PROPERTY(QString, activeEditor_, activeEditor, setActiveEditor);
+
+	/**
+	 * Whether the active editor window should be displayed maximised.
+	 */
+	PROPERTY(bool, maxActiveEditor_, maxActiveEditor, setMaxActiveEditor);
 
 private:
 	/**
 	 * The path of the configuration directory holding session information.
 	 */
 	QString path_;
-
-	/**
-	 * A list of locations representing open editor windows.
-	 */
-	Core::LocationList editorList_;
-
-	/**
-	 * The path of the file in the active editor.
-	 */
-	QString activeEditor_;
 
 	/**
 	 * An XML document used to manage open query views.

@@ -69,6 +69,7 @@ void Session::load()
 
 	// Get the path of the active editor.
 	activeEditor_ = settings.value("ActiveEditor").toString();
+	maxActiveEditor_ = settings.value("MaxActiveEditor", false).toBool();
 
 	// Load the query XML file.
 	QFile xmlFile(queryViewFile());
@@ -83,7 +84,7 @@ void Session::save()
 {
 	QSettings settings(configFile(), QSettings::IniFormat);
 
-	// Get a list of files being edited, along with the location of the
+	// Store a list of files being edited, along with the location of the
 	// cursor on each one.
 	settings.beginWriteArray("Editors");
 	for (int i = 0; i < editorList_.size(); i++) {
@@ -96,8 +97,9 @@ void Session::save()
 	}
 	settings.endArray();
 
-	// Get the path of the active editor.
+	// Store other information on the editor container.
 	settings.setValue("ActiveEditor", activeEditor_);
+	settings.setValue("MaxActiveEditor", maxActiveEditor_);
 
 	// Save the query view XML document.
 	QFile xmlFile(queryViewFile());

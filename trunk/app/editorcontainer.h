@@ -82,7 +82,6 @@ private:
 	LocationHistory history_;
 
 	QMdiSubWindow* getEditor(const QString& path, bool activate = false);
-	void activateEditor(QMdiSubWindow*);
 	bool gotoLocationInternal(const Core::Location&);
 
 private slots:
