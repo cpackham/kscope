@@ -34,7 +34,8 @@ namespace App
  * @author  Elad Lahav
  */
 template<int Major, int Minor, int Revision>
-struct Version {
+struct Version
+{
 	/**
 	 * Major version number.
 	 */
@@ -57,7 +58,7 @@ struct Version {
 	 */
 	static QString toString() {
 		return QString("%1.%2.%3 (Built %4)").arg(major_).arg(minor_)
-		       .arg(revision_).arg(__DATE__);
+		                                     .arg(revision_).arg(__DATE__);
 	}
 
 	/**
@@ -72,7 +73,7 @@ struct Version {
 /**
  * Specifies the application version.
  */
-typedef Version<1, 9, 0> AppVersion;
+typedef Version<1, 9, 1> AppVersion;
 
 } // namespace App
 
