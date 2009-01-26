@@ -496,12 +496,8 @@ void QueryView::stopQuery()
  */
 void QueryView::queryTreeItem(const QModelIndex& idx)
 {
-	// Do not query if the item already has children.
-	// An item has no children if it was not yet queried, or if the query
-	// returned no results. The assumption is that the "expand" button is
-	// removed in the latter case, so that this method is called for a
-	// child-less item only if it was never queried.
-	if (model()->rowCount(idx) > 0)
+	// Query previously-non-queried items only.
+	if (model()->isEmpty(idx) != LocationModel::Unknown)
 		return;
 
 	// Get the location information from the index.
