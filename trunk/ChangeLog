@@ -1,0 +1,11 @@
+1.9.1 (2009-01-26)
+* New: Save/restore queries as part of a session
+* Improved: Better session handling
+* Bug fix: Several fixes to the Cscope output parser
+* Bug fix: Fixed crash when selecting the first item in the history
+* Bug fix: Use the correct path when loading project files
+* Bug fix: Correct detection of the active editor
+* Compilation fix: Explicitly link libkscope_cscope with libkscope_core
+
+1.9.0 (2009-01-10)
+* Initial release of the new code
