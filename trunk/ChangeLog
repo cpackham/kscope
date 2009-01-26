@@ -6,6 +6,7 @@
 * Bug fix: Use the correct path when loading project files
 * Bug fix: Correct detection of the active editor
 * Compilation fix: Explicitly link libkscope_cscope with libkscope_core
+* Documentation: Added instructions for running KScope to the INSTALL file
 
 1.9.0 (2009-01-10)
 * Initial release of the new code
