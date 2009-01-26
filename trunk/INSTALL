@@ -36,3 +36,10 @@ Make sure you have the right permissions for copying files into the destination
 directory. Then execute
 
   $ make install
+
+Run
+---
+
+The executable is called 'kscopeapp' and is located under INSTALL_PATH/bin. The
+shared libraries are under INSTALL_PATH/lib, so LD_LIBRARY_PATH needs to include
+this directory for the dynamic linker to find them.
