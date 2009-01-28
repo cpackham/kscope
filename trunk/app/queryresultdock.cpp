@@ -63,7 +63,6 @@ void QueryResultDock::query(const Core::Query& query, bool tree)
 	}
 
 	// Run the query.
-	view->model()->setRootPath(ProjectManager::project()->rootPath());
 	try {
 		view->query(query);
 	}
@@ -73,6 +72,10 @@ void QueryResultDock::query(const Core::Query& query, bool tree)
 	}
 }
 
+/**
+ * Stores the open query views in a session object.
+ * @param  session The object to use for storing the views
+ */
 void QueryResultDock::saveSession(Session& session)
 {
 	QList<QWidget*> widgetList = tabWidget()->widgets();
@@ -82,6 +85,10 @@ void QueryResultDock::saveSession(Session& session)
 	}
 }
 
+/**
+ * Restores query views from a session object.
+ * @param  session The session object to use
+ */
 void QueryResultDock::loadSession(Session& session)
 {
 	for (Session::QueryViewIterator itr = session.beginQueryIteration();
@@ -89,6 +96,7 @@ void QueryResultDock::loadSession(Session& session)
 	     ++itr) {
 		QueryView* view = addView(itr.title(), itr.type());
 		itr.load(view);
+		view->resizeColumns();
 	}
 }
 
@@ -126,7 +134,12 @@ QueryView* QueryResultDock::addView(const QString& title,
 	view->setWindowTitle(title);
 	connect(view, SIGNAL(locationRequested(const Core::Location&)), this,
 	        SIGNAL(locationRequested(const Core::Location&)));
-	view->setAutoSelectSingleResult(true);
+	view->model()->setRootPath(ProjectManager::project()->rootPath());
+
+	// TODO: Provide a configurable option to determine if a single result
+	// should be selected automatically.
+	if (type == Core::QueryView::List)
+		view->setAutoSelectSingleResult(true);
 
 	// Add to the tab widget.
 	tabWidget()->addWidget(view);
