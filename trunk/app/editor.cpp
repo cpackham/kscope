@@ -20,6 +20,7 @@
 
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QFileDialog>
 #include <QDebug>
 #include <qscilexercpp.h>
 #include "editor.h"
@@ -37,6 +38,7 @@ namespace App
  * @param  parent  Owner object
  */
 Editor::Editor(QWidget* parent) : QsciScintilla(parent),
+	newFileIndex_(0),
 	isLoading_(false),
 	onLoadLine_(0),
 	onLoadColumn_(0),
@@ -99,8 +101,16 @@ bool Editor::save()
 	if (!isModified())
 		return true;
 
+	// Prompt for a file name if the editor is holding a new file.
+	QString path = path_;
+	if (path.isEmpty()) {
+		path = QFileDialog::getSaveFileName(this, tr("Save New File"));
+		if (path.isEmpty())
+			return false;
+	}
+
 	// TODO: Provide an asynchronous implementation.
-	QFile file(path_);
+	QFile file(path);
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		QString msg = tr("Failed to save '%1'").arg(path_);
 		QMessageBox::critical(this, tr("File Error"), msg);
@@ -110,6 +120,13 @@ bool Editor::save()
 	// Save the file's contents.
 	QTextStream strm(&file);
 	strm << text();
+
+	// Notify of a change in the file path, if necessary.
+	if (path != path_) {
+		QString oldTitle = title();
+		path_ = path;
+		emit titleChanged(oldTitle, title());
+	}
 
 	return true;
 }
@@ -162,16 +179,19 @@ bool Editor::canClose()
  */
 void Editor::setCursorPosition(uint line, uint column)
 {
-	int curLine, curColumn;
-
 	// Wait for file loading to complete before setting a new position.
 	if (isLoading_) {
-		onLoadLine_ = line;
-		onLoadColumn_ = column;
+		if (line)
+			onLoadLine_ = line;
+
+		if (column)
+			onLoadColumn_ = column;
+
 		return;
 	}
 
 	// Get current values.
+	int curLine, curColumn;
 	getCursorPosition(&curLine, &curColumn);
 
 	// Determine the new line position.
@@ -297,6 +317,20 @@ void Editor::getCurrentLocation(Core::Location& loc)
 }
 
 /**
+ * Generates a unique title for this editor.
+ * The title is used both to identify the editor in the file map managed by the
+ * container, as well as for display purposes.
+ * @return The editor's title
+ */
+QString Editor::title() const
+{
+	if (path_.isEmpty())
+		return tr("Untitled %1").arg(newFileIndex_);
+
+	return path_;
+}
+
+/**
  * Searches for text inside the document.
  * Prompts the user for the text to find.
  */
@@ -341,7 +375,7 @@ void Editor::searchNext()
 void Editor::closeEvent(QCloseEvent* event)
 {
 	if (canClose()) {
-		emit closed(path_);
+		emit closed(title());
 		event->accept();
 	}
 	else {

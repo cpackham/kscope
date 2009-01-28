@@ -125,7 +125,7 @@ void MainWindow::promptQuery(Core::Query::Type type)
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->activeEditor();
+	Editor* editor = editCont_->currentEditor();
 	if (editor)
 		dlg.setPattern(editor->currentSymbol());
 
@@ -150,7 +150,7 @@ void MainWindow::quickDefinition()
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->activeEditor();
+	Editor* editor = editCont_->currentEditor();
 	if (editor)
 		symbol = editor->currentSymbol();
 
@@ -201,6 +201,9 @@ void MainWindow::quickDefinition()
 	}
 }
 
+/**
+ * Prompts the user for a symbol to create a call-tree for.
+ */
 void MainWindow::promptCallTree()
 {
 	// Create the query dialogue.
@@ -211,7 +214,7 @@ void MainWindow::promptCallTree()
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->activeEditor();
+	Editor* editor = editCont_->currentEditor();
 	if (editor)
 		dlg.setPattern(editor->currentSymbol());
 

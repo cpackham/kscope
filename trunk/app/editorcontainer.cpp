@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#include <QMdiSubWindow>
 #include <QFileDialog>
 #include <QDebug>
 #include "editorcontainer.h"
@@ -37,9 +36,9 @@ namespace App
  */
 EditorContainer::EditorContainer(QWidget* parent)
 	: QMdiArea(parent),
-	  activeEditor_(NULL),
-	  blockWindowActivation_(false),
-	  newFileIndex_(1)
+	  currentWindow_(NULL),
+	  newFileIndex_(1),
+	  blockWindowActivation_(false)
 {
 	// Load editor configuration settings.
 	QSettings settings;
@@ -116,8 +115,8 @@ void EditorContainer::saveSession(Session& session)
 	session.setEditorList(locList);
 
 	// Store the path of the currently active editor.
-	if (activeEditor_ != NULL)
-		session.setActiveEditor(activeEditor_->path());
+	if (currentEditor())
+		session.setActiveEditor(currentEditor()->path());
 
 	// Store the state of the active window.
 	QMdiSubWindow* window = currentSubWindow();
@@ -138,7 +137,7 @@ void EditorContainer::loadSession(Session& session)
 
 	// Open an editor for each location.
 	for (itr = locList.begin(); itr != locList.end(); ++itr)
-		gotoLocationInternal(*itr);
+		(void)getEditor(*itr, false);
 
 	// Re-enable handling of changes to active windows.
 	blockWindowActivation_ = false;
@@ -150,8 +149,8 @@ void EditorContainer::loadSession(Session& session)
 	QString activeEditor = session.activeEditor();
 	QMdiSubWindow* window;
 	if (!activeEditor.isEmpty()) {
-		window = getEditor(activeEditor, true);
-		setActiveSubWindow(window);
+		Core::Location loc(activeEditor);
+		window = getEditor(loc, true);
 	}
 	else {
 		// No active window was set, choose the current one.
@@ -169,7 +168,7 @@ void EditorContainer::loadSession(Session& session)
  */
 void EditorContainer::newFile()
 {
-	(void)getEditor(QString(), true);
+	(void)getEditor(Core::Location(), true);
 }
 
 /**
@@ -180,7 +179,7 @@ void EditorContainer::openFile()
 {
 	QString path = QFileDialog::getOpenFileName(0, tr("Open File"));
 	if (!path.isEmpty())
-		(void)getEditor(path, true);
+		(void)getEditor(Core::Location(path), true);
 }
 
 /**
@@ -190,7 +189,7 @@ void EditorContainer::openFile()
 void EditorContainer::openFile(const QString& path)
 {
 	if (!path.isEmpty())
-		(void)getEditor(path, true);
+		(void)getEditor(Core::Location(path), true);
 }
 
 /**
@@ -228,13 +227,13 @@ void EditorContainer::gotoLocation(const Core::Location& loc)
 	// Get the current location.
 	Core::Location curLoc;
 	bool addCurrent = false;
-	if (activeEditor_) {
-		activeEditor_->getCurrentLocation(curLoc);
+	if (currentEditor()) {
+		currentEditor()->getCurrentLocation(curLoc);
 		addCurrent = true;
 	}
 
 	// Go to the new location.
-	if (!gotoLocationInternal(loc))
+	if (getEditor(loc) == NULL)
 		return;
 
 	// Add both the previous and the new locations to the history list.
@@ -251,7 +250,7 @@ void EditorContainer::gotoNextLocation()
 {
 	Core::Location loc;
 	if (history_.next(loc))
-		gotoLocationInternal(loc);
+		(void)getEditor(loc);
 }
 
 /**
@@ -262,7 +261,7 @@ void EditorContainer::gotoPrevLocation()
 {
 	Core::Location loc;
 	if (history_.prev(loc))
-		gotoLocationInternal(loc);
+		(void)getEditor(loc);
 }
 
 /**
@@ -270,7 +269,7 @@ void EditorContainer::gotoPrevLocation()
  */
 void EditorContainer::showLocalTags()
 {
-	if (!activeEditor_)
+	if (!currentEditor())
 		return;
 
 	// Create a query view dialogue.
@@ -292,7 +291,7 @@ void EditorContainer::showLocalTags()
 			.queryFields(Core::Query::LocalTags));
 		ProjectManager::engine().query(view,
 		                               Core::Query(Core::Query::LocalTags,
-		                                           activeEditor_->path()));
+		                                           currentEditor()->path()));
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();
@@ -344,50 +343,60 @@ void EditorContainer::browseHistory()
  * @param  activate  Whether to also activate the window
  * @return The found/created editor if successful, NULL otherwise
  */
-QMdiSubWindow* EditorContainer::getEditor(const QString& path, bool activate)
+QMdiSubWindow* EditorContainer::getEditor(const Core::Location& loc,
+                                          bool activate)
 {
-	qDebug() << __func__ << path << activate;
+	qDebug() << __func__ << loc.file_ << loc.line_ << loc.column_ << activate;
+
+	QMdiSubWindow* window;
+	Editor* editor;
 
 	// Try to find an existing editor window, based on the path.
-	QMap<QString, QMdiSubWindow*>::Iterator itr = fileMap_.find(path);
+	QMap<QString, QMdiSubWindow*>::Iterator itr = fileMap_.find(loc.file_);
 	if (itr != fileMap_.end()) {
-		if (activate)
-			setActiveSubWindow(*itr);
-
-		return *itr;
-	}
-
-	// Create a new editor widget.
-	Editor* editor = new Editor(this);
-
-	// Open the given file in the editor.
-	QString name;
-	if (!path.isEmpty()) {
-		if (!editor->load(path)) {
-			delete editor;
-			return NULL;
-		}
-
-		name = path;
+		window = *itr;
+		editor = static_cast<Editor*>(window->widget());
 	}
 	else {
-		// No path supplied, treat as a new file.
-		name = QString("Untitled %1").arg(newFileIndex_++);
+		// Create a new editor widget.
+		editor = new Editor(this);
+
+		// Open the given file in the editor.
+		if (loc.isValid()) {
+			if (!editor->load(loc.file_)) {
+				delete editor;
+				return NULL;
+			}
+		}
+		else {
+			// No path supplied, treat as a new file.
+			editor->setNewFileIndex(newFileIndex_++);
+		}
+
+		editor->applyConfig(config_);
+		connect(editor, SIGNAL(closed(const QString&)), this,
+				SLOT(removeEditor(const QString&)));
+		connect(editor, SIGNAL(titleChanged(const QString&, const QString&)),
+		        this, SLOT(remapEditor(const QString&, const QString&)));
+
+		// Create a new sub window for the editor.
+		window = addSubWindow(editor);
+		window->setAttribute(Qt::WA_DeleteOnClose);
+		window->setWindowTitle(editor->title());
+		window->show();
+		fileMap_[editor->title()] = window;
 	}
 
-	editor->applyConfig(config_);
-	connect(editor, SIGNAL(closed(const QString&)), this,
-	        SLOT(editorClosed(const QString&)));
+	// Move the cursor.
+	editor->setCursorPosition(loc.line_, loc.column_);
 
-	// Create a new sub window for the editor.
-	QMdiSubWindow* window = addSubWindow(editor);
-	window->setAttribute(Qt::WA_DeleteOnClose);
-	window->setWindowTitle(name);
-	window->show();
-	fileMap_[name] = window;
-
-	if (activate)
-		setActiveSubWindow(window);
+	// Activate the editor, if required.
+	if (activate) {
+		if (window != currentSubWindow())
+			setActiveSubWindow(window);
+		else
+			currentEditor()->setFocus();
+	}
 
 	return window;
 }
@@ -410,35 +419,10 @@ void EditorContainer::closeAll()
 	fileMap_.clear();
 
 	// No active editor.
-	activeEditor_ = NULL;
 	emit hasActiveEditor(false);
 
 	// Re-enable handling of changes to active windows.
 	blockWindowActivation_ = false;
-}
-
-/**
- * Activates an editor window showing the given location.
- * The file, line and column values of the Location structure are used to open
- * an editor for the given file (or activate an existing one), and to set the
- * cursor to the requested coordinates.
- * @param  loc  The requested location
- * @return true if successful, false otherwise
- */
-bool EditorContainer::gotoLocationInternal(const Core::Location& loc)
-{
-	QMdiSubWindow* window;
-	Editor* editor;
-
-	// Open/activate an editor window for the requested file.
-	window = getEditor(loc.file_, true);
-	if (!window)
-		return false;
-
-	// Set the cursor to the given line and column.
-	editor = static_cast<Editor*>(window->widget());
-	editor->setCursorPosition(loc.line_, loc.column_);
-	return true;
 }
 
 /**
@@ -448,61 +432,89 @@ bool EditorContainer::gotoLocationInternal(const Core::Location& loc)
  */
 void EditorContainer::handleWindowAction(QAction* action)
 {
-	(void)getEditor(action->text(), true);
+	(void)getEditor(Core::Location(action->text()), true);
 }
 
 /**
- * Emits the hasActiveEditor() signal whenever the active window changes.
- * Note that this slot is activated whenever the active sub-window changes,
- * which includes cases where the application or MDI-area lose focus. However,
- * this method is only concerned with changes to the current editor, so the
- * parameter is ignored, and instead the method invokes currentSubWindow() to
- * check if the current window has indeed changed.
- * @param  window  Ignored
+ * Handles changes to the active editor window.
+ * When an editor becomes active, it needs to get the keyboard focus. Also,
+ * the container forwards certain signals to the active editor, which need to
+ * be connected.
+ * Note that this method is also called when the MDI area gains or loses focus.
+ * If the latter happens, the active sub window becomes NULL, even though the
+ * current sub window stays the same. This method is only concerned with changes
+ * to the current sub window.
+ * @param  window  The new active editor
  */
 void EditorContainer::windowActivated(QMdiSubWindow* window)
 {
+	// Do nothing if activation signals are blocked.
+	// TODO: This is just a workaround. The proper way should be to disconnect
+	// from the subWindowActivated() signal.
 	if (blockWindowActivation_)
 		return;
 
-	// Get the new active editor widget, if any.
-	window = currentSubWindow();
-	Editor* editor = window ? static_cast<Editor*>(window->widget()) : NULL;
-	if (editor == activeEditor_)
+	// Do nothing if the active window is not the current one (i.e., a NULL
+	// active window due to the MDI area losing focus).
+	if (window != currentSubWindow())
+		return;
+
+	// Do nothing if the new current window is the same as the old one.
+	if (window == currentWindow_)
 		return;
 
 	// Stop forwarding signals to the active editor.
-	if (activeEditor_)
-		disconnect(activeEditor_);
+	if (currentWindow_)
+		disconnect(static_cast<Editor*>(currentWindow_->widget()));
+
+	// Remember the current window.
+	currentWindow_ = window;
 
 	// Update the active editor.
-	activeEditor_ = editor;
-	qDebug() << "Active editor" << (activeEditor_ ? activeEditor_->path() : "");
-
-	if (activeEditor_) {
-		// Acquire the keyboard focus.
-		activeEditor_->setFocus();
-
-		// Forward signals.
-		connect(this, SIGNAL(find()), activeEditor_, SLOT(search()));
-		connect(this, SIGNAL(findNext()), activeEditor_,
-		        SLOT(searchNext()));
-
-		emit hasActiveEditor(true);
+	Editor* editor = currentEditor();
+	if (!editor) {
+		qDebug() << "No current editor";
+		return;
 	}
-	else {
-		emit hasActiveEditor(false);
-	}
+
+	qDebug() << "Current editor" << (editor ? editor->path() : "");
+
+	// Acquire keyboard focus.
+	editor->setFocus();
+
+	// Forward signals.
+	connect(this, SIGNAL(find()), editor, SLOT(search()));
+	connect(this, SIGNAL(findNext()), editor, SLOT(searchNext()));
+
+	emit hasActiveEditor(true);
 }
 
 /**
  * Removes an editor from the file map when its window is closed.
- * @param  path  The path of the file edited in the closed window
+ * @param  title  The unique title of the editor being closed
  */
-void EditorContainer::editorClosed(const QString& path)
+void EditorContainer::removeEditor(const QString& title)
 {
-	fileMap_.remove(path);
-	qDebug() << path << "removed";
+	fileMap_.remove(title);
+	qDebug() << title << "removed";
+}
+
+/**
+ * Changes the map key for an editor window.
+ * This slot is called when an editor changes its title (e.g., following a
+ * "Save As" operation).
+ * @param  oldTitle The previous title of the editor
+ * @param  newTitle The new title of the editor
+ */
+void EditorContainer::remapEditor(const QString& oldTitle,
+                                  const QString& newTitle)
+{
+	QMap<QString, QMdiSubWindow*>::Iterator itr = fileMap_.find(oldTitle);
+	if (itr != fileMap_.end()) {
+		QMdiSubWindow* window = *itr;
+		fileMap_.remove(oldTitle);
+		fileMap_[newTitle] = window;
+	}
 }
 
 } // namespace App

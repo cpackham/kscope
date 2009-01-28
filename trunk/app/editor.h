@@ -97,15 +97,37 @@ public:
 	void applyConfig(const Config&);
 	void getConfig(Config&);
 	void getCurrentLocation(Core::Location&);
+	QString title() const;
 
+	/**
+	 * @return The path of the file loaded in the editor, an empty string for
+	 *         a new file
+	 */
 	QString path() const { return path_; }
+
+	/**
+	 * @param index The unique index used to generate the title of the editor
+	 */
+	void setNewFileIndex(uint index) { newFileIndex_ = index; }
 
 public slots:
 	void search();
 	void searchNext();
 
 signals:
-	void closed(const QString& path);
+	/**
+	 * Notifies the container that the editor with the given title is being
+	 * closed.
+	 * @param  title The unique title of the editor being closed
+	 */
+	void closed(const QString& title);
+
+	/**
+	 * Notifies the container of a change to the editor's title.
+	 * @param  oldTitle
+	 * @param  newTitle
+	 */
+	void titleChanged(const QString& oldTitle, const QString& newTitle);
 
 protected:
 	void closeEvent(QCloseEvent*);
@@ -115,6 +137,12 @@ private:
 	 * The file being edited.
 	 */
 	QString path_;
+
+	/**
+	 * For new files only, stores the index used to create a unique title for
+	 * this editor.
+	 */
+	uint newFileIndex_;
 
 	/**
 	 * Whether a file is currently being loaded.

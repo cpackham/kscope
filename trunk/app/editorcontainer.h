@@ -22,6 +22,7 @@
 #define __APP_EDITORCONTAINER_H
 
 #include <QMdiArea>
+#include <QMdiSubWindow>
 #include <QMap>
 #include <QMenu>
 #include "globals.h"
@@ -54,7 +55,13 @@ public:
 	void saveSession(Session&);
 	void loadSession(Session&);
 
-	Editor* activeEditor() const { return activeEditor_; }
+	inline Editor* currentEditor() {
+		QMdiSubWindow* window = currentSubWindow();
+		if (!window)
+			return NULL;
+
+		return static_cast<Editor*>(window->widget());
+	}
 
 public slots:
 	void newFile();
@@ -74,20 +81,20 @@ signals:
 	void findNext();
 
 private:
-	Editor* activeEditor_;
-	bool blockWindowActivation_;
+	QMdiSubWindow* currentWindow_;
 	QMap<QString, QMdiSubWindow*> fileMap_;
 	uint newFileIndex_;
 	Editor::Config config_;
 	LocationHistory history_;
+	bool blockWindowActivation_;
 
-	QMdiSubWindow* getEditor(const QString& path, bool activate = false);
-	bool gotoLocationInternal(const Core::Location&);
+	QMdiSubWindow* getEditor(const Core::Location&, bool activate = true);
 
 private slots:
 	void handleWindowAction(QAction*);
 	void windowActivated(QMdiSubWindow*);
-	void editorClosed(const QString&);
+	void removeEditor(const QString&);
+	void remapEditor(const QString&, const QString&);
 };
 
 } // namespace App
