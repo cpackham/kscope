@@ -235,6 +235,27 @@ struct Location
 	};
 
 	/**
+	 * Default constructor.
+	 * Creates an empty (invalid) location object.
+	 */
+	Location() : line_(0), column_(0) {}
+
+	/**
+	 * Convenience constructor.
+	 * @param  file
+	 * @param  line
+	 * @param  column
+	 */
+	Location(const QString& file, uint line = 0, uint column = 0)
+		: file_(file), line_(line), column_(column) {}
+
+	/**
+	 * @return true if the object represents a valid location (at least the
+	 *         file path is set), false otherwise
+	 */
+	bool isValid() const { return !file_.isEmpty(); }
+
+	/**
 	 * Two locations are equal if and only if they refer to the same line and
 	 * column in the same file.
 	 * @param  other  The location to compare with
