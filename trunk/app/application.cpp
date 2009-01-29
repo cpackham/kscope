@@ -42,6 +42,8 @@ Application::Application(int& argc, char** argv)
 	QCoreApplication::setOrganizationName("elad_lahav@users.sourceforge.net");
 	QCoreApplication::setApplicationName("KScope");
 	QCoreApplication::setApplicationVersion(AppVersion::toString());
+
+	settings_ = new Settings();
 }
 
 /**
@@ -49,6 +51,7 @@ Application::Application(int& argc, char** argv)
  */
 Application::~Application()
 {
+	delete settings_;
 }
 
 /**
@@ -71,7 +74,11 @@ int Application::run()
 	// can take full advantage of the event mechanism.
 	postEvent(this, new QEvent(static_cast<QEvent::Type>(AppInitEvent)));
 
-	return exec();
+	// Run the event loop.
+	int result = exec();
+
+	settings_->store();
+	return result;
 }
 
 /**
@@ -105,6 +112,8 @@ void Application::customEvent(QEvent* event)
  */
 void Application::init()
 {
+	// Load configuration.
+	settings_->load();
 	setupEngines();
 
 	// Parse command-line arguments.
@@ -155,21 +164,19 @@ void Application::setupEngines()
 	// time to generate multi-engine code.
 	typedef Core::EngineConfig<Cscope::Crossref> Config;
 
-	QSettings settings;
-
 	// Prefix group with "Engine_" so that engines do not overrun application
 	// groups by accident.
-	settings.beginGroup(QString("Engine_") + Config::name());
+	settings_->beginGroup(QString("Engine_") + Config::name());
 
 	// Add each value under the engine group to the map of configuration
 	// parameters.
 	Core::KeyValuePairs params;
-	QStringList keys = settings.allKeys();
+	QStringList keys = settings_->allKeys();
 	QString key;
 	foreach (key, keys)
-		params[key] = settings.value(key);
+		params[key] = settings_->value(key);
 
-	settings.endGroup();
+	settings_->endGroup();
 
 	// Apply configuration to the engine.
 	Config::setConfig(params);

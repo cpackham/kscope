@@ -20,6 +20,7 @@
 
 #include <QFileDialog>
 #include <QDebug>
+#include "application.h"
 #include "editorcontainer.h"
 #include "editorconfigdialog.h"
 #include "queryresultdialog.h"
@@ -41,7 +42,7 @@ EditorContainer::EditorContainer(QWidget* parent)
 	  blockWindowActivation_(false)
 {
 	// Load editor configuration settings.
-	QSettings settings;
+	Settings& settings = Application::settings();
 	settings.beginGroup("Editor");
 	config_.load(settings);
 	settings.endGroup();
@@ -207,7 +208,7 @@ void EditorContainer::configEditor()
 	dlg.getConfig(config_);
 
 	// Store the editor configuration.
-	QSettings settings;
+	Settings& settings = Application::settings();
 	settings.beginGroup("Editor");
 	config_.store(settings);
 	settings.endGroup();

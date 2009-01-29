@@ -18,11 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_APPLICATION_H
-#define __APP_APPLICATION_H
+#ifndef __APP_SETTINGS_H__
+#define __APP_SETTINGS_H__
 
-#include <QApplication>
-#include "settings.h"
+#include <QSettings>
+#include <QLinkedList>
 
 namespace KScope
 {
@@ -30,50 +30,37 @@ namespace KScope
 namespace App
 {
 
-class MainWindow;
-
 /**
- * The KScope application.
- * Runs the event loop and maintains the active project.
+ * Manages application-wide configuration.
  * @author Elad Lahav
  */
-class Application : public QApplication
+class Settings : public QSettings
 {
-	Q_OBJECT
-
 public:
-	Application(int&, char**);
-	~Application();
+	Settings();
+	~Settings();
 
-	enum Event { AppInitEvent = QEvent::User };
+	void load();
+	void store();
 
-	int run();
+	struct RecentProject
+	{
+		QString path_;
+		QString name_;
+	};
 
-	static Settings& settings() {
-		return *(static_cast<Application*>(qApp)->settings_);
+	void addRecentProject(const QString&, const QString&);
+	void removeRecentProject(const QString&);
+	const QLinkedList<RecentProject>& recentProjects() const {
+		return recentProjects_;
 	}
 
-public slots:
-	void about();
-
-protected:
-	void customEvent(QEvent*);
-
 private:
-	/**
-	 * The main window.
-	 */
-	MainWindow* mainWnd_;
-	Settings* settings_;
-
-	void init();
-	void setupEngines();
+	QLinkedList<RecentProject> recentProjects_;
 };
-
-inline Application* theApp() { return static_cast<Application*>(qApp); }
 
 } // namespace App
 
 } // namespace KScope
 
-#endif // __APP_APPLICATION_H
+#endif // __APP_SETTINGS_H__

@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include <QLabel>
-#include <QSettings>
+#include "application.h"
 #include "configenginesdialog.h"
 #include "crossref.h"
 
@@ -79,7 +79,7 @@ void ConfigEnginesDialog::accept()
 	Core::KeyValuePairs params;
 	Config::getConfig(params);
 
-	QSettings settings;
+	Settings& settings = Application::settings();
 
 	// Prefix group with "Engine_" so that engines do not overrun application
 	// groups by accident.

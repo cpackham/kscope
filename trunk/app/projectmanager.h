@@ -22,6 +22,7 @@
 #define __APP_PROJECTMANAGER_H__
 
 #include <QObject>
+#include "application.h"
 #include "project.h"
 
 namespace KScope
@@ -90,7 +91,7 @@ public:
 		}
 
 		// Save the project path.
-		QSettings().setValue("Session/LastProject", projPath);
+		Application::settings().addRecentProject(projPath, proj_->name());
 	}
 
 	static void close();

@@ -19,7 +19,6 @@
  ***************************************************************************/
 
 #include <QDockWidget>
-#include <QSettings>
 #include <QCloseEvent>
 #include <QStatusBar>
 #include "mainwindow.h"
@@ -286,7 +285,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::writeSettings()
 {
 	// Store main window position and size.
-	QSettings settings;
+	Settings& settings = Application::settings();
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
@@ -300,7 +299,7 @@ void MainWindow::writeSettings()
 void MainWindow::readSettings()
 {
 	// Restore main window position and size.
-	QSettings settings;
+	Settings& settings = Application::settings();
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(1000, 600)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
