@@ -420,6 +420,7 @@ void EditorContainer::closeAll()
 	fileMap_.clear();
 
 	// No active editor.
+	currentWindow_ = NULL;
 	emit hasActiveEditor(false);
 
 	// Re-enable handling of changes to active windows.
