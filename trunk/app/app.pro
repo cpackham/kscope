@@ -4,7 +4,8 @@ TARGET = kscopeapp
 DEPENDPATH += """"". ../core ../cscope"""""
 
 # Input
-SOURCES += settings.cpp \
+SOURCES += openprojectdialog.cpp \
+    settings.cpp \
     session.cpp \
     findtextdialog.cpp \
     projectmanager.cpp \
@@ -23,7 +24,8 @@ SOURCES += settings.cpp \
     queryresultdialog.cpp \
     addfilesdialog.cpp \
     configenginesdialog.cpp
-HEADERS += settings.h \
+HEADERS += openprojectdialog.h \
+    settings.h \
     session.h \
     queryview.h \
     strings.h \
@@ -55,7 +57,8 @@ FORMS += querydialog.ui \
     projectdialog.ui \
     editorconfigdialog.ui \
     findtextdialog.ui \
-    configenginesdialog.ui
+    configenginesdialog.ui \
+    openprojectdialog.ui
 INCLUDEPATH += ../cscope \
     ../core \
     $${QSCI_ROOT_PATH}/include/Qsci \

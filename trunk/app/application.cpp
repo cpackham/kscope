@@ -137,25 +137,10 @@ void Application::init()
 		}
 	}
 
-	// Get the path of the last active project.
-	path = QSettings().value("Session/LastProject", "").toString();
-	if (path.isEmpty())
-		return;
-
-	// Get the project's name.
-	QString name = Cscope::ManagedProject(path).name();
-	if (name.isEmpty())
-		return;
-
-	// Prompt the user for opening the last project.
+	// Prompt the user for opening a project.
 	// TODO: Want more options on start-up (list of last projects, create new,
 	// do nothing).
-	if (QMessageBox::question(NULL, tr("Open Last Project"),
-	                          tr("Would you like to reload '%1'?").arg(name),
-	                          QMessageBox::Yes | QMessageBox::No)
-	    == QMessageBox::Yes) {
-		ProjectManager::load<Cscope::ManagedProject>(path);
-	}
+	mainWnd_->openProject();
 }
 
 void Application::setupEngines()

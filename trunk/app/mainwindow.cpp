@@ -32,6 +32,7 @@
 #include "session.h"
 #include "managedproject.h"
 #include "projectdialog.h"
+#include "openprojectdialog.h"
 #include "projectfilesdialog.h"
 #include "configenginesdialog.h"
 
@@ -300,14 +301,19 @@ void MainWindow::openProject()
 	}
 
 	// Show the "Open Project" dialogue.
-	// TODO: Handle different project files in either visible or hidden
-	// directories.
-	QString path = QFileDialog::getOpenFileName(this, tr("Open Project"),
-	                                            QString(), "project.conf");
-	if (path.isEmpty())
-		return;
+	OpenProjectDialog dlg(this);
+	switch (dlg.exec()) {
+	case OpenProjectDialog::Open:
+		ProjectManager::load<Cscope::ManagedProject>(dlg.path());
+		break;
 
-	ProjectManager::load<Cscope::ManagedProject>(QFileInfo(path).path());
+	case OpenProjectDialog::New:
+		newProject();
+		break;
+
+	default:
+		;
+	}
 }
 
 /**
