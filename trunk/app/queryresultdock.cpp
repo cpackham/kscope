@@ -121,6 +121,14 @@ void QueryResultDock::selectPrevResult()
 }
 
 /**
+ * Closes all open query windows.
+ */
+void QueryResultDock::closeAll()
+{
+	tabWidget()->removeAll();
+}
+
+/**
  * Creates a new query view and adds it to the container widget.
  * @param  title  The title of the query view
  * @param  type   Whether to create a list or a tree view

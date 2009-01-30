@@ -51,6 +51,7 @@ public:
 public slots:
 	void selectNextResult();
 	void selectPrevResult();
+	void closeAll();
 
 signals:
 	/**

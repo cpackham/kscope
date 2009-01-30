@@ -93,6 +93,7 @@ public:
 
 	void addWidget(QWidget*);
 	QList<QWidget*> widgets() const;
+	void removeAll();
 
 	/**
 	 * @return The widget of the active page, NULL if no page exists

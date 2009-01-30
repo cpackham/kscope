@@ -335,6 +335,7 @@ bool MainWindow::closeProject()
 		Session session(ProjectManager::project()->path());
 		editCont_->saveSession(session);
 		queryDock_->saveSession(session);
+		queryDock_->closeAll();
 		session.save();
 	}
 

@@ -135,6 +135,17 @@ QList<QWidget*> StackWidget::widgets() const
 }
 
 /**
+ * Deletes all pages from the stack.
+ */
+void StackWidget::removeAll()
+{
+	while (!pageList_.isEmpty())
+		delete pageList_.takeFirst();
+
+	activePage_ = NULL;
+}
+
+/**
  * Changes the active page in the stack.
  * This slot is called when a page shows its widget and emits the activated()
  * signal. The method needs to hide the widget on the previously active page.
