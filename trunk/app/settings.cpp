@@ -74,7 +74,7 @@ void Settings::addRecentProject(const QString& path, const QString& name)
 {
 	// If this is already the most recent project, only need to make sure that
 	// the project name is up-to-date.
-	if (recentProjects_.first().path_ == path) {
+	if (!recentProjects_.isEmpty() && recentProjects_.first().path_ == path) {
 		recentProjects_.first().name_ = name;
 		return;
 	}
@@ -98,7 +98,7 @@ void Settings::removeRecentProject(const QString& path)
 	QLinkedList<RecentProject>::iterator itr;
 	for (itr = recentProjects_.begin(); itr != recentProjects_.end(); ++itr) {
 		if ((*itr).path_ == path)
-			recentProjects_.erase(itr);
+			itr = recentProjects_.erase(itr);
 	}
 }
 
