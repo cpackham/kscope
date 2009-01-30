@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_ACTIONS_H
-#define __KSCOPE_ACTIONS_H
+#ifndef __KSCOPE_ACTIONS_H__
+#define __KSCOPE_ACTIONS_H__
 
 #include <QObject>
 #include <QMenu>
@@ -49,14 +49,8 @@ public:
 	void setup();
 
 public slots:
-	void newProject();
-	void openProject();
-	bool closeProject();
-	void projectFiles();
-	void projectProperties();
 	void query(QAction*);
 	void showWindowMenu();
-	void configEngines();
 
 private:
 	QMenu* wndMenu_;
@@ -68,4 +62,4 @@ private:
 
 } // namespace KScope
 
-#endif // __KSCOPE_ACTIONS_H
+#endif // __KSCOPE_ACTIONS_H__

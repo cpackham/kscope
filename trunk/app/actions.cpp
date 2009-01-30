@@ -19,17 +19,10 @@
  ***************************************************************************/
 
 #include <QMenuBar>
-#include <QFileDialog>
-#include <QMessageBox>
 #include "actions.h"
 #include "mainwindow.h"
 #include "editorcontainer.h"
-#include "projectdialog.h"
-#include "projectfilesdialog.h"
-#include "managedproject.h"
-#include "projectmanager.h"
 #include "queryresultdock.h"
-#include "configenginesdialog.h"
 
 namespace KScope
 {
@@ -173,14 +166,14 @@ void Actions::setup()
 	// Create a new project.
 	action = new QAction(tr("&New..."), this);
 	action->setStatusTip(tr("New project"));
-	connect(action, SIGNAL(triggered()), this, SLOT(newProject()));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(newProject()));
 	menu->addAction(action);
 
 	// Open an existing project.
 	action = new QAction(tr("&Open..."), this);
 	action->setShortcut(tr("Ctrl+P"));
 	action->setStatusTip(tr("Open project"));
-	connect(action, SIGNAL(triggered()), this, SLOT(openProject()));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(openProject()));
 	menu->addAction(action);
 
 	// A group for project actions requiring an open project.
@@ -196,14 +189,14 @@ void Actions::setup()
 	action = new QAction(tr("&Files..."), this);
 	action->setShortcut(tr("Ctrl+Shift+O"));
 	action->setStatusTip(tr("Manage project files"));
-	connect(action, SIGNAL(triggered()), this, SLOT(projectFiles()));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(projectFiles()));
 	menu->addAction(action);
 	group->addAction(action);
 
 	// View/edit project parameters.
 	action = new QAction(tr("&Properties..."), this);
 	action->setStatusTip(tr("View/edit project parameters"));
-	connect(action, SIGNAL(triggered()), this, SLOT(projectProperties()));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(projectProperties()));
 	menu->addAction(action);
 	group->addAction(action);
 
@@ -220,7 +213,7 @@ void Actions::setup()
 	// Close the active project.
 	action = new QAction(tr("&Close"), this);
 	action->setStatusTip(tr("Close the active project"));
-	connect(action, SIGNAL(triggered()), this, SLOT(closeProject()));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(closeProject()));
 	menu->addAction(action);
 	group->addAction(action);
 
@@ -355,118 +348,6 @@ void Actions::setup()
 
 }
 
-void Actions::newProject()
-{
-	// If an active project exists, it needs to be closed first.
-	if (ProjectManager::hasProject()) {
-		QString msg = tr("The active project needs to be closed.\n"
-                         "Would you like to close it now?");
-		int result = QMessageBox::question(mainWnd(),
-		                                   tr("Close Project"),
-		                                   msg,
-		                                   QMessageBox::Yes | QMessageBox::No);
-		if (result == QMessageBox::No)
-			return;
-
-		ProjectManager::close();
-	}
-
-	// Show the "New Project" dialogue.
-	ProjectDialog dlg(mainWnd());
-	dlg.setParamsForProject<Cscope::ManagedProject>(NULL);
-	if (dlg.exec() == QDialog::Rejected)
-		return;
-
-	// Get the new parameters from the dialogue.
-	Core::ProjectBase::Params params;
-	dlg.getParams<Cscope::ManagedProject>(params);
-
-	try {
-		// Create a project.
-		Cscope::ManagedProject proj;
-		proj.create(params);
-
-		// Load the new project.
-		ProjectManager::load<Cscope::ManagedProject>(params.projPath_);
-	}
-	catch (Core::Exception* e) {
-		e->showMessage();
-		delete e;
-		return;
-	}
-}
-
-/**
- * Handler for the "Project->Open" action.
- */
-void Actions::openProject()
-{
-	// If an active project exists, it needs to be closed first.
-	if (ProjectManager::hasProject()) {
-		QString msg = tr("The active project needs to be closed.\n"
-                         "Would you like to close it now?");
-		int result = QMessageBox::question(mainWnd(),
-		                                   tr("Close Project"),
-		                                   msg,
-		                                   QMessageBox::Yes | QMessageBox::No);
-		if (result == QMessageBox::No || !closeProject())
-			return;
-	}
-
-	// Show the "Open Project" dialogue.
-	// TODO: Handle different project files in either visible or hidden
-	// directories.
-	QString path = QFileDialog::getOpenFileName(mainWnd(), tr("Open Project"),
-	                                            QString(), "project.conf");
-	if (path.isEmpty())
-		return;
-
-	ProjectManager::load<Cscope::ManagedProject>(QFileInfo(path).path());
-}
-
-/**
- * Handler for the "Project->Close" action.
- */
-bool Actions::closeProject()
-{
-	if (!mainWnd()->closeSession())
-		return false;
-
-	ProjectManager::close();
-	return true;
-}
-
-/**
- * Handler for the "Project->Files..." action.
- */
-void Actions::projectFiles()
-{
-	ProjectFilesDialog dlg(mainWnd());
-	dlg.exec();
-}
-
-void Actions::projectProperties()
-{
-	// Get the active project.
-	const Cscope::ManagedProject* project
-		= dynamic_cast<const Cscope::ManagedProject*>
-			(ProjectManager::project());
-	if (project == NULL)
-		return;
-
-	// Create the project properties dialogue.
-	ProjectDialog dlg(mainWnd());
-	dlg.setParamsForProject(project);
-	if (dlg.exec() == QDialog::Rejected)
-		return;
-
-	// Get the new parameters from the dialogue.
-	Core::ProjectBase::Params params;
-	dlg.getParams<Cscope::ManagedProject>(params);
-
-	// TODO: Update project properties.
-}
-
 /**
  * A common handler for query menu actions.
  * @param  action  The triggered action
@@ -479,19 +360,14 @@ void Actions::query(QAction* action)
 	mainWnd()->promptQuery(type);
 }
 
+/**
+ * Constructs a sub-menu showing all open editor windows.
+ * Called before the "Window" menu is shown.
+ */
 void Actions::showWindowMenu()
 {
 	wndMenu_->clear();
 	mainWnd()->editCont_->populateWindowMenu(wndMenu_);
-}
-
-/**
- * Handler for the "Settings->Configure Engines" action.
- */
-void Actions::configEngines()
-{
-	ConfigEnginesDialog dlg;
-	dlg.exec();
 }
 
 MainWindow* Actions::mainWnd()

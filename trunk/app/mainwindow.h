@@ -52,14 +52,20 @@ public:
 	MainWindow();
 	~MainWindow();
 
-	bool closeSession();
-
 public slots:
 	void promptQuery(Core::Query::Type type = Core::Query::References);
 	void quickDefinition();
 	void promptCallTree();
 	void buildProject();
 	void openFile(const QString&);
+
+	// Action handlers.
+	void newProject();
+	void openProject();
+	bool closeProject();
+	void projectFiles();
+	void projectProperties();
+	void configEngines();
 
 protected:
 	virtual void closeEvent(QCloseEvent*);

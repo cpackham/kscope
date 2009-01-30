@@ -21,6 +21,7 @@
 #include <QDockWidget>
 #include <QCloseEvent>
 #include <QStatusBar>
+#include <QFileDialog>
 #include "mainwindow.h"
 #include "editorcontainer.h"
 #include "querydialog.h"
@@ -30,6 +31,9 @@
 #include "queryresultdialog.h"
 #include "session.h"
 #include "managedproject.h"
+#include "projectdialog.h"
+#include "projectfilesdialog.h"
+#include "configenginesdialog.h"
 
 namespace KScope
 {
@@ -84,33 +88,6 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
  */
 MainWindow::~MainWindow()
 {
-}
-
-/**
- * Terminates the current session.
- * Closes all editor windows, and saves the session (if it is part of a
- * project).
- * @return true if the session was closed, false if the user aborts the
- *         operation (e.g., chooses to cancel when prompted to save a modified
- *         editor)
- */
-bool MainWindow::closeSession()
-{
-	// Check all editors for unsaved changes.
-	if (!editCont_->canClose())
-		return false;
-
-	if (ProjectManager::hasProject()) {
-		// Store session information.
-		Session session(ProjectManager::project()->path());
-		editCont_->saveSession(session);
-		queryDock_->saveSession(session);
-		session.save();
-	}
-
-	// Close open editor windows.
-	editCont_->closeAll();
-	return true;
 }
 
 /**
@@ -262,12 +239,159 @@ void MainWindow::openFile(const QString& path)
 }
 
 /**
+ * Handles the "Project->New..." action.
+ * Closes the current project, and displays the "New Project" dialogue.
+ */
+void MainWindow::newProject()
+{
+	// If an active project exists, it needs to be closed first.
+	if (ProjectManager::hasProject()) {
+		QString msg = tr("The active project needs to be closed.\n"
+                         "Would you like to close it now?");
+		int result = QMessageBox::question(this,
+		                                   tr("Close Project"),
+		                                   msg,
+		                                   QMessageBox::Yes | QMessageBox::No);
+		if (result == QMessageBox::No || !closeProject())
+			return;
+	}
+
+	// Show the "New Project" dialogue.
+	ProjectDialog dlg(this);
+	dlg.setParamsForProject<Cscope::ManagedProject>(NULL);
+	if (dlg.exec() == QDialog::Rejected)
+		return;
+
+	// Get the new parameters from the dialogue.
+	Core::ProjectBase::Params params;
+	dlg.getParams<Cscope::ManagedProject>(params);
+
+	try {
+		// Create a project.
+		Cscope::ManagedProject proj;
+		proj.create(params);
+
+		// Load the new project.
+		ProjectManager::load<Cscope::ManagedProject>(params.projPath_);
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+		return;
+	}
+}
+
+/**
+ * Handles the "Project->Open" action.
+ * Displays the "Open Project" dialogue.
+ */
+void MainWindow::openProject()
+{
+	// If an active project exists, it needs to be closed first.
+	if (ProjectManager::hasProject()) {
+		QString msg = tr("The active project needs to be closed.\n"
+                         "Would you like to close it now?");
+		int result = QMessageBox::question(this,
+		                                   tr("Close Project"),
+		                                   msg,
+		                                   QMessageBox::Yes | QMessageBox::No);
+		if (result == QMessageBox::No || !closeProject())
+			return;
+	}
+
+	// Show the "Open Project" dialogue.
+	// TODO: Handle different project files in either visible or hidden
+	// directories.
+	QString path = QFileDialog::getOpenFileName(this, tr("Open Project"),
+	                                            QString(), "project.conf");
+	if (path.isEmpty())
+		return;
+
+	ProjectManager::load<Cscope::ManagedProject>(QFileInfo(path).path());
+}
+
+/**
+ * Handles the "Project->Close" action.
+ * Closes all editor windows, and saves the session (if it is part of a
+ * project).
+ * @return true if the session was closed, false if the user aborts the
+ *         operation (e.g., chooses to cancel when prompted to save a modified
+ *         editor)
+ */
+bool MainWindow::closeProject()
+{
+	// Check all editors for unsaved changes.
+	if (!editCont_->canClose())
+		return false;
+
+	if (ProjectManager::hasProject()) {
+		// Store session information.
+		Session session(ProjectManager::project()->path());
+		editCont_->saveSession(session);
+		queryDock_->saveSession(session);
+		session.save();
+	}
+
+	// Close open editor windows.
+	editCont_->closeAll();
+
+	// Close the project.
+	ProjectManager::close();
+	return true;
+}
+
+/**
+ * Handles the "Project->Files..." action.
+ * Shows the "Project Files" dialogue.
+ */
+void MainWindow::projectFiles()
+{
+	ProjectFilesDialog dlg(this);
+	dlg.exec();
+}
+
+/**
+ * Handles the "Project->Properties..." action.
+ * Shows the "Project Properties" dialogue.
+ */
+void MainWindow::projectProperties()
+{
+	// Get the active project.
+	const Cscope::ManagedProject* project
+		= dynamic_cast<const Cscope::ManagedProject*>
+			(ProjectManager::project());
+	if (project == NULL)
+		return;
+
+	// Create the project properties dialogue.
+	ProjectDialog dlg(this);
+	dlg.setParamsForProject(project);
+	if (dlg.exec() == QDialog::Rejected)
+		return;
+
+	// Get the new parameters from the dialogue.
+	Core::ProjectBase::Params params;
+	dlg.getParams<Cscope::ManagedProject>(params);
+
+	// TODO: Update project properties.
+}
+
+/**
+ * Handles the "Settings->Configure Engines" action.
+ */
+void MainWindow::configEngines()
+{
+	ConfigEnginesDialog dlg(this);
+	dlg.exec();
+}
+
+/**
  * Called before the main window closes.
  * @param  event  Information on the closing event
  */
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-	if (!closeSession()) {
+	if (!closeProject()) {
 		event->ignore();
 		return;
 	}
@@ -345,7 +469,7 @@ void MainWindow::projectOpenedClosed(bool opened)
 		// Show the project files dialogue if files need to be added to the
 		// project.
 		if (ProjectManager::codebase().needFiles())
-			actions_.projectFiles();
+			projectFiles();
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();
