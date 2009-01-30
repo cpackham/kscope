@@ -331,7 +331,7 @@ void Actions::setup()
 	// Engine configuration.
 	action = new QAction(tr("Configure E&ngines"), this);
 	action->setStatusTip(tr("Manage engine configuration"));
-	connect(action, SIGNAL(triggered()), this, SLOT(configEngines()));
+	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(configEngines()));
 	menu->addAction(action);
 
 	// Dynamically-created Window menu.
