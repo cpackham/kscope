@@ -74,6 +74,16 @@ void Actions::setup()
 			SLOT(openFile()));
 	menu->addAction(action);
 
+	// Close all open files.
+	action = new QAction(tr("Close &All"), this);
+	action->setStatusTip(tr("Close all open files"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+			SLOT(closeAll()));
+	action->setEnabled(false);
+	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
+	        SLOT(setEnabled(bool)));
+	menu->addAction(action);
+
 	menu->addSeparator();
 
 	// Exit the application.
