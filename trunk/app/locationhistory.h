@@ -38,9 +38,19 @@ namespace App
 class LocationHistory
 {
 public:
+	/**
+	 * Class constructor.
+	 */
 	LocationHistory() : pos_(-1) {}
+
+	/**
+	 * Class destructor.
+	 */
 	~LocationHistory() {}
 
+	/**
+	 * @return The list of locations
+	 */
 	const Core::LocationList& list() const { return locList_; }
 
 	/**
@@ -111,6 +121,14 @@ public:
 		Q_ASSERT(pos_ >= 0 && pos_ < locList_.size());
 		loc = locList_.at(pos_);
 		return true;
+	}
+
+	/**
+	 * Removes all items.
+	 */
+	void clear() {
+		locList_.clear();
+		pos_ = -1;
 	}
 
 private:

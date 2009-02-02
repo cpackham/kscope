@@ -54,6 +54,7 @@ public:
 	bool canClose();
 	void saveSession(Session&);
 	void loadSession(Session&);
+	void clearHistory();
 
 	inline Editor* currentEditor() {
 		QMdiSubWindow* window = currentSubWindow();

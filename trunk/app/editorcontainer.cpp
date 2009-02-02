@@ -165,6 +165,14 @@ void EditorContainer::loadSession(Session& session)
 }
 
 /**
+ * Deletes all location items in the history list.
+ */
+void EditorContainer::clearHistory()
+{
+	history_.clear();
+}
+
+/**
  * Creates an editor window with an empty, unnamed file.
  */
 void EditorContainer::newFile()
