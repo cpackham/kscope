@@ -77,6 +77,7 @@ Cscope::Cscope()
 	                           << Parser::String<>(' ')
 	  	                       << Parser::Whitespace()
 	                           << Parser::Number()
+	  	                       << Parser::Whitespace()
 	                           << Parser::String<>('\n')
 	                           << Parser::Literal("\n"),
 	        queryResultState_, QueryResultAction(*this));
