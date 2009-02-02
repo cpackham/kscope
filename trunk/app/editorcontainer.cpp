@@ -320,7 +320,6 @@ void EditorContainer::browseHistory()
 	// Add location history entries to the model.
 	Core::QueryView* view = dlg.view();
 	view->model()->add(history_.list(), QModelIndex());
-	view->resizeColumns();
 
 	// Setup the model's displayed columns.
 	QList<Core::Location::Fields> columns;
@@ -336,6 +335,8 @@ void EditorContainer::browseHistory()
 		e->showMessage();
 		delete e;
 	}
+
+	view->resizeColumns();
 
 	// Go to selected locations.
 	connect(view, SIGNAL(locationRequested(const Core::Location&)),
