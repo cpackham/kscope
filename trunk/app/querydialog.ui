@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>153</height>
+    <width>465</width>
+    <height>121</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -22,9 +22,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="QLineEdit" name="patternEdit_" />
-     </item>
      <item row="1" column="0" >
       <widget class="QLabel" name="label" >
        <property name="text" >
@@ -33,7 +30,27 @@
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="QComboBox" name="typeCombo_" />
+      <widget class="QComboBox" name="typeCombo_" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QComboBox" name="patternCombo_" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editable" >
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -51,7 +68,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>151</width>
          <height>20</height>
@@ -81,7 +98,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>patternEdit_</tabstop>
+  <tabstop>patternCombo_</tabstop>
   <tabstop>typeCombo_</tabstop>
   <tabstop>okButton_</tabstop>
   <tabstop>cancelButton_</tabstop>

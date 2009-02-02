@@ -64,6 +64,9 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 	connect(queryDock_, SIGNAL(locationRequested(const Core::Location&)),
 	        editCont_, SLOT(gotoLocation(const Core::Location&)));
 
+	// Create the query dialogue.
+	queryDlg_ = new QueryDialog(this);
+
 	// Create a status bar.
 	statusBar();
 
@@ -98,20 +101,21 @@ MainWindow::~MainWindow()
  */
 void MainWindow::promptQuery(Core::Query::Type type)
 {
-	QueryDialog dlg(type, this);
+	queryDlg_->setWindowTitle(tr("Query"));
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
 	Editor* editor = editCont_->currentEditor();
 	if (editor)
-		dlg.setPattern(editor->currentSymbol());
+		queryDlg_->setPattern(editor->currentSymbol());
 
 	// Prompt the user.
-	if (dlg.exec() != QDialog::Accepted)
+	if (queryDlg_->exec(type) != QDialog::Accepted)
 		return;
 
 	// Start a query with results shown in a view inside the query dock.
-	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()), false);
+	queryDock_->query(Core::Query(queryDlg_->type(), queryDlg_->pattern()),
+	                  false);
 }
 
 /**
@@ -133,17 +137,17 @@ void MainWindow::quickDefinition()
 
 	// Prompt for a symbol, if none is selected in the current editor.
 	if (symbol.isEmpty()) {
-		// Create the query dialogue.
+		// Prompt for a symbol.
+		queryDlg_->setWindowTitle(tr("Quick Definition"));
 		QueryDialog::TypeList typeList;
 		typeList << Core::Query::Definition;
-		QueryDialog dlg(typeList, Core::Query::Definition, this);
-
-		// Prompt for a symbol.
-		if (dlg.exec() != QDialog::Accepted)
+		if (queryDlg_->exec(Core::Query::Definition, typeList)
+		    != QDialog::Accepted) {
 			return;
+		}
 
 		// Get the symbol from the dialogue.
-		symbol = dlg.pattern();
+		symbol = queryDlg_->pattern();
 		if (symbol.isEmpty())
 			return;
 	}
@@ -183,24 +187,25 @@ void MainWindow::quickDefinition()
  */
 void MainWindow::promptCallTree()
 {
-	// Create the query dialogue.
-	QueryDialog::TypeList typeList;
-	typeList << Core::Query::CalledFunctions << Core::Query::CallingFunctions;
-	QueryDialog dlg(typeList, Core::Query::CalledFunctions, this);
-	dlg.setWindowTitle(tr("Call Tree"));
+	queryDlg_->setWindowTitle(tr("Call Tree"));
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
 	Editor* editor = editCont_->currentEditor();
 	if (editor)
-		dlg.setPattern(editor->currentSymbol());
+		queryDlg_->setPattern(editor->currentSymbol());
 
 	// Prompt the user.
-	if (dlg.exec() != QDialog::Accepted)
+	QueryDialog::TypeList typeList;
+	typeList << Core::Query::CalledFunctions << Core::Query::CallingFunctions;
+	if (queryDlg_->exec(Core::Query::CalledFunctions, typeList)
+	    != QDialog::Accepted) {
 		return;
+	}
 
 	// Start a query with results shown in a view inside the query dock.
-	queryDock_->query(Core::Query(dlg.type(), dlg.pattern()), true);
+	queryDock_->query(Core::Query(queryDlg_->type(), queryDlg_->pattern()),
+	                  true);
 }
 
 /**
@@ -341,6 +346,10 @@ bool MainWindow::closeProject()
 
 	// Close open editor windows.
 	editCont_->closeAll();
+
+	// Reset histories.
+	queryDlg_->clear();
+	editCont_->clearHistory();
 
 	// Close the project.
 	ProjectManager::close();

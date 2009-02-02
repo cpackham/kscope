@@ -42,17 +42,17 @@ class QueryDialog : public QDialog, private Ui::QueryDialog
 public:
 	typedef QList<Core::Query::Type> TypeList;
 
-	QueryDialog(Core::Query::Type, QWidget* parent = 0);
-	QueryDialog(const TypeList&, Core::Query::Type, QWidget* parent = 0);
+	QueryDialog(QWidget* parent = 0);
 	~QueryDialog();
 
-	void accept();
+	int exec(Core::Query::Type, const TypeList& typeList = TypeList());
 	QString pattern();
 	void setPattern(const QString&);
 	Core::Query::Type type();
+	void clear();
 
-private:
-	void setupUi(const TypeList&, Core::Query::Type);
+public slots:
+	void accept();
 };
 
 } // namespace App

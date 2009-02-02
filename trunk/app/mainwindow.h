@@ -36,6 +36,7 @@ namespace App
 
 class EditorContainer;
 class QueryResultDock;
+class QueryDialog;
 
 /**
  * KScope's main window.
@@ -87,6 +88,11 @@ private:
 	 * Holds query result views in a docked widget.
 	 */
 	QueryResultDock* queryDock_;
+
+	/**
+	 * Used to prompt for query information.
+	 */
+	QueryDialog* queryDlg_;
 
 	/**
 	 * Provides progress information on an engine's build process.

@@ -18,7 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QDebug>
 #include "querydialog.h"
 #include "strings.h"
 
@@ -30,33 +32,12 @@ namespace App
 
 /**
  * Class constructor.
- * @param  type    Default query type
  * @param  parent  Parent widget
  */
-QueryDialog::QueryDialog(Core::Query::Type type, QWidget* parent)
+QueryDialog::QueryDialog(QWidget* parent)
 	: QDialog(parent), Ui::QueryDialog()
 {
-	// Create a list with all supported query types.
-	TypeList typeList;
-	typeList << Core::Query::Text << Core::Query::References
-	         << Core::Query::Definition << Core::Query::CalledFunctions
-	         << Core::Query::CallingFunctions << Core::Query::FindFile
-	         << Core::Query::IncludingFiles;
-
-	setupUi(typeList, type);
-}
-
-/**
- * Class constructor.
- * @param  typeList  The types to show
- * @param  type      Default query type
- * @param  parent    Parent widget
- */
-QueryDialog::QueryDialog(const TypeList& typeList, Core::Query::Type type,
-                         QWidget* parent)
-	: QDialog(parent), Ui::QueryDialog()
-{
-	setupUi(typeList, type);
+	setupUi(this);
 }
 
 /**
@@ -67,20 +48,33 @@ QueryDialog::~QueryDialog()
 }
 
 /**
- * Called when the user clicks the "OK" button.
- * Removes all white space from before and after the entered text.
+ * Displays a modal dialogue.
+ * @param  defType   Default query type
+ * @param  typeList  The types to show
  */
-void QueryDialog::accept()
+int QueryDialog::exec(Core::Query::Type defType, const TypeList& typeList)
 {
-	QString text = patternEdit_->text().trimmed();
-	if (text.isEmpty()) {
-		QMessageBox::warning(this, tr("Invalid Pattern"),
-		                     tr("Please enter a non-empty pattern"));
-		return;
+	// Prepare the query type combo box.
+	if (typeList.size() > 0) {
+		foreach (Core::Query::Type type, typeList)
+			typeCombo_->addItem(Strings::toString(type), type);
+	}
+	else {
+		// Create a list with all supported query types.
+		TypeList typeList;
+		typeList << Core::Query::Text << Core::Query::References
+		         << Core::Query::Definition << Core::Query::CalledFunctions
+		         << Core::Query::CallingFunctions << Core::Query::FindFile
+		         << Core::Query::IncludingFiles;
+
+		foreach (Core::Query::Type type, typeList)
+			typeCombo_->addItem(Strings::toString(type), type);
 	}
 
-	patternEdit_->setText(text);
-	QDialog::accept();
+	// Select the default type.
+	typeCombo_->setCurrentIndex(typeCombo_->findData(defType));
+
+	return QDialog::exec();
 }
 
 /**
@@ -88,7 +82,7 @@ void QueryDialog::accept()
  */
 QString QueryDialog::pattern()
 {
-	return patternEdit_->text();
+	return patternCombo_->lineEdit()->text();
 }
 
 /**
@@ -96,8 +90,8 @@ QString QueryDialog::pattern()
  */
 void QueryDialog::setPattern(const QString& pattern)
 {
-	patternEdit_->setText(pattern);
-	patternEdit_->selectAll();
+	patternCombo_->lineEdit()->setText(pattern);
+	patternCombo_->lineEdit()->selectAll();
 }
 
 /**
@@ -117,24 +111,44 @@ Core::Query::Type QueryDialog::type()
 }
 
 /**
- * Common method for both constructors.
- * Creates the dialogue's user interface.
- * @param  typeList  The types to show
- * @param  type      Default query type
+ * Deletes all items in the pattern combo-box.
  */
-void QueryDialog::setupUi(const TypeList& typeList, Core::Query::Type defType)
+void QueryDialog::clear()
 {
-	// Generate the GUI.
-	Ui::QueryDialog::setupUi(this);
+	patternCombo_->clear();
+}
 
-	// Prepare the query type combo box.
-	Core::Query::Type type;
-	foreach (type, typeList)
-		typeCombo_->addItem(Strings::toString(type), type);
+/**
+ * Called when the user clicks the "OK" button.
+ * Removes all white space from before and after the entered text.
+ */
+void QueryDialog::accept()
+{
+	// Get a trimmed version of the current text.
+	QString text = patternCombo_->lineEdit()->text().trimmed();
+	if (text.isEmpty()) {
+		QMessageBox::warning(this, tr("Invalid Pattern"),
+		                     tr("Please enter a non-empty pattern"));
+		return;
+	}
 
-	// Select the default type.
-	if (typeList.size() > 1)
-		typeCombo_->setCurrentIndex(typeCombo_->findData(defType));
+	// Remove an existing copy of the pattern.
+	int i = patternCombo_->findText(text);
+	if (i >= 0) {
+		patternCombo_->removeItem(i);
+	}
+
+	// Add to the top of the history list.
+	patternCombo_->insertItem(i, text);
+
+	// Make sure the list does not exceed 20 items.
+	while (patternCombo_->count() >= 20)
+		patternCombo_->removeItem(patternCombo_->count() - 1);
+
+	// Set as the current text.
+	patternCombo_->lineEdit()->setText(text);
+
+	QDialog::accept();
 }
 
 } // namespace App
