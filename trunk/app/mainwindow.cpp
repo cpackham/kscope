@@ -169,9 +169,10 @@ void MainWindow::quickDefinition()
 
 	try {
 		// Run the query.
-		view->model()->setRootPath(ProjectManager::project()->rootPath());
-		view->model()->setColumns(ProjectManager::engine()
-			.queryFields(Core::Query::Definition));
+		Core::LocationModel* model = view->locationModel();
+		model->setRootPath(ProjectManager::project()->rootPath());
+		model->setColumns(ProjectManager::engine()
+		                  .queryFields(Core::Query::Definition));
 		ProjectManager::engine().query(view,
 		                               Core::Query(Core::Query::Definition,
 		                                           symbol));

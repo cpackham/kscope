@@ -44,15 +44,21 @@ QueryView::QueryView(QWidget* parent, Type type)
 	setExpandsOnDoubleClick(false);
 
 	// Create a location model.
+	LocationModel* model;
 	switch (type_) {
 	case List:
-		setModel(new LocationListModel(this));
+		model = new LocationListModel(this);
 		break;
 
 	case Tree:
-		setModel(new LocationTreeModel(this));
+		model = new LocationTreeModel(this);
 		break;
 	}
+
+	// Create the model proxy.
+	QSortFilterProxyModel* proxy = new QSortFilterProxyModel(this);
+	proxy->setSourceModel(model);
+	setModel(proxy);
 
 	// Emit requests for locations when an item is double-clicked.
 	connect(this, SIGNAL(activated(const QModelIndex&)), this,
@@ -77,8 +83,8 @@ QueryView::~QueryView()
  */
 void QueryView::query(const Query& query)
 {
-	// Reset the model.
-	model()->clear();
+	// Delete the model data.
+	locationModel()->clear();
 
 	try {
 		// Get an engine for running the query.
@@ -86,7 +92,7 @@ void QueryView::query(const Query& query)
 		if ((eng = engine()) != NULL) {
 			// Run the query.
 			query_ = query;
-			model()->setColumns(eng->queryFields(query_.type_));
+			locationModel()->setColumns(eng->queryFields(query_.type_));
 			eng->query(this, query_);
 		}
 	}
@@ -101,7 +107,7 @@ void QueryView::query(const Query& query)
  */
 void QueryView::resizeColumns()
 {
-	for (int i = 0; i < model()->columnCount(); i++)
+	for (int i = 0; i < locationModel()->columnCount(); i++)
 		resizeColumnToContents(i);
 }
 
@@ -134,7 +140,7 @@ QDomElement QueryView::toXML(QDomDocument& doc) const
 	viewElem.appendChild(colsElem);
 
 	// Add an element for each column.
-	foreach (Location::Fields field, model()->columns()) {
+	foreach (Location::Fields field, locationModel()->columns()) {
 		QDomElement colElem = doc.createElement("Column");
 		colElem.setAttribute("field", QString::number(field));
 		colsElem.appendChild(colElem);
@@ -153,7 +159,8 @@ QDomElement QueryView::toXML(QDomDocument& doc) const
 void QueryView::fromXML(const QDomElement& viewElem)
 {
 	// Get query information.
-	QDomElement queryElem = viewElem.elementsByTagName("Query").at(0).toElement();
+	QDomElement queryElem
+		= viewElem.elementsByTagName("Query").at(0).toElement();
 	if (queryElem.isNull())
 		return;
 
@@ -163,7 +170,7 @@ void QueryView::fromXML(const QDomElement& viewElem)
 	query_.pattern_ = queryElem.childNodes().at(0).toCDATASection().data();
 
 	// Reset the model.
-	model()->clear();
+	locationModel()->clear();
 
 	// TODO: Is there a guarantee of order?
 	QDomNodeList columnNodes = viewElem.elementsByTagName("Column");
@@ -176,7 +183,7 @@ void QueryView::fromXML(const QDomElement& viewElem)
 		colList.append(static_cast<Location::Fields>
 		               (elem.attribute("field").toUInt()));
 	}
-	model()->setColumns(colList);
+	locationModel()->setColumns(colList);
 
 	// Find the <LocationList> element that is a child of the root element.
 	QDomNodeList childNodes = viewElem.childNodes();
@@ -190,7 +197,7 @@ void QueryView::fromXML(const QDomElement& viewElem)
 	}
 
 #ifndef QT_NO_DEBUG
-	model()->verify();
+	locationModel()->verify();
 #endif
 }
 
@@ -201,7 +208,7 @@ void QueryView::fromXML(const QDomElement& viewElem)
  */
 void QueryView::onDataReady(const LocationList& locList)
 {
-	model()->add(locList, queryIndex_);
+	locationModel()->add(locList, queryIndex_);
 }
 
 /**
@@ -233,8 +240,8 @@ void QueryView::onProgress(const QString& text, uint cur, uint total)
 void QueryView::onFinished()
 {
 	// Handle an empty result set.
-	if (model()->rowCount(queryIndex_) == 0)
-		model()->add(LocationList(), queryIndex_);
+	if (locationModel()->rowCount(queryIndex_) == 0)
+		locationModel()->add(LocationList(), queryIndex_);
 
 	// Destroy the progress-bar, if it exists.
 	if (progBar_) {
@@ -247,12 +254,14 @@ void QueryView::onFinished()
 
 	// Auto-select a single result, if required.
 	Location loc;
-	if (autoSelectSingleResult_ && model()->rowCount(queryIndex_) == 1
-	                            && model()->firstLocation(loc)) {
+	if (autoSelectSingleResult_ && locationModel()->rowCount(queryIndex_) == 1
+	                            && locationModel()->firstLocation(loc)) {
 		emit locationRequested(loc);
 	}
-	else if (!isVisible()) {
-		emit needToShow();
+	else {
+		setCurrentIndex(QModelIndex());
+		if (!isVisible())
+			emit needToShow();
 	}
 }
 
@@ -269,30 +278,34 @@ void QueryView::onAborted()
 }
 
 /**
- * Selects the next location in the list.
+ * Selects the next available index in the proxy.
  */
 void QueryView::selectNext()
 {
-	QModelIndex selIndex = model()->nextIndex(currentIndex());
-	if (selIndex.isValid())
-		setCurrentIndex(selIndex);
+	QModelIndex index = moveCursor(MoveNext, 0);
+	if (!index.isValid())
+		return;
+
+	setCurrentIndex(index);
 
 	Location loc;
-	if (model()->locationFromIndex(selIndex, loc))
+	if (locationModel()->locationFromIndex(proxy()->mapToSource(index), loc))
 		emit locationRequested(loc);
 }
 
 /**
- * Selects the previous location in the list.
+ * Selects the previous available index in the proxy.
  */
 void QueryView::selectPrev()
 {
-	QModelIndex selIndex = model()->prevIndex(currentIndex());
-	if (selIndex.isValid())
-		setCurrentIndex(selIndex);
+	QModelIndex index = moveCursor(MovePrevious, 0);
+	if (!index.isValid())
+		return;
+
+	setCurrentIndex(index);
 
 	Location loc;
-	if (model()->locationFromIndex(selIndex, loc))
+	if (locationModel()->locationFromIndex(proxy()->mapToSource(index), loc))
 		emit locationRequested(loc);
 }
 
@@ -305,18 +318,18 @@ void QueryView::selectPrev()
  * @param  doc        The XML document object to use
  * @param  parentElem XML element under which new location elements should be
  *                    created
- * @param  idx        The index to store (along with its children)
+ * @param  index      The source index to store (along with its children)
  */
 void QueryView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
-                              const QModelIndex& idx) const
+                              const QModelIndex& index) const
 {
 	QDomElement elem;
 
-	if (idx.isValid()) {
+	if (index.isValid()) {
 		// A non-root index.
 		// Translate the index into a location information structure.
 		Location loc;
-		if (!model()->locationFromIndex(idx, loc))
+		if (!locationModel()->locationFromIndex(index, loc))
 			return;
 
 		// Create an XML element for the location.
@@ -324,7 +337,7 @@ void QueryView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
 		parentElem.appendChild(elem);
 
 		// Add a text node for each structure member.
-		const QList<Location::Fields>& colList = model()->columns();
+		const QList<Location::Fields>& colList = locationModel()->columns();
 		foreach (Location::Fields field, colList) {
 			QString name;
 			QDomNode node;
@@ -382,15 +395,17 @@ void QueryView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
 	// were any results or not). An element is not created for non-queried
 	// items, so that locationFromXML() does not call add() for such items,
 	// correctly restoring their status.
-	if (model()->isEmpty(idx) != LocationModel::Unknown) {
+	if (locationModel()->isEmpty(index) != LocationModel::Unknown) {
 		// Create the element.
 		QDomElement locListElem = doc.createElement("LocationList");
-		locListElem.setAttribute("expanded", isExpanded(idx) ? "1" : "0");
+		QModelIndex proxyIndex = proxy()->mapFromSource(index);
+		locListElem.setAttribute("expanded", isExpanded(proxyIndex) ? "1"
+		                                                            : "0");
 		elem.appendChild(locListElem);
 
 		// Add child locations.
-		for (int i = 0; i < model()->rowCount(idx); i++)
-			locationToXML(doc, locListElem, model()->index(i, 0, idx));
+		for (int i = 0; i < locationModel()->rowCount(index); i++)
+			locationToXML(doc, locListElem, locationModel()->index(i, 0, index));
 	}
 }
 
@@ -398,7 +413,8 @@ void QueryView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
  * Loads a hierarchy of locations from an XML document into the model.
  * See locationToXML() for the XML format.
  * @param  locListElem A <LocationList> XML element
- * @param  parentIndex The model index under which locations should be added
+ * @param  parentIndex The source model index under which locations should be
+ *                     added
  */
 void QueryView::locationFromXML(const QDomElement& locListElem,
                                 const QModelIndex& parentIndex)
@@ -454,13 +470,13 @@ void QueryView::locationFromXML(const QDomElement& locListElem,
 	}
 
 	// Store locations in the model.
-	model()->add(locList, parentIndex);
+	locationModel()->add(locList, parentIndex);
 
 	// Load any sub-lists encountered earlier.
 	QList< QPair<int, QDomElement> >::Iterator itr;
 	for (itr = childLists.begin(); itr != childLists.end(); ++itr) {
 		locationFromXML((*itr).second,
-		                model()->index((*itr).first, 0, parentIndex));
+		                locationModel()->index((*itr).first, 0, parentIndex));
 	}
 
 	// Expand the item if required.
@@ -471,12 +487,12 @@ void QueryView::locationFromXML(const QDomElement& locListElem,
 /**
  * Called when the user double-clicks a location item in the list.
  * Emits the locationRequested() signal for this location.
- * @param  index  Identifies the clicked item
+ * @param  index  The clicked item (proxy index)
  */
 void QueryView::requestLocation(const QModelIndex& index)
 {
 	Location loc;
-	if (model()->locationFromIndex(index, loc))
+	if (locationModel()->locationFromIndex(proxy()->mapToSource(index), loc))
 		emit locationRequested(loc);
 }
 
@@ -492,24 +508,25 @@ void QueryView::stopQuery()
 /**
  * Called when a tree item is expanded.
  * If this item was not queried before, a query is performed.
- * @param  idx  The expanded item
+ * @param  index  The expanded item (proxy index)
  */
-void QueryView::queryTreeItem(const QModelIndex& idx)
+void QueryView::queryTreeItem(const QModelIndex& index)
 {
 	// Query previously-non-queried items only.
-	if (model()->isEmpty(idx) != LocationModel::Unknown)
+	QModelIndex srcIndex = proxy()->mapToSource(index);
+	if (locationModel()->isEmpty(srcIndex) != LocationModel::Unknown)
 		return;
 
 	// Get the location information from the index.
 	Location loc;
-	if (!model()->locationFromIndex(idx, loc))
+	if (!locationModel()->locationFromIndex(srcIndex, loc))
 		return;
 
 	// Run a query on this location.
 	try {
 		Engine* eng;
 		if ((eng = engine()) != NULL) {
-			queryIndex_ = idx;
+			queryIndex_ = srcIndex;
 			eng->query(this, Query(query_.type_, loc.tag_.scope_));
 		}
 	}

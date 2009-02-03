@@ -100,6 +100,9 @@ LocationListModel::isEmpty(const QModelIndex& index) const
  */
 void LocationListModel::clear()
 {
+	if (locList_.isEmpty())
+		return;
+
 	locList_.clear();
 	locationsAdded_ = false;
 	reset();

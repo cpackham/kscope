@@ -120,6 +120,9 @@ LocationTreeModel::isEmpty(const QModelIndex& index) const
  */
 void LocationTreeModel::clear()
 {
+	if (root_.childCount() == 0)
+		return;
+
 	root_.clear();
 	reset();
 }
@@ -153,7 +156,7 @@ bool LocationTreeModel::locationFromIndex(const QModelIndex& idx,
  */
 bool LocationTreeModel::firstLocation(Location& loc) const
 {
-	if (root_.childCount() < 1)
+	if (root_.childCount() == 0)
 		return false;
 
 	loc = root_.child(0)->data().loc_;

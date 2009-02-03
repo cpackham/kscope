@@ -22,6 +22,7 @@
 #define __CORE_QUERYVIEW_H__
 
 #include <QTreeView>
+#include <QSortFilterProxyModel>
 #include <QDomDocument>
 #include <QDomElement>
 #include "globals.h"
@@ -86,18 +87,26 @@ public:
 	 */
 	Type type() const { return type_; }
 
-	/**
-	 * @return The location model for this view
-	 */
-	inline LocationModel* model() {
-		return static_cast<LocationModel*>(QTreeView::model());
+	inline QSortFilterProxyModel* proxy() {
+		return static_cast<QSortFilterProxyModel*>(model());
+	}
+
+	inline const QSortFilterProxyModel* proxy() const {
+		return static_cast<QSortFilterProxyModel*>(model());
 	}
 
 	/**
 	 * @return The location model for this view
 	 */
-	const LocationModel* model() const {
-		return static_cast<const LocationModel*>(QTreeView::model());
+	inline LocationModel* locationModel() {
+		return static_cast<LocationModel*>(proxy()->sourceModel());
+	}
+
+	/**
+	 * @return The location model for this view
+	 */
+	inline const LocationModel* locationModel() const {
+		return static_cast<LocationModel*>(proxy()->sourceModel());
 	}
 
 	// Engine::Connection implementation.

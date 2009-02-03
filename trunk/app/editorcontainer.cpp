@@ -295,9 +295,10 @@ void EditorContainer::showLocalTags()
 
 	try {
 		// Run the query.
-		view->model()->setRootPath(ProjectManager::project()->rootPath());
-		view->model()->setColumns(ProjectManager::engine()
-			.queryFields(Core::Query::LocalTags));
+		Core::LocationModel* model = view->locationModel();
+		model->setRootPath(ProjectManager::project()->rootPath());
+		model->setColumns(ProjectManager::engine()
+		                  .queryFields(Core::Query::LocalTags));
 		ProjectManager::engine().query(view,
 		                               Core::Query(Core::Query::LocalTags,
 		                                           currentEditor()->path()));
@@ -319,17 +320,18 @@ void EditorContainer::browseHistory()
 
 	// Add location history entries to the model.
 	Core::QueryView* view = dlg.view();
-	view->model()->add(history_.list(), QModelIndex());
+	Core::LocationModel* model = view->locationModel();
+	model->add(history_.list(), QModelIndex());
 
 	// Setup the model's displayed columns.
 	QList<Core::Location::Fields> columns;
 	columns << Core::Location::File << Core::Location::Line
 	        << Core::Location::Text;
-	view->model()->setColumns(columns);
+	model->setColumns(columns);
 
 	try {
 		// Set the root path.
-		view->model()->setRootPath(ProjectManager::project()->rootPath());
+		model->setRootPath(ProjectManager::project()->rootPath());
 	}
 	catch (Core::Exception* e) {
 		e->showMessage();

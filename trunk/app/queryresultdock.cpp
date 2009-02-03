@@ -142,7 +142,14 @@ QueryView* QueryResultDock::addView(const QString& title,
 	view->setWindowTitle(title);
 	connect(view, SIGNAL(locationRequested(const Core::Location&)), this,
 	        SIGNAL(locationRequested(const Core::Location&)));
-	view->model()->setRootPath(ProjectManager::project()->rootPath());
+
+	try {
+		Core::LocationModel* model = view->locationModel();
+		model->setRootPath(ProjectManager::project()->rootPath());
+	}
+	catch (Core::Exception* e) {
+		delete e;
+	}
 
 	// TODO: Provide a configurable option to determine if a single result
 	// should be selected automatically.

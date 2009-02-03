@@ -52,6 +52,7 @@ public:
 	 */
 	void setColumns(const QList<Location::Fields>& colList) {
 		colList_ = colList;
+		reset();
 	}
 
 	/**
