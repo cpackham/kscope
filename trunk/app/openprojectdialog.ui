@@ -106,6 +106,9 @@
        <property name="text" >
         <string>&amp;Open</string>
        </property>
+       <property name="default" >
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -119,6 +122,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>pathEdit_</tabstop>
+  <tabstop>browseButton_</tabstop>
+  <tabstop>recentProjectsList_</tabstop>
+  <tabstop>removeProjectButton_</tabstop>
+  <tabstop>newButton_</tabstop>
+  <tabstop>openButton_</tabstop>
+  <tabstop>cancelButton_</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
