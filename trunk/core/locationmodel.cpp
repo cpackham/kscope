@@ -84,10 +84,8 @@ QVariant LocationModel::headerData(int section, Qt::Orientation orient,
  */
 int LocationModel::columnCount(const QModelIndex& parent) const
 {
-	if (!parent.isValid())
-		return colList_.size();
-
-	return 0;
+	(void)parent;
+	return colList_.size();
 }
 
 #ifndef QT_NO_DEBUG
