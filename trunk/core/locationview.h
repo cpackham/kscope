@@ -66,7 +66,7 @@ public:
 	 */
 	bool hasChildren(const QModelIndex& parent = QModelIndex()) const {
 		LocationModel* model = static_cast<LocationModel*>(sourceModel());
-		if (model->isEmpty(parent) == LocationModel::Unknown)
+		if (model->isEmpty(mapToSource(parent)) == LocationModel::Unknown)
 			return true;
 
 		return QSortFilterProxyModel::hasChildren(parent);
