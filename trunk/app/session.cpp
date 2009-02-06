@@ -125,8 +125,9 @@ void Session::addQueryView(const QueryView* view)
 	}
 
 	// Put location information under the element.
-	QDomElement elem = view->toXML(queryViewDoc_);
-	root.appendChild(elem);
+	QDomElement viewElem = queryViewDoc_.createElement("QueryView");
+	root.appendChild(viewElem);
+	view->toXML(queryViewDoc_, viewElem);
 }
 
 /**

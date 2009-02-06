@@ -21,20 +21,17 @@
 #ifndef __CORE_QUERYVIEW_H__
 #define __CORE_QUERYVIEW_H__
 
-#include <QTreeView>
-#include <QSortFilterProxyModel>
-#include <QDomDocument>
-#include <QDomElement>
+#include "locationview.h"
 #include "globals.h"
-#include "engine.h"
-#include "progressbar.h"
-#include "locationmodel.h"
 
 namespace KScope
 {
 
 namespace Core
 {
+
+class Engine;
+class ProgressBar;
 
 /**
  * A view for displaying query results.
@@ -55,23 +52,17 @@ namespace Core
  * query on a child item.
  * @author Elad Lahav
  */
-class QueryView : public QTreeView, public Engine::Connection
+class QueryView : public LocationView, public Engine::Connection
 {
 	Q_OBJECT
 
 public:
-	/**
-	 * The view can work in either list or tree modes.
-	 */
-	enum Type { List, Tree };
-
 	QueryView(QWidget*, Type type = List);
 	~QueryView();
 
 	void query(const Query&);
-	void resizeColumns();
-	QDomElement toXML(QDomDocument&) const;
-	void fromXML(const QDomElement&);
+	virtual void toXML(QDomDocument&, QDomElement&) const;
+	virtual void fromXML(const QDomElement&);
 
 	/**
 	 * In the case the query returns only a single location, determines whether
@@ -82,56 +73,11 @@ public:
 		autoSelectSingleResult_ = select;
 	}
 
-	/**
-	 * @return  The type of the view
-	 */
-	Type type() const { return type_; }
-
-	inline QSortFilterProxyModel* proxy() {
-		return static_cast<QSortFilterProxyModel*>(model());
-	}
-
-	inline const QSortFilterProxyModel* proxy() const {
-		return static_cast<QSortFilterProxyModel*>(model());
-	}
-
-	/**
-	 * @return The location model for this view
-	 */
-	inline LocationModel* locationModel() {
-		return static_cast<LocationModel*>(proxy()->sourceModel());
-	}
-
-	/**
-	 * @return The location model for this view
-	 */
-	inline const LocationModel* locationModel() const {
-		return static_cast<LocationModel*>(proxy()->sourceModel());
-	}
-
 	// Engine::Connection implementation.
 	virtual void onDataReady(const LocationList&);
 	virtual void onFinished();
 	virtual void onAborted();
 	virtual void onProgress(const QString&, uint, uint);
-
-public slots:
-	void selectNext();
-	void selectPrev();
-
-signals:
-	/**
-	 * Emitted when a location item is selected.
-	 * @param  loc  The location descriptor
-	 */
-	void locationRequested(const Core::Location& loc);
-
-	/**
-	 * Emitted when the view needs to be visible.
-	 * This is useful for creating containers that only become visible when
-	 * there is something to show in the view (either progress or results).
-	 */
-	void needToShow();
 
 protected:
 	/**
@@ -144,11 +90,6 @@ protected:
 	virtual Engine* engine() { return NULL; }
 
 private:
-	/**
-	 * Whether the view is in list or tree modes.
-	 */
-	Type type_;
-
 	/**
 	 * The query associated with this view.
 	 * This can be used, e.g., for re-running the query from within the view.
@@ -174,11 +115,7 @@ private:
 	 */
 	bool autoSelectSingleResult_;
 
-	void locationToXML(QDomDocument&, QDomElement&, const QModelIndex&) const;
-	void locationFromXML(const QDomElement&, const QModelIndex&);
-
 private slots:
-	void requestLocation(const QModelIndex&);
 	void stopQuery();
 	void queryTreeItem(const QModelIndex&);
 };

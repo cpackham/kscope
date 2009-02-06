@@ -1,5 +1,4 @@
 include(../config)
-
 TEMPLATE = lib
 TARGET = kscope_core
 CONFIG += dll
@@ -22,7 +21,8 @@ HEADERS += locationtreemodel.h \
     statemachine.h \
     treeitem.h \
     progressbar.h \
-    engine.h
+    engine.h \
+    locationview.h
 FORMS += progressbar.ui
 SOURCES += locationtreemodel.cpp \
     locationmodel.cpp \
@@ -31,8 +31,8 @@ SOURCES += locationtreemodel.cpp \
     locationlistmodel.cpp \
     codebasemodel.cpp \
     process.cpp \
-    progressbar.cpp
+    progressbar.cpp \
+    locationview.cpp
 RESOURCES = core.qrc
-
 target.path = $${INSTALL_PATH}/lib
 INSTALLS += target
