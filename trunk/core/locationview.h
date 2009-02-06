@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-
 #ifndef __CORE_LOCATIONVIEW_H__
 #define __CORE_LOCATIONVIEW_H__
 
@@ -36,6 +35,43 @@ namespace KScope
 
 namespace Core
 {
+
+/**
+ * A proxy model used by LocationView.
+ * @author Elad Lahav
+ */
+class LocationViewProxyModel : public QSortFilterProxyModel
+{
+	Q_OBJECT
+
+public:
+	/**
+	 * Class constructor.
+	 * @param  parent Parent object
+	 */
+	LocationViewProxyModel(QObject* parent) : QSortFilterProxyModel(parent) {}
+
+	/**
+	 * Class destructor.
+	 */
+	~LocationViewProxyModel() {}
+
+	/**
+	 * Determines if the given index has children.
+	 * Used to display an expansion button beside items which either have
+	 * children, or for which the state is still unknown (for on-demand
+	 * population of the model).
+	 * @param  parent The parent index
+	 * @return true to display an expansion button, false otherwise
+	 */
+	bool hasChildren(const QModelIndex& parent = QModelIndex()) const {
+		LocationModel* model = static_cast<LocationModel*>(sourceModel());
+		if (model->isEmpty(parent) == LocationModel::Unknown)
+			return true;
+
+		return QSortFilterProxyModel::hasChildren(parent);
+	}
+};
 
 /**
  * A view for displaying LocationModel models.
@@ -67,15 +103,15 @@ public:
 	/**
 	 * @return The proxy model
 	 */
-	inline QSortFilterProxyModel* proxy() {
-		return static_cast<QSortFilterProxyModel*>(model());
+	inline LocationViewProxyModel* proxy() {
+		return static_cast<LocationViewProxyModel*>(model());
 	}
 
 	/**
 	 * @return The proxy model
 	 */
-	inline const QSortFilterProxyModel* proxy() const {
-		return static_cast<QSortFilterProxyModel*>(model());
+	inline const LocationViewProxyModel* proxy() const {
+		return static_cast<LocationViewProxyModel*>(model());
 	}
 
 	/**

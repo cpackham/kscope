@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#include <QDebug>
 #include "locationtreemodel.h"
 
 namespace KScope
@@ -326,7 +325,7 @@ bool LocationTreeModel::hasChildren(const QModelIndex& parent) const
 			return 0;
 	}
 
-	return ((!node->data().locationsAdded_) || (node->childCount() > 0));
+	return node->childCount() > 0;
 }
 
 /**

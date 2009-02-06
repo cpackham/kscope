@@ -42,7 +42,7 @@ LocationView::LocationView(QWidget* parent, Type type)
 	setExpandsOnDoubleClick(false);
 
 	// Create the model proxy.
-	QSortFilterProxyModel* proxy = new QSortFilterProxyModel(this);
+	LocationViewProxyModel* proxy = new LocationViewProxyModel(this);
 	setModel(proxy);
 
 	// Create a location model.
@@ -264,8 +264,8 @@ void LocationView::locationToXML(QDomDocument& doc, QDomElement& parentElem,
 		// Create the element.
 		QDomElement locListElem = doc.createElement("LocationList");
 		QModelIndex proxyIndex = proxy()->mapFromSource(index);
-		locListElem.setAttribute("expanded", isExpanded(proxyIndex) ? "1"
-		                                                            : "0");
+		locListElem.setAttribute("expanded",
+		                         isExpanded(proxyIndex) ? "1" : "0");
 		elem.appendChild(locListElem);
 
 		// Add child locations.
@@ -346,7 +346,7 @@ void LocationView::locationFromXML(const QDomElement& locListElem,
 
 	// Expand the item if required.
 	if (locListElem.attribute("expanded").toUInt())
-		expand(parentIndex);
+		expand(proxy()->mapFromSource(parentIndex));
 }
 
 /**
