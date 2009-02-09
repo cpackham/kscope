@@ -47,7 +47,7 @@ public:
 	// LocationModel implementation.
 	void add(const LocationList&, const QModelIndex&);
 	IsEmptyResult isEmpty(const QModelIndex&) const;
-	void clear();
+	void clear(const QModelIndex&);
 	bool locationFromIndex(const QModelIndex&, Location&) const;
 	bool firstLocation(Location&) const;
 	QModelIndex nextIndex(const QModelIndex&) const;

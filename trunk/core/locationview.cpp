@@ -120,7 +120,7 @@ void LocationView::toXML(QDomDocument& doc, QDomElement& viewElem) const
 void LocationView::fromXML(const QDomElement& viewElem)
 {
 	// Reset the model.
-	locationModel()->clear();
+	locationModel()->clear(QModelIndex());
 
 	// TODO: Is there a guarantee of order?
 	QDomNodeList columnNodes = viewElem.elementsByTagName("Column");
@@ -381,6 +381,10 @@ void LocationView::requestLocation(const QModelIndex& index)
 		emit locationRequested(loc);
 }
 
+/**
+ * Displays the text filter dialogue.
+ * If a filter is specified by the user, it is applied to the proxy model.
+ */
 void LocationView::promptFilter()
 {
 	TextFilterDialog dlg(proxy()->filterRegExp());
@@ -388,6 +392,9 @@ void LocationView::promptFilter()
 		proxy()->setFilterRegExp(dlg.filter());
 }
 
+/**
+ * Removes any filters from the proxy.
+ */
 void LocationView::clearFilter()
 {
 	proxy()->setFilterRegExp(QRegExp());

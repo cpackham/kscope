@@ -118,6 +118,7 @@ private:
 private slots:
 	void stopQuery();
 	void queryTreeItem(const QModelIndex&);
+	void requery();
 };
 
 } // namespace Core

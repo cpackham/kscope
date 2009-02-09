@@ -114,16 +114,31 @@ LocationTreeModel::isEmpty(const QModelIndex& index) const
 }
 
 /**
- * Removes all tree nodes.
- * Resets the model.
+ * Removes all tree nodes rooted at the given index.
+ * @param  parent The index to start from
  */
-void LocationTreeModel::clear()
+void LocationTreeModel::clear(const QModelIndex& parent)
 {
-	if (root_.childCount() == 0)
+	// Handle the root node (removing all data from the model).
+	if (!parent.isValid()) {
+		if (root_.childCount() > 0) {
+			root_.clear();
+			root_.data().locationsAdded_ = false;
+			reset();
+		}
+		return;
+	}
+
+	// Get the node from the index.
+	Node* node = static_cast<Node*>(parent.internalPointer());
+	if (node == NULL || node->childCount() == 0)
 		return;
 
-	root_.clear();
-	reset();
+	// Delete all descendants.
+	beginRemoveRows(parent, 0, node->childCount() - 1);
+	node->clear();
+	node->data().locationsAdded_ = false;
+	endRemoveRows();
 }
 
 /**

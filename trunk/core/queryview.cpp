@@ -38,12 +38,13 @@ QueryView::QueryView(QWidget* parent, Type type)
 	: LocationView(parent, type), progBar_(NULL),
 	  autoSelectSingleResult_(false)
 {
-
 	// Query child items when expanded (in a tree view).
 	if (type_ == Tree) {
 		connect(this, SIGNAL(expanded(const QModelIndex&)), this,
 		        SLOT(queryTreeItem(const QModelIndex&)));
 	}
+
+	menu_->addAction(tr("&Rerun Query"), this, SLOT(requery()));
 }
 
 /**
@@ -59,7 +60,7 @@ QueryView::~QueryView()
 void QueryView::query(const Query& query)
 {
 	// Delete the model data.
-	locationModel()->clear();
+	locationModel()->clear(QModelIndex());
 
 	try {
 		// Get an engine for running the query.
@@ -231,6 +232,27 @@ void QueryView::queryTreeItem(const QModelIndex& index)
 		e->showMessage();
 		delete e;
 	}
+}
+
+/**
+ * Runs the current query again.
+ */
+void QueryView::requery()
+{
+	// Do nothing if there is no valid query associated with this view.
+	if (query_.type_ == Query::Invalid)
+		return;
+
+	// For a list view, just re-execute the query.
+	if (type_ == List) {
+		query(query_);
+		return;
+	}
+
+	// Tree view: rerun the current branch only.
+	QModelIndex srcIndex = proxy()->mapToSource(menuIndex_);
+	locationModel()->clear(srcIndex);
+	queryTreeItem(menuIndex_);
 }
 
 } // namespace Core

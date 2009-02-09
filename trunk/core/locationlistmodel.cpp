@@ -97,9 +97,12 @@ LocationListModel::isEmpty(const QModelIndex& index) const
 /**
  * Removes all descriptors from the lists.
  * Resets the model.
+ * @param  parent ignored
  */
-void LocationListModel::clear()
+void LocationListModel::clear(const QModelIndex& parent)
 {
+	(void)parent;
+
 	if (locList_.isEmpty())
 		return;
 

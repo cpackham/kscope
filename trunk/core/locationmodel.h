@@ -93,9 +93,9 @@ public:
 	virtual IsEmptyResult isEmpty(const QModelIndex& index) const = 0;
 
 	/**
-	 * Deletes all locations in the model.
+	 * Deletes all locations in the model rooted at the given index.
 	 */
-	virtual void clear() = 0;
+	virtual void clear(const QModelIndex& parent) = 0;
 
 	/**
 	 * Converts a model index into a location structure.
