@@ -22,9 +22,11 @@
 #define __CORE_LOCATIONVIEW_H__
 
 #include <QTreeView>
+#include <QMenu>
 #include <QSortFilterProxyModel>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QContextMenuEvent>
 #include "globals.h"
 #include "engine.h"
 #include "progressbar.h"
@@ -152,12 +154,25 @@ protected:
 	 */
 	Type type_;
 
+	/**
+	 * A context menu for the view widget.
+	 */
+	QMenu* menu_;
+
+	/**
+	 * The proxy index for which the context menu was displayed.
+	 */
+	QModelIndex menuIndex_;
+
+	virtual void contextMenuEvent(QContextMenuEvent*);
 	virtual void locationToXML(QDomDocument&, QDomElement&,
 	                           const QModelIndex&) const;
 	virtual void locationFromXML(const QDomElement&, const QModelIndex&);
 
 protected slots:
 	void requestLocation(const QModelIndex&);
+	void promptFilter();
+	void clearFilter();
 };
 
 } // namespace Core

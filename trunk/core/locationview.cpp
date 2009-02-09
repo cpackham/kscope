@@ -18,9 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QDebug>
 #include "locationview.h"
 #include "locationlistmodel.h"
 #include "locationtreemodel.h"
+#include "textfilterdialog.h"
 
 namespace KScope
 {
@@ -59,6 +61,13 @@ LocationView::LocationView(QWidget* parent, Type type)
 	// Emit requests for locations when an item is double-clicked.
 	connect(this, SIGNAL(activated(const QModelIndex&)), this,
 	        SLOT(requestLocation(const QModelIndex&)));
+
+	// Create the context menu.
+	menu_ = new QMenu(this);
+	menu_->addAction(tr("&Filter..."), this, SLOT(promptFilter()),
+	                 QKeySequence("Alt+F"));
+	menu_->addAction(tr("C&lear filter"), this, SLOT(clearFilter()),
+	                 QKeySequence("Alt+C"));
 }
 
 /**
@@ -172,6 +181,17 @@ void LocationView::selectPrev()
 	Location loc;
 	if (locationModel()->locationFromIndex(proxy()->mapToSource(index), loc))
 		emit locationRequested(loc);
+}
+
+/**
+ * Displays the context menu in response to the matching event.
+ * @param  event Event parameters
+ */
+void LocationView::contextMenuEvent(QContextMenuEvent* event)
+{
+	menu_->popup(event->globalPos());
+	menuIndex_ = indexAt(event->pos());
+	event->accept();
 }
 
 /**
@@ -359,6 +379,18 @@ void LocationView::requestLocation(const QModelIndex& index)
 	Location loc;
 	if (locationModel()->locationFromIndex(proxy()->mapToSource(index), loc))
 		emit locationRequested(loc);
+}
+
+void LocationView::promptFilter()
+{
+	TextFilterDialog dlg(proxy()->filterRegExp());
+	if (dlg.exec() == QDialog::Accepted)
+		proxy()->setFilterRegExp(dlg.filter());
+}
+
+void LocationView::clearFilter()
+{
+	proxy()->setFilterRegExp(QRegExp());
 }
 
 } // namespace Core
