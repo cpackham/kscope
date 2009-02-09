@@ -148,6 +148,12 @@ signals:
 	 */
 	void needToShow();
 
+	/**
+	 * Emitted when the filter on the proxy model is changed.
+	 * @param  filtered true if a filter is currently applied, false otherwise
+	 */
+	void isFiltered(bool filtered);
+
 protected:
 	/**
 	 * Whether the view is in list or tree modes.

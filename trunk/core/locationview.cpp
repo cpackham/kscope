@@ -388,8 +388,11 @@ void LocationView::requestLocation(const QModelIndex& index)
 void LocationView::promptFilter()
 {
 	TextFilterDialog dlg(proxy()->filterRegExp());
-	if (dlg.exec() == QDialog::Accepted)
-		proxy()->setFilterRegExp(dlg.filter());
+	if (dlg.exec() == QDialog::Accepted) {
+		QRegExp filter = dlg.filter();
+		proxy()->setFilterRegExp(filter);
+		emit isFiltered(filter.isEmpty());
+	}
 }
 
 /**
@@ -398,6 +401,7 @@ void LocationView::promptFilter()
 void LocationView::clearFilter()
 {
 	proxy()->setFilterRegExp(QRegExp());
+	emit isFiltered(false);
 }
 
 } // namespace Core
