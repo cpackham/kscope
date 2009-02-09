@@ -67,7 +67,6 @@ public:
 public slots:
 	void newFile();
 	void openFile();
-	void openFile(const QString&);
 	void configEditor();
 	void gotoLocation(const Core::Location&);
 	void gotoNextLocation();
@@ -81,21 +80,32 @@ signals:
 	void find();
 	void findNext();
 
+	/**
+	 * Emitted when the cursor position of the active editor changes.
+	 * @param  line   1-based index of the current cursor line
+	 * @param  column 1-based index of the current cursor column
+	 */
+	void cursorPositionChanged(uint line, uint column);
+
 private:
 	QMdiSubWindow* currentWindow_;
 	QMap<QString, QMdiSubWindow*> fileMap_;
 	uint newFileIndex_;
 	Editor::Config config_;
 	LocationHistory history_;
-	bool blockWindowActivation_;
+	bool windowActivationBlocked_;
 
-	QMdiSubWindow* getEditor(const Core::Location&, bool activate = true);
+	bool gotoLocationInternal(const Core::Location&);
+	Editor* findEditor(const QString&);
+	Editor* createEditor(const QString&);
+	void blockWindowActivation(bool);
 
 private slots:
 	void handleWindowAction(QAction*);
 	void windowActivated(QMdiSubWindow*);
 	void removeEditor(const QString&);
 	void remapEditor(const QString&, const QString&);
+	void updateCursorPosition(int, int);
 };
 
 } // namespace App
