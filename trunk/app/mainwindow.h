@@ -99,12 +99,18 @@ private:
 	 */
 	BuildProgress buildProgress_;
 
+	/**
+	 * Displays the current cursor position in the status bar.
+	 */
+	QLabel* cursorPositionLabel_;
+
 	void readSettings();
 	void writeSettings();
 	void setWindowTitle(bool);
 
 private slots:
 	void projectOpenedClosed(bool);
+	void showCursorPosition(uint, uint);
 };
 
 } // namespace App
