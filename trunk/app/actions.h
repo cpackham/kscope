@@ -53,6 +53,9 @@ public slots:
 	void showWindowMenu();
 
 private:
+	/**
+	 * A dynamically-generated list of open windows.
+	 */
 	QMenu* wndMenu_;
 
 	inline MainWindow* mainWnd();

@@ -121,6 +121,10 @@ void Actions::setup()
 	menu->addAction(action);
 	group->addAction(action);
 
+	// View menu.
+	menu = mainWnd()->menuBar()->addMenu(tr("&View"));
+	menu->addAction(mainWnd()->queryDock_->toggleViewAction());
+
 	// Navigate menu.
 	// Enabled only when there is an active project.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Navigate"));
