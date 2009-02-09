@@ -140,9 +140,6 @@ void EditorContainer::loadSession(Session& session)
 	for (itr = locList.begin(); itr != locList.end(); ++itr)
 		(void)gotoLocationInternal(*itr);
 
-	// Re-enable handling of changes to active windows.
-	blockWindowActivation(false);
-
 	// Activate the previously-active editor.
 	// We have to call windowActivated() explicitly, in the case the active
 	// window is the last one to be loaded. In that case, the signal will not
@@ -150,6 +147,9 @@ void EditorContainer::loadSession(Session& session)
 	QString activeEditor = session.activeEditor();
 	if (!activeEditor.isEmpty())
 		(void)findEditor(activeEditor);
+
+	// Re-enable handling of changes to active windows.
+	blockWindowActivation(false);
 
 	// Maximise the active window, if required.
 	if (session.maxActiveEditor())
