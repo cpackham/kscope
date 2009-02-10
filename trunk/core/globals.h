@@ -350,18 +350,27 @@ struct Query
 };
 
 /**
- * Parameters for configuring an engine.
+ * A generic associative set, indexed by strings.
  */
 typedef QMap<QString, QVariant> KeyValuePairs;
 
+/**
+ * Used as a default type.
+ */
 struct Void {};
 
+/**
+ * Defines a generic callback functor, with a type T parameter.
+ */
 template<class T = Void>
 struct Callback
 {
 	virtual void call(T t) = 0;
 };
 
+/**
+ * Defines a generic callback functor, without parameters.
+ */
 template<>
 struct Callback<Void>
 {
