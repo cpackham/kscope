@@ -48,10 +48,6 @@ public:
 
 	void setup();
 
-public slots:
-	void query(QAction*);
-	void showWindowMenu();
-
 private:
 	/**
 	 * A dynamically-generated list of open windows.
@@ -59,6 +55,11 @@ private:
 	QMenu* wndMenu_;
 
 	inline MainWindow* mainWnd();
+
+private slots:
+	void query(QAction*);
+	void showWindowMenu();
+	void setEditorViewMode(QAction*);
 };
 
 } // namespace App

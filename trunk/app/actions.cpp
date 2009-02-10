@@ -123,6 +123,35 @@ void Actions::setup()
 
 	// View menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&View"));
+
+	// Exclusive group for setting the editor view mode.
+	group = new QActionGroup(this);
+	connect(group, SIGNAL(triggered(QAction*)), this,
+	        SLOT(setEditorViewMode(QAction*)));
+
+	// Display editors as sub-windows.
+	action = new QAction(tr("&Sub-Window Mode"), this);
+	action->setStatusTip(tr("Display editors as sub-windows"));
+	action->setCheckable(true);
+	action->setChecked(mainWnd()->editCont_->viewMode()
+	                   == QMdiArea::SubWindowView);
+	action->setData(QMdiArea::SubWindowView);
+	menu->addAction(action);
+	group->addAction(action);
+
+	// Display editors as tabs.
+	action = new QAction(tr("&Tabbed Mode"), this);
+	action->setStatusTip(tr("Display editors as tabs"));
+	action->setCheckable(true);
+	action->setChecked(mainWnd()->editCont_->viewMode()
+	                   == QMdiArea::TabbedView);
+	action->setData(QMdiArea::TabbedView);
+	menu->addAction(action);
+	group->addAction(action);
+
+	menu->addSeparator();
+
+	// Show/hide the query dock.
 	menu->addAction(mainWnd()->queryDock_->toggleViewAction());
 
 	// Navigate menu.
@@ -384,6 +413,22 @@ void Actions::showWindowMenu()
 	mainWnd()->editCont_->populateWindowMenu(wndMenu_);
 }
 
+/**
+ * Determines the view mode of the editor container.
+ * This is a common handler to the "View->Sub-Window Mode" and "View->Tabbed
+ * Mode" actions.
+ * @param  action The triggerred action
+ */
+void Actions::setEditorViewMode(QAction* action)
+{
+	QMdiArea::ViewMode mode =
+		static_cast<QMdiArea::ViewMode>(action->data().toUInt());
+	mainWnd()->editCont_->setViewMode(mode);
+}
+
+/**
+ * @return Pointer to the main window
+ */
 MainWindow* Actions::mainWnd()
 {
 	return static_cast<MainWindow*>(parent());
