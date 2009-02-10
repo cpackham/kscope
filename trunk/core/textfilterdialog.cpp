@@ -26,46 +26,107 @@ namespace KScope
 namespace Core
 {
 
+/**
+ * Class constructor.
+ * @param  re     The regular expression to use by default
+ * @param  parent Parent widget
+ */
 TextFilterDialog::TextFilterDialog(const QRegExp& re, QWidget* parent)
 	: QDialog(parent), Ui::TextFilterDialog()
 {
 	setupUi(this);
 
+	// Show the regular expression pattern.
 	patternEdit_->setText(re.pattern());
-	switch (re.patternSyntax()) {
-	case QRegExp::FixedString:
+
+	// Set the type of filter to use.
+	if (re.isEmpty()) {
+		// Special case: empty QRegExp.
+		// We want the default to be a fixed-string match, while a QRegExp()
+		// constructor defaults to a regular expression.
 		stringButton_->setChecked(true);
-		break;
-
-	case QRegExp::RegExp:
-	case QRegExp::RegExp2:
-		regExpButton_->setChecked(true);
-		break;
-
-	case QRegExp::Wildcard:
-		simpRegExpButton_->setChecked(true);
-		break;
 	}
+	else {
+		// Non-empty QRegExp.
+		// Use the type set for the object.
+		switch (re.patternSyntax()) {
+		case QRegExp::FixedString:
+			stringButton_->setChecked(true);
+			break;
+
+		case QRegExp::RegExp:
+		case QRegExp::RegExp2:
+			regExpButton_->setChecked(true);
+			break;
+
+		case QRegExp::Wildcard:
+			simpRegExpButton_->setChecked(true);
+			break;
+		}
+	}
+
+	// Determine whether the filter is case-sensitive.
+	caseSensitiveCheck_->setChecked(re.caseSensitivity() == Qt::CaseSensitive);
 }
 
+/**
+ * Class destructor.
+ */
 TextFilterDialog::~TextFilterDialog()
 {
 }
 
+/**
+ * Populates the "Filter By" combo-box.
+ * @param  pairs Option names and values for the combo-box
+ */
+void TextFilterDialog::setFilterByList(const KeyValuePairs& pairs)
+{
+	KeyValuePairs::ConstIterator itr;
+	for (itr = pairs.begin(); itr != pairs.end(); ++itr)
+		filterByCombo_->addItem(itr.key(), itr.value());
+}
+
+/**
+ * Selects an item in the "Filter By" combo-box.
+ * @param  value The value by which the item is selected
+ */
+void TextFilterDialog::setFilterByValue(const QVariant& value)
+{
+	int index = filterByCombo_->findData(value);
+	if (index >= 0)
+		filterByCombo_->setCurrentIndex(index);
+}
+
+/**
+ * Generates a QRegExp object from the parameters of the dialogue.
+ * @return The generated QRegExp object
+ */
 QRegExp TextFilterDialog::filter() const
 {
-	QRegExp re;
-
+	// Determine the type of filter to use.
+	QRegExp::PatternSyntax type;
 	if (stringButton_->isChecked())
-		re.setPatternSyntax(QRegExp::FixedString);
+		type = QRegExp::FixedString;
 	else if (regExpButton_->isChecked())
-		re.setPatternSyntax(QRegExp::RegExp);
+		type = QRegExp::RegExp;
 	else if (simpRegExpButton_->isChecked())
-		re.setPatternSyntax(QRegExp::Wildcard);
+		type = QRegExp::Wildcard;
 
-	re.setPattern(patternEdit_->text());
+	// Determine case sensitivity.
+	Qt::CaseSensitivity cs = caseSensitiveCheck_->isChecked()
+	                         ? Qt::CaseSensitive :  Qt::CaseInsensitive;
 
-	return re;
+	// Create and return the object.
+	return QRegExp(patternEdit_->text(), cs, type);
+}
+
+/**
+ * @return The data stored in the current index of the "Filter By" combo
+ */
+QVariant TextFilterDialog::filterByValue() const
+{
+	return filterByCombo_->itemData(filterByCombo_->currentIndex());
 }
 
 } // namespace Core

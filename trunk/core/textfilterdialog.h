@@ -24,6 +24,7 @@
 #include <QDialog>
 #include <QRegExp>
 #include "ui_textfilterdialog.h"
+#include "globals.h"
 
 namespace KScope
 {
@@ -43,7 +44,10 @@ public:
 	TextFilterDialog(const QRegExp&, QWidget* parent = 0);
 	~TextFilterDialog();
 
+	void setFilterByList(const KeyValuePairs&);
+	void setFilterByValue(const QVariant&);
 	QRegExp filter() const;
+	QVariant filterByValue() const;
 };
 
 } // namespace Core

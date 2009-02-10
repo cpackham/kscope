@@ -64,10 +64,8 @@ LocationView::LocationView(QWidget* parent, Type type)
 
 	// Create the context menu.
 	menu_ = new QMenu(this);
-	menu_->addAction(tr("&Filter..."), this, SLOT(promptFilter()),
-	                 QKeySequence("Alt+F"));
-	menu_->addAction(tr("C&lear filter"), this, SLOT(clearFilter()),
-	                 QKeySequence("Alt+C"));
+	menu_->addAction(tr("&Filter..."), this, SLOT(promptFilter()));
+	menu_->addAction(tr("C&lear filter"), this, SLOT(clearFilter()));
 }
 
 /**
@@ -387,12 +385,29 @@ void LocationView::requestLocation(const QModelIndex& index)
  */
 void LocationView::promptFilter()
 {
+	// Create the dialogue.
 	TextFilterDialog dlg(proxy()->filterRegExp());
-	if (dlg.exec() == QDialog::Accepted) {
-		QRegExp filter = dlg.filter();
-		proxy()->setFilterRegExp(filter);
-		emit isFiltered(filter.isEmpty());
+
+	// Populate the "Filter By" list.
+	KeyValuePairs pairs;
+	for (int i = 0; i < locationModel()->columnCount(); i++) {
+		QString colName = locationModel()->headerData(i, Qt::Horizontal,
+		                                              Qt::DisplayRole)
+		                                             .toString();
+		pairs[colName] = i;
 	}
+	dlg.setFilterByList(pairs);
+	dlg.setFilterByValue(menuIndex_.column());
+
+	// Show the dialogue.
+	if (dlg.exec() != QDialog::Accepted)
+		return;
+
+	// Apply the filter.
+	proxy()->setFilterKeyColumn(dlg.filterByValue().toInt());
+	QRegExp filter = dlg.filter();
+	proxy()->setFilterRegExp(filter);
+	emit isFiltered(filter.isEmpty());
 }
 
 /**
