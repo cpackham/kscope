@@ -28,8 +28,6 @@
 #include <QDomElement>
 #include <QContextMenuEvent>
 #include "globals.h"
-#include "engine.h"
-#include "progressbar.h"
 #include "locationmodel.h"
 
 namespace KScope

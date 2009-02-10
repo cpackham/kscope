@@ -23,6 +23,7 @@
 
 #include "locationview.h"
 #include "globals.h"
+#include "engine.h"
 
 namespace KScope
 {
