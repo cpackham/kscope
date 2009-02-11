@@ -60,18 +60,17 @@ Editor::~Editor()
  * During the loading process, the editor widget is disabled. Any calls to
  * setCursorPosition() or setFocus() are delayed until loading finishes.
  * @param  path  The path of the file to load
+ * @param  lexer Text formatter
  * @return true if the loading process started successfully, false otherwise
  */
-bool Editor::load(const QString& path)
+bool Editor::load(const QString& path, QsciLexer* lexer)
 {
 	// Indicate that loading is in progress.
 	isLoading_ = true;
 	setEnabled(false);
 	setText(tr("Loading..."));
 
-	// TODO:
-	// Set up the correct lexer based on the file's MIME type.
-	setLexer(new QsciLexerCPP(this));
+	setLexer(lexer);
 
 	// Create and start the loading thread.
 	FileIoThread* thread = new FileIoThread(this);
@@ -263,41 +262,6 @@ void Editor::setFocus()
 }
 
 /**
- * Updates the editor widget to use a new set of configuration parameters.
- * @param  config  The configuration parameters
- */
-void Editor::applyConfig(const Config& config)
-{
-	QsciLexer* lex = lexer();
-	if (lex)
-		lex->setFont(config.font_);
-	else
-		setFont(config.font_);
-
-	setIndentationsUseTabs(config.indentTabs_);
-	setTabWidth(config.tabWidth_);
-	setCaretLineVisible(config.hlCurLine_);
-}
-
-/**
- * Fills a Config structure with the current configuration options.
- * Used to get QScintilla's default values.
- * @param config
- */
-void Editor::getConfig(Config& config)
-{
-	QsciLexer* lex = lexer();
-	if (lex)
-		config.font_ = lex->defaultFont();
-	else
-		config.font_ = font();
-
-	config.indentTabs_ = indentationsUseTabs();
-	config.tabWidth_ = tabWidth();
-	config.hlCurLine_ = false;
-}
-
-/**
  * Fills a Location structure with information on the current file name, line
  * and column.
  * @param  loc  The structure to fill
@@ -381,34 +345,6 @@ void Editor::closeEvent(QCloseEvent* event)
 	else {
 		event->ignore();
 	}
-}
-
-/**
- * Loads editor configuration parameters.
- * @param  settings  The QSettings object to use for loading
- */
-void Editor::Config::load(QSettings& settings)
-{
-	Editor::Config config;
-
-	Editor().getConfig(config);
-	font_ = settings.value("Font", config.font_).value<QFont>();
-	hlCurLine_
-		= settings.value("HighlightCurrentLine", config.hlCurLine_).toBool();
-	indentTabs_ = settings.value("IndentWithTabs", config.indentTabs_).toBool();
-	tabWidth_ = settings.value("TabWidth", config.tabWidth_).toInt();
-}
-
-/**
- * Stores editor configuration parameters.
- * @param  settings  The QSettings object to use for storing
- */
-void Editor::Config::store(QSettings& settings)
-{
-	settings.setValue("Font", font_);
-	settings.setValue("HighlightCurrentLine", hlCurLine_);
-	settings.setValue("IndentWithTabs", indentTabs_);
-	settings.setValue("TabWidth", tabWidth_);
 }
 
 /**

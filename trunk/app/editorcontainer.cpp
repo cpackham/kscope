@@ -44,9 +44,7 @@ EditorContainer::EditorContainer(QWidget* parent)
 	// Load editor configuration settings.
 	Settings& settings = Application::settings();
 	settings.beginGroup("Editor");
-#if 0
 	config_.load(settings);
-#endif
 	settings.endGroup();
 
 	// Notify when an active editor is available.
@@ -393,7 +391,7 @@ Editor::Editor* EditorContainer::createEditor(const QString& path)
 
 	// Open the given file in the editor.
 	if (!path.isEmpty()) {
-		if (!editor->load(path)) {
+		if (!editor->load(path, config_.lexer(path))) {
 			delete editor;
 			return NULL;
 		}
@@ -404,9 +402,7 @@ Editor::Editor* EditorContainer::createEditor(const QString& path)
 	}
 
 	// Set configuration parameters.
-#if 0
-	editor->applyConfig(config_);
-#endif
+	config_.apply(editor);
 
 	// Handle editor closing/name changes.
 	connect(editor, SIGNAL(closed(const QString&)), this,

@@ -27,6 +27,7 @@
 #include <QMenu>
 #include <core/globals.h>
 #include <editor/editor.h>
+#include <editor/config.h>
 #include "locationhistory.h"
 #include "session.h"
 
@@ -89,6 +90,7 @@ private:
 	uint newFileIndex_;
 	LocationHistory history_;
 	bool windowActivationBlocked_;
+	Editor::Config config_;
 
 	bool gotoLocationInternal(const Core::Location&);
 	Editor::Editor* findEditor(const QString&);

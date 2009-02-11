@@ -44,20 +44,6 @@ public:
 	~Editor();
 
 	/**
-	 * Provides editor configuration parameters.
-	 */
-	struct Config
-	{
-		void load(QSettings& settings);
-		void store(QSettings& settings);
-
-		QFont font_;
-		bool hlCurLine_;
-		bool indentTabs_;
-		int tabWidth_;
-	};
-
-	/**
 	 * Options for text searches.
 	 */
 	struct SearchOptions
@@ -88,14 +74,12 @@ public:
 		bool backward_;
 	};
 
-	bool load(const QString&);
+	bool load(const QString&, QsciLexer* lexer);
 	bool save();
 	bool canClose();
 	void setCursorPosition(uint, uint);
 	QString currentSymbol() const;
 	void setFocus();
-	void applyConfig(const Config&);
-	void getConfig(Config&);
 	void getCurrentLocation(Core::Location&);
 	QString title() const;
 

@@ -18,12 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __EDITOR_CONFIGDIALOG_H__
-#define __EDITOR_CONFIGDIALOG_H__
+#ifndef __EDITOR_CONFIG_H__
+#define __EDITOR_CONFIG_H__
 
-#include <QDialog>
-#include "ui_configdialog.h"
-#include "config.h"
+#include <QObject>
+#include <QSettings>
+#include <qscilexercpp.h>
 
 namespace KScope
 {
@@ -31,24 +31,61 @@ namespace KScope
 namespace Editor
 {
 
+class Editor;
+
 /**
- * A dialogue for configuring a QScintilla editor.
- * Unfortunately, QScintilla does not provide such a dialogue
+ * Manages editor configuration.
  * @author Elad Lahav
  */
-class ConfigDialog : public QDialog, public Ui::ConfigDialog
+class Config : public QObject
 {
 	Q_OBJECT
 
 public:
-	ConfigDialog(const Config&, QWidget* parent = NULL);
-	~ConfigDialog();
+	Config(QObject* parent = NULL);
+	~Config();
 
-	void getConfig(Config&);
+	void load(const QSettings&);
+	void store(QSettings&) const;
+	void apply(Editor*) const;
+	QsciLexer* lexer(const QString&) const;
+
+private:
+	/**
+	 * Default font.
+	 */
+	QFont font_;
+
+	/**
+	 * Whether to highlight the current line.
+	 */
+	bool hlCurLine_;
+
+	/**
+	 * Whether to use tabs for indentation.
+	 */
+	bool indentTabs_;
+
+	/**
+	 * The tab width, in characters.
+	 */
+	int tabWidth_;
+
+	/**
+	 * Manages styles for C/C++ text formatting.
+	 */
+	QsciLexerCPP* cppLexer_;
+
+	/**
+	 * Maps file suffixes to lexers.
+	 */
+	QMap<QString, QsciLexer*> lexerMap_;
+
+	void fromEditor(Editor* editor = NULL);
 };
 
 } // namespace Editor
 
 } // namespace KScope
 
-#endif // __EDITOR_CONFIGDIALOG_H__
+#endif // __EDITOR_CONFIG_H__
