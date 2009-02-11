@@ -23,7 +23,7 @@
 namespace KScope
 {
 
-namespace App
+namespace Editor
 {
 
 QStringList FindTextDialog::historyList_;
@@ -98,6 +98,6 @@ int FindTextDialog::promptPattern(QString& pattern,
 	return QDialog::Accepted;
 }
 
-} // namespace App
+} // namespace Editor
 
 } // namespace KScope

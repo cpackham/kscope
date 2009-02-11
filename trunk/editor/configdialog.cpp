@@ -18,17 +18,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#include "editorconfigdialog.h"
+#include "configdialog.h"
 
 namespace KScope
 {
 
-namespace App
+namespace Editor
 {
 
-EditorConfigDialog::EditorConfigDialog(const Editor::Config& config,
-                                       QWidget* parent)
-	: QDialog(parent), Ui::EditorConfigDialog()
+ConfigDialog::ConfigDialog(const Editor::Config& config, QWidget* parent)
+	: QDialog(parent), Ui::ConfigDialog()
 {
 	setupUi(this);
 
@@ -42,11 +41,11 @@ EditorConfigDialog::EditorConfigDialog(const Editor::Config& config,
 	tabWidthSpin_->setValue(config.tabWidth_);
 }
 
-EditorConfigDialog::~EditorConfigDialog()
+ConfigDialog::~ConfigDialog()
 {
 }
 
-void EditorConfigDialog::getConfig(Editor::Config& config)
+void ConfigDialog::getConfig(Editor::Config& config)
 {
 	config.font_ = QFont(fontFamilyCombo_->currentFont().family(),
 	                     fontSizeSpin_->value(),
@@ -58,6 +57,6 @@ void EditorConfigDialog::getConfig(Editor::Config& config)
 	config.tabWidth_ = tabWidthSpin_->value();
 }
 
-}
+} // namespace Editor
 
-}
+} // namespace KScope

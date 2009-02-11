@@ -18,59 +18,37 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __KSCOPE_FILEIOTHREAD_H
-#define __KSCOPE_FILEIOTHREAD_H
+#ifndef __EDITOR_CONFIGDIALOG_H__
+#define __EDITOR_CONFIGDIALOG_H__
 
-#include <QThread>
-#include <QFile>
-#include <QTextStream>
+#include <QDialog>
+#include "ui_configdialog.h"
+#include "editor.h"
 
 namespace KScope
 {
 
-namespace App
+namespace Editor
 {
 
 /**
- * Thread-based asynchronous file loading/storing.
+ * A dialogue for configuring a QScintilla editor.
+ * Unfortunately, QScintilla does not provide such a dialogue
  * @author Elad Lahav
  */
-class FileIoThread : public QThread
+class ConfigDialog : public QDialog, public Ui::ConfigDialog
 {
 	Q_OBJECT
 
 public:
-	FileIoThread(QObject* parent) : QThread(parent) {}
+	ConfigDialog(const Editor::Config&, QWidget* parent = NULL);
+	~ConfigDialog();
 
-	bool load(const QString& path) {
-		file_.setFileName(path);
-
-		if (!file_.open(QIODevice::ReadOnly | QIODevice::Text))
-			return false;
-
-		start();
-		return true;
-	}
-
-	virtual void run() {
-		QTextStream strm(&file_);
-		QString text;
-
-		text = strm.readAll();
-		file_.close();
-
-		emit done(text);
-	}
-
-signals:
-	void done(const QString& text);
-
-private:
-	QFile file_;
+	void getConfig(Editor::Config&);
 };
 
-}
+} // namespace Editor
 
-}
+} // namespace KScope
 
-#endif  // __KSCOPE_FILEIOTHREAD_H
+#endif // __EDITOR_CONFIGDIALOG_H__

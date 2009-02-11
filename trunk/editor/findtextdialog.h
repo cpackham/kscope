@@ -18,37 +18,49 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_EDITORCONFIGDIALOG_H__
-#define __APP_EDITORCONFIGDIALOG_H__
+#ifndef __EDITOR_FINDTEXTDIALOG_H__
+#define __EDITOR_FINDTEXTDIALOG_H__
 
 #include <QDialog>
-#include "ui_editorconfigdialog.h"
+#include <QLineEdit>
+#include "ui_findtextdialog.h"
 #include "editor.h"
 
 namespace KScope
 {
 
-namespace App
+namespace Editor
 {
 
 /**
- * A dialogue for configuring a QScintilla editor.
- * Unfortunately, QScintilla does not provide such a dialogue
- * @author Elad Lahav
+ * A simple dialogue for searching text within an editor window.
+ * @author  Elad Lahav
  */
-class EditorConfigDialog : public QDialog, public Ui::EditorConfigDialog
+class FindTextDialog : public QDialog, public Ui::FindTextDialog
 {
 	Q_OBJECT
 
 public:
-	EditorConfigDialog(const Editor::Config&, QWidget* parent = NULL);
-	~EditorConfigDialog();
+	FindTextDialog(QWidget* parent = 0);
+	~FindTextDialog();
 
-	void getConfig(Editor::Config&);
+	static int promptPattern(QString&, Editor::SearchOptions&,
+	                         QWidget* parent = NULL);
+
+private:
+	/**
+	 * A list of previously-searched patterns.
+	 */
+	static QStringList historyList_;
+
+	/**
+	 *
+	 */
+	static Editor::SearchOptions options_;
 };
 
-} // namespace App
+} // namespace Editor
 
 } // namespace KScope
 
-#endif // __APP_EDITORCONFIGDIALOG_H__
+#endif // __EDITOR_FINDTEXTDIALOG_H__

@@ -56,12 +56,8 @@ public:
 	void loadSession(Session&);
 	void clearHistory();
 
-	inline Editor* currentEditor() {
-		QMdiSubWindow* window = currentSubWindow();
-		if (!window)
-			return NULL;
-
-		return static_cast<Editor*>(window->widget());
+	inline Editor::Editor* currentEditor() {
+		return editorFromWindow(currentSubWindow());
 	}
 
 public slots:
@@ -91,14 +87,20 @@ private:
 	QMdiSubWindow* currentWindow_;
 	QMap<QString, QMdiSubWindow*> fileMap_;
 	uint newFileIndex_;
-	Editor::Config config_;
 	LocationHistory history_;
 	bool windowActivationBlocked_;
 
 	bool gotoLocationInternal(const Core::Location&);
-	Editor* findEditor(const QString&);
-	Editor* createEditor(const QString&);
+	Editor::Editor* findEditor(const QString&);
+	Editor::Editor* createEditor(const QString&);
 	void blockWindowActivation(bool);
+
+	static inline Editor::Editor* editorFromWindow(QMdiSubWindow* window) {
+		if (!window)
+			return NULL;
+
+		return static_cast<Editor::Editor*>(window->widget());
+	}
 
 private slots:
 	void handleWindowAction(QAction*);

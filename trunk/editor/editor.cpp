@@ -30,7 +30,7 @@
 namespace KScope
 {
 
-namespace App
+namespace Editor
 {
 
 /**
@@ -430,6 +430,6 @@ void Editor::loadDone(const QString& text)
 	}
 }
 
-} // namespace App
+} // namespace Editor
 
 } // namespace KScope

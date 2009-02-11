@@ -111,7 +111,7 @@ void MainWindow::promptQuery(Core::Query::Type type)
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->currentEditor();
+	Editor::Editor* editor = editCont_->currentEditor();
 	if (editor)
 		queryDlg_->setPattern(editor->currentSymbol());
 
@@ -137,7 +137,7 @@ void MainWindow::quickDefinition()
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->currentEditor();
+	Editor::Editor* editor = editCont_->currentEditor();
 	if (editor)
 		symbol = editor->currentSymbol();
 
@@ -198,7 +198,7 @@ void MainWindow::promptCallTree()
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
-	Editor* editor = editCont_->currentEditor();
+	Editor::Editor* editor = editCont_->currentEditor();
 	if (editor)
 		queryDlg_->setPattern(editor->currentSymbol());
 

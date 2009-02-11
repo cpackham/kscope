@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_EDITOR_H
-#define __APP_EDITOR_H
+#ifndef __EDITOR_EDITOR_H__
+#define __EDITOR_EDITOR_H__
 
 #include <qsciscintilla.h>
 #include <QSettings>
@@ -28,7 +28,7 @@
 namespace KScope
 {
 
-namespace App
+namespace Editor
 {
 
 /**
@@ -168,8 +168,8 @@ private slots:
 	void loadDone(const QString&);
 };
 
-} // namespace App
+} // namespace Editor
 
 } // namespace KScope
 
-#endif  // __APP_EDITOR_H
+#endif  // __EDITOR_EDITOR_H__

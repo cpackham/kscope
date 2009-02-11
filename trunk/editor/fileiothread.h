@@ -18,49 +18,59 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __APP_FINDTEXTDIALOG_H__
-#define __APP_FINDTEXTDIALOG_H__
+#ifndef __EDITOR_FILEIOTHREAD_H__
+#define __EDITOR_FILEIOTHREAD_H__
 
-#include <QDialog>
-#include <QLineEdit>
-#include "ui_findtextdialog.h"
-#include "editor.h"
+#include <QThread>
+#include <QFile>
+#include <QTextStream>
 
 namespace KScope
 {
 
-namespace App
+namespace Editor
 {
 
 /**
- * A simple dialogue for searching text within an editor window.
- * @author  Elad Lahav
+ * Thread-based asynchronous file loading/storing.
+ * @author Elad Lahav
  */
-class FindTextDialog : public QDialog, public Ui::FindTextDialog
+class FileIoThread : public QThread
 {
 	Q_OBJECT
 
 public:
-	FindTextDialog(QWidget* parent = 0);
-	~FindTextDialog();
+	FileIoThread(QObject* parent) : QThread(parent) {}
 
-	static int promptPattern(QString&, Editor::SearchOptions&,
-	                         QWidget* parent = NULL);
+	bool load(const QString& path) {
+		file_.setFileName(path);
+
+		if (!file_.open(QIODevice::ReadOnly | QIODevice::Text))
+			return false;
+
+		start();
+		return true;
+	}
+
+	virtual void run() {
+		QTextStream strm(&file_);
+		QString text;
+
+		text = strm.readAll();
+		file_.close();
+
+		emit done(text);
+	}
+
+signals:
+	void done(const QString& text);
 
 private:
-	/**
-	 * A list of previously-searched patterns.
-	 */
-	static QStringList historyList_;
-
-	/**
-	 *
-	 */
-	static Editor::SearchOptions options_;
+	QFile file_;
 };
 
-} // namespace App
+} // namespace Editor
 
 } // namespace KScope
 
-#endif // __APP_FINDTEXTDIALOG_H__
+#endif  // __EDITOR_FILEIOTHREAD_H__

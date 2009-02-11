@@ -1,15 +1,13 @@
 include(../config)
 TEMPLATE = app
 TARGET = kscopeapp
-DEPENDPATH += """"". ../core ../cscope"""""
+DEPENDPATH += ". ../core ../cscope ../editor"
 
 # Input
 SOURCES += openprojectdialog.cpp \
     settings.cpp \
     session.cpp \
-    findtextdialog.cpp \
     projectmanager.cpp \
-    editorconfigdialog.cpp \
     projectdialog.cpp \
     projectfilesdialog.cpp \
     stackwidget.cpp \
@@ -19,7 +17,6 @@ SOURCES += openprojectdialog.cpp \
     application.cpp \
     querydialog.cpp \
     editorcontainer.cpp \
-    editor.cpp \
     queryresultdock.cpp \
     queryresultdialog.cpp \
     addfilesdialog.cpp \
@@ -30,9 +27,7 @@ HEADERS += openprojectdialog.h \
     queryview.h \
     strings.h \
     locationhistory.h \
-    findtextdialog.h \
     projectmanager.h \
-    editorconfigdialog.h \
     projectfilesdialog.h \
     stackwidget.h \
     mainwindow.h \
@@ -40,7 +35,6 @@ HEADERS += openprojectdialog.h \
     application.h \
     querydialog.h \
     editorcontainer.h \
-    editor.h \
     fileiothread.h \
     queryresultdock.h \
     queryresultdialog.h \
@@ -55,20 +49,19 @@ FORMS += querydialog.ui \
     projectfilesdialog.ui \
     addfilesdialog.ui \
     projectdialog.ui \
-    editorconfigdialog.ui \
-    findtextdialog.ui \
     configenginesdialog.ui \
     openprojectdialog.ui
 INCLUDEPATH += ../cscope \
     ../core \
+    ../editor \
     $${QSCI_ROOT_PATH}/include/Qsci \
     .
 LIBS += -L../core \
     -lkscope_core \
     -L../cscope \
     -lkscope_cscope \
-    -L$${QSCI_ROOT_PATH}/lib \
-    -lqscintilla2
+    -L../editor \
+    -lkscope_editor
 RESOURCES = app.qrc
 target.path = $${INSTALL_PATH}/bin
 INSTALLS += target

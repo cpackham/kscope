@@ -22,7 +22,7 @@
 #include <QDebug>
 #include "application.h"
 #include "editorcontainer.h"
-#include "editorconfigdialog.h"
+#include "configdialog.h"
 #include "queryresultdialog.h"
 
 namespace KScope
@@ -44,7 +44,9 @@ EditorContainer::EditorContainer(QWidget* parent)
 	// Load editor configuration settings.
 	Settings& settings = Application::settings();
 	settings.beginGroup("Editor");
+#if 0
 	config_.load(settings);
+#endif
 	settings.endGroup();
 
 	// Notify when an active editor is available.
@@ -88,7 +90,7 @@ bool EditorContainer::canClose()
 
 	// Iterate over all editor windows.
 	foreach (QMdiSubWindow* window, fileMap_) {
-		Editor* editor = static_cast<Editor*>(window->widget());
+		Editor::Editor* editor = editorFromWindow(window);
 		if (!editor->canClose())
 			return false;
 	}
@@ -106,7 +108,7 @@ void EditorContainer::saveSession(Session& session)
 
 	// Create a list of locations for the open editors.
 	foreach (QMdiSubWindow* window, fileMap_) {
-		Editor* editor = static_cast<Editor*>(window->widget());
+		Editor::Editor* editor = editorFromWindow(window);
 
 		Core::Location loc;
 		editor->getCurrentLocation(loc);
@@ -189,8 +191,9 @@ void EditorContainer::openFile()
  */
 void EditorContainer::configEditor()
 {
+#if 0
 	// Show the "Configure Editor" dialogue.
-	EditorConfigDialog dlg(config_, this);
+	Editor::ConfigDialog dlg(config_, this);
 	if (dlg.exec() == QDialog::Rejected)
 		return;
 
@@ -204,9 +207,10 @@ void EditorContainer::configEditor()
 	settings.endGroup();
 
 	foreach (QMdiSubWindow* window, fileMap_) {
-		Editor* editor = static_cast<Editor*>(window->widget());
+		Editor* editor = editor(window);
 		editor->applyConfig(config_);
 	}
+#endif
 }
 
 /**
@@ -341,7 +345,7 @@ bool EditorContainer::gotoLocationInternal(const Core::Location& loc)
 {
 	// Get an editor for the given file.
 	// If one does not exists, create a new one.
-	Editor* editor = findEditor(loc.file_);
+	Editor::Editor* editor = findEditor(loc.file_);
 	if (editor == NULL) {
 		editor = createEditor(loc.file_);
 		if (editor == NULL)
@@ -358,7 +362,7 @@ bool EditorContainer::gotoLocationInternal(const Core::Location& loc)
  * @param  path      The path of the file to edit
  * @return The found editor if successful, NULL otherwise
  */
-Editor* EditorContainer::findEditor(const QString& path)
+Editor::Editor* EditorContainer::findEditor(const QString& path)
 {
 	// Try to find an existing editor window, based on the path.
 	QMap<QString, QMdiSubWindow*>::Iterator itr = fileMap_.find(path);
@@ -367,7 +371,7 @@ Editor* EditorContainer::findEditor(const QString& path)
 
 	// Get the editor widget for the window.
 	QMdiSubWindow* window = *itr;
-	Editor* editor = static_cast<Editor*>(window->widget());
+	Editor::Editor* editor = editorFromWindow(window);
 
 	// Activate the window.
 	if (window != currentSubWindow())
@@ -383,9 +387,9 @@ Editor* EditorContainer::findEditor(const QString& path)
  * @param  path The path to the file to edit
  * @return The editor widget if successful, false otherwise
  */
-Editor* EditorContainer::createEditor(const QString& path)
+Editor::Editor* EditorContainer::createEditor(const QString& path)
 {
-	Editor* editor = new Editor(this);
+	Editor::Editor* editor = new Editor::Editor(this);
 
 	// Open the given file in the editor.
 	if (!path.isEmpty()) {
@@ -400,7 +404,9 @@ Editor* EditorContainer::createEditor(const QString& path)
 	}
 
 	// Set configuration parameters.
+#if 0
 	editor->applyConfig(config_);
+#endif
 
 	// Handle editor closing/name changes.
 	connect(editor, SIGNAL(closed(const QString&)), this,
@@ -502,13 +508,13 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 
 	// Stop forwarding signals to the active editor.
 	if (currentWindow_)
-		disconnect(static_cast<Editor*>(currentWindow_->widget()));
+		disconnect(editorFromWindow(currentWindow_));
 
 	// Remember the current window.
 	currentWindow_ = window;
 
 	// Update the active editor.
-	Editor* editor = currentEditor();
+	Editor::Editor* editor = currentEditor();
 	if (!editor) {
 		qDebug() << "No current editor";
 		emit cursorPositionChanged(0, 0);
