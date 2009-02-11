@@ -20,9 +20,9 @@
 
 #include <QFileDialog>
 #include <QDebug>
+#include <editor/configdialog.h>
 #include "application.h"
 #include "editorcontainer.h"
-#include "configdialog.h"
 #include "queryresultdialog.h"
 
 namespace KScope

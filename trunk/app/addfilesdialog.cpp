@@ -23,9 +23,9 @@
 #include <QProgressDialog>
 #include <QMessageBox>
 #include <QDebug>
+#include <core/filefilter.h>
+#include <core/filescanner.h>
 #include "addfilesdialog.h"
-#include "filefilter.h"
-#include "filescanner.h"
 #include "projectmanager.h"
 
 namespace KScope

@@ -18,9 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <core/codebasemodel.h>
 #include "application.h"
 #include "projectfilesdialog.h"
-#include "codebasemodel.h"
 #include "addfilesdialog.h"
 #include "projectmanager.h"
 

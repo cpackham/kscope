@@ -23,8 +23,8 @@
 
 #include <QProgressDialog>
 #include <QDebug>
-#include "engine.h"
-#include "progressbar.h"
+#include <core/engine.h>
+#include <core/progressbar.h>
 
 namespace KScope
 {

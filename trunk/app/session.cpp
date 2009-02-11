@@ -19,9 +19,9 @@
  ***************************************************************************/
 
 #include <QDebug>
+#include <core/exception.h>
 #include "session.h"
 #include "projectmanager.h"
-#include "exception.h"
 
 namespace KScope
 {

@@ -22,8 +22,8 @@
 #define __APP_QUERYDIALOG_H__
 
 #include <QDialog>
+#include <core/engine.h>
 #include "ui_querydialog.h"
-#include "engine.h"
 
 namespace KScope
 {

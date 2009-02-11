@@ -19,9 +19,9 @@
  ***************************************************************************/
 
 #include <QLabel>
+#include <cscope/crossref.h>
 #include "application.h"
 #include "configenginesdialog.h"
-#include "crossref.h"
 
 namespace KScope
 {

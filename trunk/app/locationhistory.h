@@ -23,7 +23,7 @@
 
 #include <QList>
 #include <QDebug>
-#include "globals.h"
+#include <core/globals.h>
 
 namespace KScope
 {

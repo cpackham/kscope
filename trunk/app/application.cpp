@@ -19,9 +19,9 @@
  ***************************************************************************/
 
 #include <QMessageBox>
+#include <cscope/managedproject.h>
 #include "application.h"
 #include "mainwindow.h"
-#include "managedproject.h"
 #include "projectmanager.h"
 #include "version.h"
 

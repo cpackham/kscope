@@ -35,7 +35,6 @@ HEADERS += openprojectdialog.h \
     application.h \
     querydialog.h \
     editorcontainer.h \
-    fileiothread.h \
     queryresultdock.h \
     queryresultdialog.h \
     addfilesdialog.h \
@@ -51,9 +50,7 @@ FORMS += querydialog.ui \
     projectdialog.ui \
     configenginesdialog.ui \
     openprojectdialog.ui
-INCLUDEPATH += ../cscope \
-    ../core \
-    ../editor \
+INCLUDEPATH += .. \
     $${QSCI_ROOT_PATH}/include/Qsci \
     .
 LIBS += -L../core \

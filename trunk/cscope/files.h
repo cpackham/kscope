@@ -21,7 +21,7 @@
 #ifndef __CSCOPE_FILES_H__
 #define __CSCOPE_FILES_H__
 
-#include "codebase.h"
+#include <core/codebase.h>
 
 namespace KScope
 {

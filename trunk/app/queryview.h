@@ -21,9 +21,9 @@
 #ifndef __APP_QUERYVIEW_H__
 #define __APP_QUERYVIEW_H__
 
-#include "../core/queryview.h"
+#include <core/queryview.h>
+#include <core/exception.h>
 #include "projectmanager.h"
-#include "exception.h"
 
 namespace KScope
 {

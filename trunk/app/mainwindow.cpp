@@ -22,15 +22,15 @@
 #include <QCloseEvent>
 #include <QStatusBar>
 #include <QFileDialog>
+#include <cscope/managedproject.h>
+#include <editor/editor.h>
 #include "mainwindow.h"
 #include "editorcontainer.h"
 #include "querydialog.h"
 #include "queryresultdock.h"
-#include "editor.h"
 #include "projectmanager.h"
 #include "queryresultdialog.h"
 #include "session.h"
-#include "managedproject.h"
 #include "projectdialog.h"
 #include "openprojectdialog.h"
 #include "projectfilesdialog.h"

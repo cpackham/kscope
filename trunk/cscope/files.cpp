@@ -21,8 +21,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTextStream>
+#include <core/exception.h>
 #include "files.h"
-#include "exception.h"
 
 namespace KScope
 {

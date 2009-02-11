@@ -21,7 +21,7 @@ SOURCES += engineconfigwidget.cpp \
     crossref.cpp \
     cscope.cpp \
     files.cpp
-INCLUDEPATH += ../core \
+INCLUDEPATH += .. \
     .
 LIBS += -L../core -lkscope_core
 target.path = $${INSTALL_PATH}/lib

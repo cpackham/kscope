@@ -19,8 +19,8 @@
  ***************************************************************************/
 
 #include <QDebug>
+#include <core/exception.h>
 #include "cscope.h"
-#include "exception.h"
 
 namespace KScope
 {

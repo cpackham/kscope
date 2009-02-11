@@ -20,8 +20,8 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <core/exception.h>
 #include "crossref.h"
-#include "exception.h"
 #include "ctags.h"
 
 namespace KScope

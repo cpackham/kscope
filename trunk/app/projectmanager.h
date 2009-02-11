@@ -22,8 +22,8 @@
 #define __APP_PROJECTMANAGER_H__
 
 #include <QObject>
+#include <core/project.h>
 #include "application.h"
-#include "project.h"
 
 namespace KScope
 {

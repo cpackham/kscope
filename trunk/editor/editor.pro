@@ -14,7 +14,7 @@ FORMS += configdialog.ui \
 SOURCES += editor.cpp \
     configdialog.cpp \
     findtextdialog.cpp
-INCLUDEPATH += ../core \
+INCLUDEPATH += .. \
     $${QSCI_ROOT_PATH}/include/Qsci \
     .
 LIBS += -L../core -lkscope_core \

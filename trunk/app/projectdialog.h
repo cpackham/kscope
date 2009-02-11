@@ -22,9 +22,9 @@
 #define __APP_PROJECTDIALOG_H__
 
 #include <QDialog>
+#include <core/project.h>
+#include <core/projectconfig.h>
 #include "ui_projectdialog.h"
-#include "project.h"
-#include "projectconfig.h"
 
 namespace KScope
 {

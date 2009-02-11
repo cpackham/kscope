@@ -18,11 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CSCOPE_MANAGEDPROJECT_H
-#define __CSCOPE_MANAGEDPROJECT_H
+#ifndef __CSCOPE_MANAGEDPROJECT_H__
+#define __CSCOPE_MANAGEDPROJECT_H__
 
-#include "project.h"
-#include "projectconfig.h"
+#include <core/project.h>
+#include <core/projectconfig.h>
 #include "crossref.h"
 #include "files.h"
 #include "configwidget.h"

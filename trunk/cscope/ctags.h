@@ -21,9 +21,9 @@
 #ifndef __CSCOPE_CTAGS_H__
 #define __CSCOPE_CTAGS_H__
 
-#include "process.h"
-#include "globals.h"
-#include "engine.h"
+#include <core/process.h>
+#include <core/globals.h>
+#include <core/engine.h>
 
 namespace KScope
 {

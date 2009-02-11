@@ -18,12 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __CSCOPE_CSCOPE_H
-#define __CSCOPE_CSCOPE_H
+#ifndef __CSCOPE_CSCOPE_H__
+#define __CSCOPE_CSCOPE_H__
 
-#include "process.h"
-#include "globals.h"
-#include "engine.h"
+#include <core/process.h>
+#include <core/globals.h>
+#include <core/engine.h>
 
 namespace KScope
 {
@@ -249,4 +249,4 @@ private:
 
 } // namespace KScope
 
-#endif // __CSCOPE_CSCOPE_H
+#endif // __CSCOPE_CSCOPE_H__

@@ -21,7 +21,6 @@
 #ifndef __CSCOPE_CROSSREF_H__
 #define __CSCOPE_CROSSREF_H__
 
-#include "engine.h"
 #include "cscope.h"
 #include "ctags.h"
 #include "engineconfigwidget.h"

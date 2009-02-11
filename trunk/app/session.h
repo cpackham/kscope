@@ -22,7 +22,7 @@
 #define __APP_SESSION_H__
 
 #include <QDomDocument>
-#include "globals.h"
+#include <core/globals.h>
 #include "queryview.h"
 
 namespace KScope

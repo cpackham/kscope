@@ -21,9 +21,9 @@
 #ifndef __EDITOR_EDITOR_H__
 #define __EDITOR_EDITOR_H__
 
-#include <qsciscintilla.h>
 #include <QSettings>
-#include "globals.h"
+#include <qsciscintilla.h>
+#include <core/globals.h>
 
 namespace KScope
 {

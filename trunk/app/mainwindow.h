@@ -22,8 +22,8 @@
 #define __APP_MAINWINDOW_H
 
 #include <QMainWindow>
+#include <core/globals.h>
 #include "actions.h"
-#include "globals.h"
 #include "buildprogress.h"
 
 class QCloseEvent;

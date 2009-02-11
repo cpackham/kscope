@@ -25,8 +25,8 @@
 #include <QMdiSubWindow>
 #include <QMap>
 #include <QMenu>
-#include "globals.h"
-#include "editor.h"
+#include <core/globals.h>
+#include <editor/editor.h>
 #include "locationhistory.h"
 #include "session.h"
 
