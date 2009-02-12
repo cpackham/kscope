@@ -14,9 +14,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
+    <widget class="QTabWidget" name="tabs_" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -199,38 +199,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>EditorConfigDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>227</x>
-     <y>295</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>EditorConfigDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>295</x>
-     <y>301</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>indentTabsCheck_</sender>
    <signal>toggled(bool)</signal>
    <receiver>widget</receiver>
@@ -243,6 +211,38 @@
     <hint type="destinationlabel" >
      <x>166</x>
      <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ConfigDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>233</x>
+     <y>298</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>359</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ConfigDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>167</x>
+     <y>296</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>355</x>
+     <y>289</y>
     </hint>
    </hints>
   </connection>

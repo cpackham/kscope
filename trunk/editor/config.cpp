@@ -52,11 +52,13 @@ void Config::load(const QSettings& settings)
 {
 	// Get the current (default) configuration.
 	Editor editor;
+	font_ = editor.font();
 	indentTabs_ = editor.indentationsUseTabs();
 	tabWidth_ = editor.tabWidth();
 	hlCurLine_ = false;
 
 	// Read values from the settings object.
+	font_ = settings.value("DefaultFont", font_).value<QFont>();
 	hlCurLine_ = settings.value("HighlightCurrentLine", hlCurLine_).toBool();
 	indentTabs_ = settings.value("IndentWithTabs", indentTabs_).toBool();
 	tabWidth_ = settings.value("TabWidth", tabWidth_).toInt();

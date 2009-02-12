@@ -18,12 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __EDITOR_CONFIG_H__
-#define __EDITOR_CONFIG_H__
+#ifndef __EDITOR_LEXERSTYLEMODEL_H__
+#define __EDITOR_LEXERSTYLEMODEL_H__
 
-#include <QObject>
-#include <QSettings>
-#include <qscilexercpp.h>
+#include <QAbstractItemModel>
+#include <qscilexer.h>
 
 namespace KScope
 {
@@ -31,63 +30,33 @@ namespace KScope
 namespace Editor
 {
 
-class Editor;
-
 /**
- * Manages editor configuration.
+ * Used to display/edit lexer properties in a QTreeView widget.
  * @author Elad Lahav
  */
-class Config : public QObject
+class LexerStyleModel : public QAbstractItemModel
 {
 	Q_OBJECT
 
 public:
-	Config(QObject* parent = NULL);
-	~Config();
+	LexerStyleModel(QsciLexer*, QObject* parent = NULL);
+	~LexerStyleModel();
 
-	void load(const QSettings&);
-	void store(QSettings&) const;
-	void apply(Editor*) const;
-	QsciLexer* lexer(const QString&) const;
+	// QAbstractItemModel implementation.
+	QModelIndex index(int, int,
+	                  const QModelIndex& parent = QModelIndex()) const;
+	QModelIndex parent(const QModelIndex&) const;
+	int rowCount(const QModelIndex& parent = QModelIndex()) const;
+	int columnCount(const QModelIndex& parent = QModelIndex()) const;
+	QVariant data(const QModelIndex&, int role = Qt::DisplayRole) const;
 
 private:
-	/**
-	 * Default font.
-	 */
-	QFont font_;
-
-	/**
-	 * Whether to highlight the current line.
-	 */
-	bool hlCurLine_;
-
-	/**
-	 * Whether to use tabs for indentation.
-	 */
-	bool indentTabs_;
-
-	/**
-	 * The tab width, in characters.
-	 */
-	int tabWidth_;
-
-	/**
-	 * Manages styles for C/C++ text formatting.
-	 */
-	QsciLexerCPP* cppLexer_;
-
-	/**
-	 * Maps file suffixes to lexers.
-	 */
-	QMap<QString, QsciLexer*> lexerMap_;
-
-	friend class ConfigDialog;
-
-	void fromEditor(Editor* editor = NULL);
+	QsciLexer* lexer_;
+	int styleNum_;
 };
 
 } // namespace Editor
 
 } // namespace KScope
 
-#endif // __EDITOR_CONFIG_H__
+#endif // __EDITOR_LEXERSTYLEMODEL_H__

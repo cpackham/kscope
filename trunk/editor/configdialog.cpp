@@ -18,7 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QTreeView>
 #include "configdialog.h"
+#include "lexerstylemodel.h"
 
 namespace KScope
 {
@@ -31,7 +33,6 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 {
 	setupUi(this);
 
-#if 0
 	// Update the controls to reflect the given configuration.
 	fontFamilyCombo_->setCurrentFont(config.font_);
 	fontSizeSpin_->setValue(config.font_.pointSize());
@@ -40,7 +41,11 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 	hlCurLineCheck_->setChecked(config.hlCurLine_);
 	indentTabsCheck_->setChecked(config.indentTabs_);
 	tabWidthSpin_->setValue(config.tabWidth_);
-#endif
+
+	// Add a configuration page for each lexer.
+	QTreeView* view = new QTreeView(this);
+	view->setModel(new LexerStyleModel(config.cppLexer_, this));
+	tabs_->addTab(view, config.cppLexer_->lexer());
 }
 
 ConfigDialog::~ConfigDialog()
@@ -49,7 +54,6 @@ ConfigDialog::~ConfigDialog()
 
 void ConfigDialog::getConfig(Config& config)
 {
-#if 0
 	config.font_ = QFont(fontFamilyCombo_->currentFont().family(),
 	                     fontSizeSpin_->value(),
 	                     fontBoldCheck_->isChecked() ? QFont::Bold
@@ -58,7 +62,6 @@ void ConfigDialog::getConfig(Config& config)
 	config.hlCurLine_ = hlCurLineCheck_->isChecked();
 	config.indentTabs_ = indentTabsCheck_->isChecked();
 	config.tabWidth_ = tabWidthSpin_->value();
-#endif
 }
 
 } // namespace Editor

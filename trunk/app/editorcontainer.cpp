@@ -189,7 +189,6 @@ void EditorContainer::openFile()
  */
 void EditorContainer::configEditor()
 {
-#if 0
 	// Show the "Configure Editor" dialogue.
 	Editor::ConfigDialog dlg(config_, this);
 	if (dlg.exec() == QDialog::Rejected)
@@ -204,11 +203,9 @@ void EditorContainer::configEditor()
 	config_.store(settings);
 	settings.endGroup();
 
-	foreach (QMdiSubWindow* window, fileMap_) {
-		Editor* editor = editor(window);
-		editor->applyConfig(config_);
-	}
-#endif
+	// Apply new settings to all open editors.
+	foreach (QMdiSubWindow* window, fileMap_)
+		config_.apply(editorFromWindow(window));
 }
 
 /**
