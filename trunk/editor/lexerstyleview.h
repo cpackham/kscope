@@ -18,12 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __EDITOR_CONFIGDIALOG_H__
-#define __EDITOR_CONFIGDIALOG_H__
+#ifndef __EDITOR_LEXERSTYLEVIEW_H__
+#define __EDITOR_LEXERSTYLEVIEW_H__
 
-#include <QDialog>
-#include "ui_configdialog.h"
-#include "config.h"
+#include <QWidget>
+#include <qscilexer.h>
+#include "lexerstylemodel.h"
 
 namespace KScope
 {
@@ -32,32 +32,35 @@ namespace Editor
 {
 
 /**
- * A dialogue for configuring a QScintilla editor.
- * Unfortunately, QScintilla does not provide such a dialogue
+ * Used to display/edit lexer properties in a QTreeView widget.
  * @author Elad Lahav
  */
-class ConfigDialog : public QDialog, public Ui::ConfigDialog
+class LexerStyleView : public QWidget
 {
 	Q_OBJECT
 
 public:
-	ConfigDialog(const Config&, QWidget* parent = NULL);
-	~ConfigDialog();
+	LexerStyleView(QsciLexer*, QWidget* parent = NULL);
+	~LexerStyleView();
 
-	void getConfig(Config&);
-
-signals:
 	/**
-	 * Used to notify all lexer models of a change to the default font.
+	 * @return The lexer style model used by the tree view
 	 */
-	void defaultFontChanged(const QFont&);
+	LexerStyleModel* model() { return model_; }
+
+private:
+	/**
+	 * The lexer style model to use.
+	 */
+	LexerStyleModel* model_;
 
 private slots:
-	void changeDefaultFont();
+	void editStyle(const QModelIndex&);
+	void useDefaultFont(bool);
 };
 
 } // namespace Editor
 
 } // namespace KScope
 
-#endif // __EDITOR_CONFIGDIALOG_H__
+#endif // __EDITOR_LEXERSTYLEVIEW_H__

@@ -31,7 +31,13 @@ namespace Editor
 {
 
 /**
- * Used to display/edit lexer properties in a QTreeView widget.
+ * A model for displaying/editing lexer styles.
+ * The model holds the data in two levels. First-level items represent styles
+ * (e.g., keyword, number, comment), while second-level items represent the
+ * different properties of the style (font, colour, etc.). The items are
+ * distinguished by their internal IDs: styles have an ID of -1, with the row
+ * number matching the style number, while properties hold the number of the
+ * style in the internal ID.
  * @author Elad Lahav
  */
 class LexerStyleModel : public QAbstractItemModel
@@ -49,10 +55,42 @@ public:
 	int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 	QVariant data(const QModelIndex&, int role = Qt::DisplayRole) const;
+	bool setData(const QModelIndex&, const QVariant&,
+	             int role = Qt::EditRole);
+
+public slots:
+	void useDefaultFont(bool);
+	void setDefaultFont(const QFont&);
 
 private:
+	/**
+	 * The lexer to display.
+	 */
 	QsciLexer* lexer_;
+
+	/**
+	 * The number of available styles.
+	 */
 	int styleNum_;
+
+	/**
+	 * Whether all styles should be using the same (default) font.
+	 */
+	bool useDefaultFont_;
+
+	/**
+	 * Style properties.
+	 */
+	enum StyleProperty {
+		Font = 0,
+		Foreground,
+		Background,
+		_Last = Background
+	};
+
+	QVariant styleData(int, int) const;
+	QString propertyName(StyleProperty) const;
+	QVariant propertyData(int, StyleProperty, int) const;
 };
 
 } // namespace Editor
