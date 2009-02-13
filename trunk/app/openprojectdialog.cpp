@@ -77,14 +77,14 @@ OpenProjectDialog::ExecResult OpenProjectDialog::exec()
  * Called when the user clicks the "..." button next to the path edit widget.
  * Shows the standard "Select Directory" dialogue.
  * The directories available for selection are the visible ones, as well as
- * hidden directories called ".cscope".
+ * hidden directories called ".kscope".
  */
 void OpenProjectDialog::browse()
 {
 	// Set up the dialogue.
 	QFileDialog dlg(this);
 	dlg.setFileMode(QFileDialog::DirectoryOnly);
-	dlg.setNameFilter("[^\\.]* .cscope");
+	dlg.setNameFilter("[^\\.]* .kscope");
 	dlg.setFilter(QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot);
 
 	// Show the dialogue.
