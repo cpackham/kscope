@@ -58,7 +58,7 @@ void Config::load(const QSettings& settings)
 	hlCurLine_ = false;
 
 	// Read values from the settings object.
-	font_ = settings.value("DefaultFont", font_).value<QFont>();
+	font_ = settings.value("Font", font_).value<QFont>();
 	hlCurLine_ = settings.value("HighlightCurrentLine", hlCurLine_).toBool();
 	indentTabs_ = settings.value("IndentWithTabs", indentTabs_).toBool();
 	tabWidth_ = settings.value("TabWidth", tabWidth_).toInt();
