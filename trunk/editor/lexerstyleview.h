@@ -56,7 +56,6 @@ private:
 
 private slots:
 	void editStyle(const QModelIndex&);
-	void useDefaultFont(bool);
 };
 
 } // namespace Editor
