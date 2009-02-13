@@ -1,3 +1,23 @@
+1.9.2 (2009-02-13)
+* New: "Open Project" dialogue with recent projects
+* New: Added a "Close All" action to the file menu
+* New: Pattern history in the query dialogue
+* New: A context menu for filtering query results and for reexecuting queries
+* New: Menu command for switching the UI between tabbed and sub-window views
+* New: Show cursor position for the active editor
+* Improved: Restore maximised editor windows when loading a session
+* Improved: Handle name changes to files
+* Improved: Close all open queries when closing a project
+* Improved: The build progress bar no longer changes the height of the status bar
+* Improved: Many enhancements to the editor configuration dialogue
+* Bug fix: Do not requery expanded empty items upon loading from XML
+* Bug fix: Do not crash when a new file is closed
+* Bug fix: Resize columns and set root path in restored queries
+* Bug fix: Clear location history when closing a project
+* Bug fix: Cscope parser should remove whitespace after the line number
+* Bug fix: Adjust column width in the location history view
+* Bug fix: More fixes to the handling of the active editor
+
 1.9.1 (2009-01-26)
 * New: Save/restore queries as part of a session
 * Improved: Better session handling
