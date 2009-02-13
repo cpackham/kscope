@@ -45,8 +45,10 @@ class LexerStyleModel : public QAbstractItemModel
 	Q_OBJECT
 
 public:
-	LexerStyleModel(QsciLexer*, QObject* parent = NULL);
+	LexerStyleModel(QObject* parent = NULL);
 	~LexerStyleModel();
+
+	void setLexer(QsciLexer*);
 
 	// QAbstractItemModel implementation.
 	QModelIndex index(int, int,
@@ -59,8 +61,9 @@ public:
 	             int role = Qt::EditRole);
 
 public slots:
-	void useDefaultFont(bool);
-	void setDefaultFont(const QFont&);
+	void useGlobalFont(bool);
+	void onGlobalFontChange();
+	void resetStyles();
 
 private:
 	/**
@@ -72,11 +75,6 @@ private:
 	 * The number of available styles.
 	 */
 	int styleNum_;
-
-	/**
-	 * Whether all styles should be using the same (default) font.
-	 */
-	bool useDefaultFont_;
 
 	/**
 	 * Style properties.

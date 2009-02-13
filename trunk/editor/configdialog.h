@@ -22,6 +22,7 @@
 #define __EDITOR_CONFIGDIALOG_H__
 
 #include <QDialog>
+#include <QStandardItemModel>
 #include "ui_configdialog.h"
 #include "config.h"
 
@@ -48,12 +49,19 @@ public:
 
 signals:
 	/**
-	 * Used to notify all lexer models of a change to the default font.
+	 * Used to notify the lexer model of a change to the default font.
 	 */
-	void defaultFontChanged(const QFont&);
+	void globalFontChanged();
+
+private:
+	QStandardItemModel* lexerModel_;
 
 private slots:
-	void changeDefaultFont();
+	void changeGlobalFont();
+	void editStyle(const QModelIndex&);
+	void resetStyles();
+	void indentLanguageChanged(int);
+	void styleLanguageChanged(int);
 };
 
 } // namespace Editor

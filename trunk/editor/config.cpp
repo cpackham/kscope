@@ -29,12 +29,98 @@ namespace Editor
 {
 
 /**
+ * Adds more information to a QsciLexer class.
+ * Inherits from both a QsciLexer-derived class, and LexerExInterface.
+ * @author Elad Lahav
+ */
+template<class LexerT>
+class Lexer : public LexerT, public LexerExInterface
+{
+public:
+	/**
+	 * Class constructor.
+	 * @param  parent Parent object
+	 */
+	Lexer(QObject* parent) : LexerT(parent) {}
+	~Lexer() {}
+
+	/**
+	 * @return Whether to use the global font for all styles.
+	 */
+	bool useGlobalFont() const {
+		return useGlobalFont_;
+	}
+
+	/**
+	 * Toggles the global font parameter.
+	 * If the parameter is turned on, then the global font is applied to all
+	 * styles.
+	 * @param  use true to use the global font, false otherwise
+	 */
+	void setUseGlobalFont(bool use) {
+		useGlobalFont_ = use;
+		if (useGlobalFont_)
+			LexerT::setFont(QsciLexer::defaultFont());
+	}
+
+	/**
+	 * Changes the global font.
+	 * The font is applied to all styles if the "use global font" flag is set.
+	 * @param  font The new global font to set
+	 */
+	void setGlobalFont(const QFont& font) {
+		LexerT::setDefaultFont(font);
+		if (useGlobalFont_)
+			LexerT::setFont(QsciLexer::defaultFont());
+	}
+
+protected:
+	/**
+	 * Reads lexer configuration parameters from a QSettings object.
+	 * @param  settings The object to read from
+	 * @param  prefix   Identifies the lexer in the settings object
+	 * @return true if successful, false otherwise
+	 */
+	bool readProperties(QSettings& settings, const QString& prefix) {
+		bool result = LexerT::readProperties(settings, prefix);
+		useGlobalFont_ = settings.value(prefix + "UseGlobalFont",
+		                                false).toBool();
+		return result;
+	}
+
+	/**
+	 * Writes lexer configuration parameters to a QSettings object.
+	 * @param  settings The object to write to
+	 * @param  prefix   Identifies the lexer in the settings object
+	 * @return true if successful, false otherwise
+	 */
+	bool writeProperties(QSettings& settings, const QString& prefix) const {
+		bool result = LexerT::writeProperties(settings, prefix);
+		settings.setValue(prefix + "UseGlobalFont", useGlobalFont_);
+		return result;
+	}
+
+protected:
+	/**
+	 * Whether all styles of the lexer should be using the global font.
+	 * If this flag is set, the style's font cannot be modified separately.
+	 * Instead, changes to the global font are applied to all styles.
+	 */
+	bool useGlobalFont_;
+};
+
+/**
  * Class constructor.
  * @param  parent Parent object
  */
 Config::Config(QObject* parent) : QObject(parent)
 {
-	cppLexer_ = new QsciLexerCPP(this);
+	// Create the lexers.
+	cppLexer_ = new Lexer<QsciLexerCPP>(this);
+	makeLexer_ = new Lexer<QsciLexerMakefile>(this);
+	bashLexer_ = new Lexer<QsciLexerBash>(this);
+
+	lexers_ << cppLexer_ << makeLexer_ << bashLexer_;
 }
 
 /**
@@ -64,15 +150,21 @@ void Config::load(const QSettings& settings)
 	tabWidth_ = settings.value("TabWidth", tabWidth_).toInt();
 
 	// Load the C lexer parameters.
-	cppLexer_->readSettings(const_cast<QSettings&>(settings), "CPPLexer");
+	foreach (QsciLexer* lexer, lexers_) {
+		lexer->readSettings(const_cast<QSettings&>(settings), lexer->lexer());
+		lexer->setDefaultFont(font_);
+	}
 
-	// Create the file suffix to lexer map.
+	// Create the file to lexer map.
 	// TODO: Make this configurable.
-	lexerMap_["c"] = cppLexer_;
-	lexerMap_["cc"] = cppLexer_;
-	lexerMap_["cpp"] = cppLexer_;
-	lexerMap_["h"] = cppLexer_;
-	lexerMap_["hpp"] = cppLexer_;
+	lexerMap_.clear();
+	lexerMap_["*.c"] = cppLexer_;
+	lexerMap_["*.cc"] = cppLexer_;
+	lexerMap_["*.cpp"] = cppLexer_;
+	lexerMap_["*.h"] = cppLexer_;
+	lexerMap_["*.hpp"] = cppLexer_;
+	lexerMap_["Makefile*"] = makeLexer_;
+	lexerMap_["*.sh"] = bashLexer_;
 }
 
 /**
@@ -88,7 +180,8 @@ void Config::store(QSettings& settings) const
 	settings.setValue("TabWidth", tabWidth_);
 
 	// Store C lexer parameters.
-	cppLexer_->writeSettings(settings, "CPPLexer");
+	foreach (QsciLexer* lexer, lexers_)
+		lexer->writeSettings(settings, lexer->lexer());
 }
 
 /**
@@ -113,12 +206,8 @@ void Config::apply(Editor* editor) const
  */
 QsciLexer* Config::lexer(const QString& path) const
 {
-	QString suffix = QFileInfo(path).suffix();
-	QMap<QString, QsciLexer*>::ConstIterator itr = lexerMap_.find(suffix);
-	if (itr == lexerMap_.end())
-		return NULL;
-
-	return *itr;
+	QString name = QFileInfo(path).fileName();
+	return lexerMap_.find(path);
 }
 
 } // namespace Editor

@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include "lexerstylemodel.h"
+#include "config.h"
 
 namespace KScope
 {
@@ -29,15 +30,11 @@ namespace Editor
 
 /**
  * Class constructor.
- * @param  lexer  The lexer to use
  * @param  parent Parent object
  */
-LexerStyleModel::LexerStyleModel(QsciLexer* lexer, QObject* parent)
-	: QAbstractItemModel(parent), lexer_(lexer), useDefaultFont_(false)
+LexerStyleModel::LexerStyleModel(QObject* parent)
+	: QAbstractItemModel(parent), styleNum_(0)
 {
-	// Determine the number of styles used by the lexer.
-	for (styleNum_ = 0; !lexer_->description(styleNum_).isEmpty(); styleNum_++)
-		;
 }
 
 /**
@@ -47,22 +44,43 @@ LexerStyleModel::~LexerStyleModel()
 {
 }
 
-void LexerStyleModel::useDefaultFont(bool use)
+void LexerStyleModel::setLexer(QsciLexer* lexer)
 {
-	useDefaultFont_ = use;
-	if (use) {
-		lexer_->setFont(lexer_->defaultFont());
-		reset();
-	}
+	lexer_ = lexer;
+
+	// Determine the number of styles used by the lexer.
+	for (styleNum_ = 0; !lexer_->description(styleNum_).isEmpty(); styleNum_++)
+		;
+
+	reset();
 }
 
-void LexerStyleModel::setDefaultFont(const QFont& font)
+void LexerStyleModel::useGlobalFont(bool use)
 {
-	lexer_->setDefaultFont(font);
-	if (useDefaultFont_) {
-		lexer_->setFont(font);
+	dynamic_cast<LexerExInterface*>(lexer_)->setUseGlobalFont(use);
+	reset();
+}
+
+void LexerStyleModel::onGlobalFontChange()
+{
+	if (dynamic_cast<LexerExInterface*>(lexer_)->useGlobalFont())
 		reset();
+}
+
+/**
+ * Restores the default styles.
+ */
+void LexerStyleModel::resetStyles()
+{
+	for (int i = 0; i < styleNum_; i++) {
+		lexer_->setFont(lexer_->defaultFont(i), i);
+		lexer_->setColor(lexer_->defaultColor(i), i);
+		lexer_->setPaper(lexer_->defaultPaper(i), i);
 	}
+
+	dynamic_cast<LexerExInterface*>(lexer_)->setUseGlobalFont(false);
+
+	reset();
 }
 
 /**
@@ -274,7 +292,7 @@ QVariant LexerStyleModel::propertyData(int style, StyleProperty prop,
 		case Qt::EditRole:
 			// Can edit the font only if not using the default font for all
 			// styles.
-			if (!useDefaultFont_)
+			if (!dynamic_cast<LexerExInterface*>(lexer_)->useGlobalFont())
 				return lexer_->font(style);
 		}
 		break;

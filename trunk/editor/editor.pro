@@ -5,8 +5,7 @@ DEPENDPATH += ". ../core"
 CONFIG += dll
 
 # Input
-HEADERS += lexerstyleview.h \
-    lexerstylemodel.h \
+HEADERS += lexerstylemodel.h \
     editor.h \
     configdialog.h \
     fileiothread.h \
@@ -14,8 +13,7 @@ HEADERS += lexerstyleview.h \
     config.h
 FORMS += configdialog.ui \
     findtextdialog.ui
-SOURCES += lexerstyleview.cpp \
-    lexerstylemodel.cpp \
+SOURCES += lexerstylemodel.cpp \
     config.cpp \
     editor.cpp \
     configdialog.cpp \
