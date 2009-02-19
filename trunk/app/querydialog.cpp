@@ -55,6 +55,7 @@ QueryDialog::~QueryDialog()
 int QueryDialog::exec(Core::Query::Type defType, const TypeList& typeList)
 {
 	// Prepare the query type combo box.
+	typeCombo_->clear();
 	if (typeList.size() > 0) {
 		foreach (Core::Query::Type type, typeList)
 			typeCombo_->addItem(Strings::toString(type), type);
