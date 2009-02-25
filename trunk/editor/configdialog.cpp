@@ -47,8 +47,12 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 	tabWidthSpin_->setValue(config.tabWidth_);
 
 	// Prepare the style editor.
-	styleView_->setModel(config.styleModel_);
-	propView_->setModel(config.styleModel_);
+	// We use a copy of the style model managed by the Config object, so that
+	// changes to the model do not persist in case the dialogue is cancelled.
+	styleModel_ = new LexerStyleModel(config.lexers_, this);
+	styleModel_->copy(*config.styleModel_);
+	styleView_->setModel(styleModel_);
+	propView_->setModel(styleModel_);
 	connect(styleView_->selectionModel(),
 	        SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(editStyle(const QModelIndex&)));
@@ -62,7 +66,7 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 
 	// Select the top index, so that the property view shows its properties,
 	// rather than a tree of styles.
-	QModelIndex index = config.styleModel_->index(0, 0);
+	QModelIndex index = styleModel_->index(0, 0);
 	styleView_->setCurrentIndex(index);
 
 	// Populate language combo-boxes.
@@ -94,6 +98,8 @@ void ConfigDialog::getConfig(Config& config)
 	config.marginLineNumbers_ = marginLineNumbersCheck_->isChecked();
 	config.indentTabs_ = indentTabsCheck_->isChecked();
 	config.tabWidth_ = tabWidthSpin_->value();
+	config.styleModel_->copy(*styleModel_);
+	config.styleModel_->updateLexers();
 }
 
 /**

@@ -32,6 +32,8 @@ namespace KScope
 namespace Editor
 {
 
+class LexerStyleModel;
+
 /**
  * A dialogue for configuring a QScintilla editor.
  * Unfortunately, QScintilla does not provide such a dialogue
@@ -55,6 +57,7 @@ signals:
 
 private:
 	QStandardItemModel* lexerModel_;
+	LexerStyleModel* styleModel_;
 
 private slots:
 	void selectDefaultFont();

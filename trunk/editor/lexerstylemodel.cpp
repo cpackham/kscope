@@ -35,7 +35,6 @@ const QString LexerStyleModel::inheritValue_ = "<Inherit>";
  * @param  parent Parent object
  */
 LexerStyleModel::LexerStyleModel(const Config::LexerList& lexers,
-                                 const QSettings& settings,
                                  QObject* parent)
 	: QAbstractItemModel(parent), root_(NULL)
 {
@@ -46,12 +45,10 @@ LexerStyleModel::LexerStyleModel(const Config::LexerList& lexers,
 		if (defNode == NULL) {
 			// Create the root node.
 			defNode = createStyleNode(&root_, lexer);
-			loadStyle(settings, defNode);
 		}
 		else {
 			// Create the default style node for this lexer.
 			Node* lexNode = createStyleNode(defNode, lexer);
-			loadStyle(settings, lexNode);
 
 			// Create per-style nodes for this lexer.
 			for (int i = 0; !lexer->description(i).isEmpty(); i++) {
@@ -59,8 +56,7 @@ LexerStyleModel::LexerStyleModel(const Config::LexerList& lexers,
 				if (i == lexer->defaultStyle())
 					continue;
 
-				Node* styleNode = createStyleNode(lexNode, lexer, i);
-				loadStyle(settings, styleNode);
+				createStyleNode(lexNode, lexer, i);
 			}
 		}
 	}
@@ -71,6 +67,43 @@ LexerStyleModel::LexerStyleModel(const Config::LexerList& lexers,
  */
 LexerStyleModel::~LexerStyleModel()
 {
+}
+
+/**
+ * Reads style data from a QSettings object
+ * @param  settings The object to read from
+ */
+void LexerStyleModel::load(const QSettings& settings)
+{
+	loadStyle(settings, root_.child(0));
+}
+
+/**
+ * Writes style data to a QSettings object
+ * @param  settings The object to write to
+ */
+void LexerStyleModel::store(QSettings& settings) const
+{
+	storeStyle(settings, root_.child(0));
+}
+
+/**
+ * Copies style data from another model.
+ * @param  model The model to copy from
+ */
+void LexerStyleModel::copy(const LexerStyleModel& model)
+{
+	copyStyle(root_.child(0), model.root_.child(0));
+}
+
+/**
+ * Uses the data stored in the model to update the style properties of all
+ * managed lexers.
+ * This method should be called after any changes are applied to the model.
+ */
+void LexerStyleModel::updateLexers() const
+{
+	updateLexerStyle(root_.child(0));
 }
 
 /**
@@ -272,8 +305,7 @@ bool LexerStyleModel::setData(const QModelIndex& index, const QVariant& value,
 	emit dataChanged(styleIndex, styleIndex);
 
 	// Apply property to inheriting styles.
-	if (value != inheritValue_)
-		inheritProperty(value, styleNode, data->prop_);
+	inheritProperty(value, styleNode, data->prop_);
 
 	return true;
 }
@@ -320,9 +352,8 @@ LexerStyleModel::Node* LexerStyleModel::createStyleNode(Node* parent,
 }
 
 /**
- * Reads style data from a QSettings object.
- * If data is not available, the method attempts to provide good defaults based
- * on the current lexer settings.
+ * Reads style data from a QSettings object for the given node and all its
+ * children.
  * @param  settings The QSettings object to read from
  * @param  node     The style node
  */
@@ -339,12 +370,102 @@ void LexerStyleModel::loadStyle(const QSettings& settings, Node* node)
 	                                   .arg(lexer->description(style));
 
 	// Get the properties.
-	setProperty(settings.value(key.arg("Font")), node, Font,
-	            lexer->font(style));
-	setProperty(settings.value(key.arg("Foreground")), node, Foreground,
-	            lexer->color(style));
-	setProperty(settings.value(key.arg("Background")), node, Background,
-	            lexer->paper(style));
+	for (uint i = 0; i != _LastProperty; i++) {
+		StyleProperty prop = static_cast<StyleProperty>(i);
+		setProperty(settings.value(key.arg(propertyKey(prop))), node, prop,
+		            propertyDefaultValue(lexer, style, prop));
+	}
+
+	// Recursive call.
+	for (int i = 0; i < node->childCount(); i++)
+		loadStyle(settings, node->child(i));
+}
+
+/**
+ * Writes style data to a QSettings object for the given node and all its
+ * children.
+ * @param  settings The QSettings object to write to
+ * @param  node     The style node
+ */
+void LexerStyleModel::storeStyle(QSettings& settings, const Node* node) const
+{
+	// Get the lexer and style ID from the node data.
+	StyleData* data = static_cast<StyleData*>(node->data());
+	QsciLexer* lexer = data->lexer_;
+	int style = data->style_;
+
+	// Create a key template for the settings object, of the form
+	// LEXER\STYLE\%1, where %1 will be replaced by the property name.
+	QString key = QString("%1\\%2\\%3").arg(lexer->lexer())
+	                                   .arg(lexer->description(style));
+
+	// Get the properties.
+	for (uint i = 0; i != _LastProperty; i++) {
+		StyleProperty prop = static_cast<StyleProperty>(i);
+		PropertyData* propData = propertyDataFromNode(node, prop);
+		QVariant value = propData->inherited_ ? inheritValue_
+		                                      : propData->value_;
+		settings.setValue(key.arg(propertyKey(prop)), value);
+	}
+
+	// Recursive call.
+	for (int i = 0; i < node->childCount(); i++)
+		storeStyle(settings, node->child(i));
+}
+
+/**
+ * Recursively copies style node data from another model.
+ * @param  destNode The node to copy to
+ * @param  srcNode  The node to copy from
+ */
+void LexerStyleModel::copyStyle(Node* destNode, const Node* srcNode)
+{
+	StyleData* destData = static_cast<StyleData*>(destNode->data());
+	StyleData* srcData = static_cast<StyleData*>(srcNode->data());
+
+	// Copy the style data.
+	destData->lexer_ = srcData->lexer_;
+	destData->style_ = srcData->style_;
+
+	// Copy properties.
+	for (uint i = 0; i != _LastProperty; i++) {
+		StyleProperty prop = static_cast<StyleProperty>(i);
+		PropertyData* destProp = propertyDataFromNode(destNode, prop);
+		PropertyData* srcProp = propertyDataFromNode(srcNode, prop);
+
+		destProp->value_ = srcProp->value_;
+		destProp->inherited_ = srcProp->inherited_;
+	}
+
+	// Recursive call.
+	for (int i = 0; i < destNode->childCount(); i++)
+		copyStyle(destNode->child(i), srcNode->child(i));
+}
+
+/**
+ * Recursively updates lexer style properties, using the data stored in the
+ * model.
+ * @param  node The style node holding the lexer to update
+ */
+void LexerStyleModel::updateLexerStyle(const Node* node) const
+{
+	StyleData* data = static_cast<StyleData*>(node->data());
+	QsciLexer* lexer = data->lexer_;
+	int style = data->style_;
+
+	// Update lexer properties.
+	QFont font = propertyDataFromNode(node, Font)->value_.value<QFont>();
+	lexer->setFont(font, style);
+	QColor foreground
+		= propertyDataFromNode(node, Foreground)->value_.value<QColor>();
+	lexer->setColor(foreground, style);
+	QColor background
+		= propertyDataFromNode(node, Background)->value_.value<QColor>();
+	lexer->setPaper(background, style);
+
+	// Recursive call.
+	for (int i = 0; i < node->childCount(); i++)
+		updateLexerStyle(node->child(i));
 }
 
 /**
@@ -429,7 +550,7 @@ void LexerStyleModel::inheritProperty(const QVariant& val, Node* node,
 		// Check if this property is inherited by the child.
 		if (data->inherited_) {
 			// Set the new value.
-			data->value_ = val;
+			setProperty(val, child, prop, QVariant());
 
 			// Notify views of the change.
 			QModelIndex index = createIndex(i, 1, (void*)child);
@@ -542,6 +663,51 @@ QVariant LexerStyleModel::propertyData(PropertyData* data, int role) const
 
 	case Qt::EditRole:
 		return data->value_;
+	}
+
+	return QVariant();
+}
+
+/**
+ * @param  prop Property value
+ * @return The key used to store this property in a QSettings object
+ */
+QString LexerStyleModel::propertyKey(StyleProperty prop) const
+{
+	switch (prop) {
+	case Font:
+		return "Font";
+
+	case Foreground:
+		return "Foreground";
+
+	case Background:
+		return "Background";
+
+	default:
+		// Must not get here.
+		Q_ASSERT(false);
+	}
+
+	return QString();
+}
+
+QVariant LexerStyleModel::propertyDefaultValue(QsciLexer* lexer, int style,
+                                               StyleProperty prop) const
+{
+	switch (prop) {
+	case Font:
+		return lexer->font(style);
+
+	case Foreground:
+		return lexer->color(style);
+
+	case Background:
+		return lexer->paper(style);
+
+	default:
+		// Must not get here.
+		Q_ASSERT(false);
 	}
 
 	return QVariant();

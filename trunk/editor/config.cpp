@@ -33,15 +33,17 @@ namespace Editor
  * Class constructor.
  * @param  parent Parent object
  */
-Config::Config(QObject* parent) : QObject(parent), styleModel_(NULL)
+Config::Config(QObject* parent) : QObject(parent)
 {
 	// Create the lexers.
 	commonLexer_ = new CommonLexer(this);
 	cppLexer_ = new QsciLexerCPP(this);
 	makeLexer_ = new QsciLexerMakefile(this);
 	bashLexer_ = new QsciLexerBash(this);
-
 	lexers_ << commonLexer_ << cppLexer_ << makeLexer_ << bashLexer_;
+
+	// Create the lexer style model.
+	styleModel_ = new LexerStyleModel(lexers_, this);
 }
 
 /**
@@ -68,9 +70,8 @@ void Config::load(const QSettings& settings)
 	loadValue(settings, tabWidth_, "TabWidth", editor.tabWidth());
 
 	// Load the C lexer parameters.
-	if (styleModel_)
-		delete styleModel_;
-	styleModel_ = new LexerStyleModel(lexers_, settings, this);
+	styleModel_->load(settings);
+	styleModel_->updateLexers();
 
 	// Create the file to lexer map.
 	// TODO: Make this configurable.
@@ -95,10 +96,7 @@ void Config::store(QSettings& settings) const
 	settings.setValue("LineNumbersInMargin", marginLineNumbers_);
 	settings.setValue("IndentWithTabs", indentTabs_);
 	settings.setValue("TabWidth", tabWidth_);
-
-	// Store C lexer parameters.
-	foreach (QsciLexer* lexer, lexers_)
-		lexer->writeSettings(settings, lexer->lexer());
+	styleModel_->store(settings);
 }
 
 /**
@@ -111,6 +109,7 @@ void Config::apply(Editor* editor) const
 	editor->setIndentationsUseTabs(indentTabs_);
 	editor->setTabWidth(tabWidth_);
 	editor->setCaretLineVisible(hlCurLine_);
+	editor->setMarginLineNumbers(0, marginLineNumbers_);
 
 	if (editor->lexer())
 		editor->lexer()->refreshProperties();

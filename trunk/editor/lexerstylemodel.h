@@ -73,9 +73,13 @@ class LexerStyleModel : public QAbstractItemModel
 	Q_OBJECT
 
 public:
-	LexerStyleModel(const Config::LexerList&, const QSettings&,
-	                QObject* parent = NULL);
+	LexerStyleModel(const Config::LexerList&, QObject* parent = NULL);
 	~LexerStyleModel();
+
+	void load(const QSettings&);
+	void store(QSettings&) const;
+	void copy(const LexerStyleModel&);
+	void updateLexers() const;
 
 	// QAbstractItemModel implementation.
 	QModelIndex index(int, int,
@@ -239,7 +243,7 @@ private:
 	                                         StyleProperty prop) {
 		StyleData* style = static_cast<StyleData*>(node->data());
 		Core::TreeItem<NodeData*>* propNode
-			= const_cast<Core::TreeItem<NodeData*>*>
+			= static_cast<Core::TreeItem<NodeData*>*>
 		      (style->propRoot_.child(prop));
 		return static_cast<PropertyData*>(propNode->data());
 	}
@@ -248,12 +252,17 @@ private:
 
 	Node* createStyleNode(Node*, QsciLexer*, int style = -1);
 	void loadStyle(const QSettings&, Node*);
+	void storeStyle(QSettings&, const Node*) const;
+	void copyStyle(Node*, const Node*);
+	void updateLexerStyle(const Node*) const;
 	void setProperty(const QVariant&, Node*, StyleProperty, const QVariant&);
 	void inheritProperty(const QVariant&, Node*, StyleProperty);
 	QVariant styleData(const Node*, int) const;
 	QString propertyName(StyleProperty) const;
 	QVariant::Type propertyType(StyleProperty) const;
 	QVariant propertyData(PropertyData*, int role) const;
+	QString propertyKey(StyleProperty) const;
+	QVariant propertyDefaultValue(QsciLexer*, int, StyleProperty) const;
 };
 
 } // namespace Editor
