@@ -51,17 +51,17 @@ signals:
 	/**
 	 * Used to notify the lexer model of a change to the default font.
 	 */
-	void globalFontChanged();
+	void defaultFontChanged();
 
 private:
 	QStandardItemModel* lexerModel_;
 
 private slots:
-	void changeGlobalFont();
-	void editStyle(const QModelIndex&);
+	void selectDefaultFont();
 	void resetStyles();
 	void indentLanguageChanged(int);
-	void styleLanguageChanged(int);
+	void editStyle(const QModelIndex&);
+	void editProperty(const QModelIndex&, const QVariant&);
 };
 
 } // namespace Editor

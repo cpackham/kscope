@@ -34,16 +34,58 @@ namespace Editor
 {
 
 class Editor;
+class LexerStyleModel;
 
 /**
- * Extends the interface provided by a QsciLexer-derived class.
+ * A special lexer used to create a common default style for all other lexers.
+ * This class serves two purposes:
+ * 1. Allows style properties to be inherited by all lexers (e.g., for setting
+ *    a single, common font);
+ * 2. Provides a default lexer for files that are not handled by any of the
+ *    pre-defined lexers.
  * @author Elad Lahav
  */
-struct LexerExInterface
+class CommonLexer : public QsciLexer
 {
-	virtual bool useGlobalFont() const = 0;
-	virtual void setUseGlobalFont(bool use) = 0;
-	virtual void setGlobalFont(const QFont&) = 0;
+public:
+	/**
+	 * Class constructor.
+	 * @param  parent Parent object
+	 */
+	CommonLexer(QObject* parent) : QsciLexer(parent) {}
+
+	/**
+	 * Class destructor.
+	 */
+	~CommonLexer() {}
+
+	/**
+	 * @return A string identifying the language handled by the lexer
+	 */
+	const char* language() const { return tr("Common").toLatin1(); }
+
+	/**
+	 * @return A string identifying the lexer
+	 */
+	const char* lexer() const { return tr("Common").toLatin1(); }
+
+	/**
+	 * Provides a name for the given style ID.
+	 * @param  style The style ID
+	 * @return The name of the style, or an empty string if the style does not
+	 *         exist
+	 */
+	QString description(int style) const {
+		if (style == 0)
+			return tr("Default");
+
+		return QString();
+	}
+
+	/**
+	 * @return The ID of the default style for this lexer
+	 */
+	int defaultStyle() const { return 0; }
 };
 
 /**
@@ -63,16 +105,18 @@ public:
 	void apply(Editor*) const;
 	QsciLexer* lexer(const QString&) const;
 
-private:
-	/**
-	 * Default font.
-	 */
-	QFont font_;
+	typedef QList<QsciLexer*> LexerList;
 
+private:
 	/**
 	 * Whether to highlight the current line.
 	 */
 	bool hlCurLine_;
+
+	/**
+	 * Whether to show line numbers in the margin.
+	 */
+	bool marginLineNumbers_;
 
 	/**
 	 * Whether to use tabs for indentation.
@@ -83,6 +127,11 @@ private:
 	 * The tab width, in characters.
 	 */
 	int tabWidth_;
+
+	/**
+	 * The common defaults lexers.
+	 */
+	CommonLexer* commonLexer_;
 
 	/**
 	 * C/C++ lexer.
@@ -104,7 +153,12 @@ private:
 	 * All objects in this list must inherit from both QsciLexer and
 	 * LexerExInterface.
 	 */
-	QList<QsciLexer*> lexers_;
+	LexerList lexers_;
+
+	/**
+	 * Used to configure lexer styles.
+	 */
+	LexerStyleModel* styleModel_;
 
 	/**
 	 * Maps file name patterns to lexers.
@@ -143,6 +197,13 @@ private:
 	friend class ConfigDialog;
 
 	void fromEditor(Editor* editor = NULL);
+
+	template<class T>
+	static inline void loadValue(const QSettings& settings, T& val,
+	                      const QString& key, const T& defVal) {
+		QVariant var = settings.value(key, defVal);
+		val = var.value<T>();
+	}
 };
 
 } // namespace Editor

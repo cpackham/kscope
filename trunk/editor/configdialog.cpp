@@ -22,6 +22,7 @@
 #include <QColorDialog>
 #include "configdialog.h"
 #include "lexerstylemodel.h"
+#include "lexerstyledelegate.h"
 
 namespace KScope
 {
@@ -40,21 +41,29 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 	setupUi(this);
 
 	// Update the controls to reflect the given configuration.
-	globalFontLabel_->setText(config.font_.family());
-	globalFontLabel_->setFont(config.font_);
 	hlCurLineCheck_->setChecked(config.hlCurLine_);
+	marginLineNumbersCheck_->setChecked(config.marginLineNumbers_);
 	indentTabsCheck_->setChecked(config.indentTabs_);
 	tabWidthSpin_->setValue(config.tabWidth_);
 
-	// Create a model for the style tree view.
-	LexerStyleModel* styleModel = new LexerStyleModel(this);
-	styleView_->setModel(styleModel);
-	connect(globalFontCheck_, SIGNAL(toggled(bool)), styleModel,
-	        SLOT(useGlobalFont(bool)));
-	connect(this, SIGNAL(globalFontChanged()), styleModel,
-	        SLOT(onGlobalFontChange()));
-	connect(resetButton_, SIGNAL(clicked()), styleModel,
-	        SLOT(resetStyles()));
+	// Prepare the style editor.
+	styleView_->setModel(config.styleModel_);
+	propView_->setModel(config.styleModel_);
+	connect(styleView_->selectionModel(),
+	        SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
+	        this, SLOT(editStyle(const QModelIndex&)));
+
+	// Create the delegate for editing properties.
+	LexerStyleDelegate* delegate = new LexerStyleDelegate(this);
+	connect(delegate,
+	        SIGNAL(editProperty(const QModelIndex&, const QVariant&)),
+	        this, SLOT(editProperty(const QModelIndex&, const QVariant&)));
+	propView_->setItemDelegate(delegate);
+
+	// Select the top index, so that the property view shows its properties,
+	// rather than a tree of styles.
+	QModelIndex index = config.styleModel_->index(0, 0);
+	styleView_->setCurrentIndex(index);
 
 	// Populate language combo-boxes.
 	lexerModel_ = new QStandardItemModel(this);
@@ -66,7 +75,6 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 	}
 
 	indentLanguageCombo_->setModel(lexerModel_);
-	styleLanguageCombo_->setModel(lexerModel_);
 }
 
 /**
@@ -82,82 +90,22 @@ ConfigDialog::~ConfigDialog()
  */
 void ConfigDialog::getConfig(Config& config)
 {
-	config.font_ = globalFontLabel_->font();
 	config.hlCurLine_ = hlCurLineCheck_->isChecked();
+	config.marginLineNumbers_ = marginLineNumbersCheck_->isChecked();
 	config.indentTabs_ = indentTabsCheck_->isChecked();
 	config.tabWidth_ = tabWidthSpin_->value();
 }
 
 /**
- * Called when the user clicks the "..." button by the global font label.
- * Prompts the user for a new global font.
+ * Changes all styles to use their default values.
+ * If the "Use default font" check-box is checked, then the font property is
+ * ignored (i.e., not reset).
  */
-void ConfigDialog::changeGlobalFont()
-{
-	// Prompt the user for a new font.
-	bool ok;
-	QFont font = QFontDialog::getFont(&ok, globalFontLabel_->font(), this);
-	if (!ok)
-		return;
-
-	// Set the font label information.
-	globalFontLabel_->setText(font.family());
-	globalFontLabel_->setFont(font);
-
-	// Apply the new global font to all lexers.
-	QStandardItem* item;
-	for (int i = 0; (item = lexerModel_->item(i)) != NULL; i++) {
-		QsciLexer* lexer = static_cast<QsciLexer*>(item->data().value<void*>());
-		dynamic_cast<LexerExInterface*>(lexer)->setGlobalFont(font);
-	}
-
-	// Notify the style model of the change.
-	emit globalFontChanged();
-}
-
-/**
- * Called when the user activates an item in the style view.
- * For a property item, the appropriate editing dialogue is displayed, which
- * allows the user to change the property's value.
- * @param  index The index of the activated item
- */
-void ConfigDialog::editStyle(const QModelIndex& index)
-{
-	// Get the edit role data for this item.
-	// Only property items will return a valid value.
-	LexerStyleModel* styleModel
-		= static_cast<LexerStyleModel*>(styleView_->model());
-	QVariant editData = styleModel->data(index, Qt::EditRole);
-
-	// Display an editor based on the value's type.
-	switch (editData.type()) {
-	case QVariant::Font:
-		{
-			bool ok;
-			QFont font = QFontDialog::getFont(&ok, editData.value<QFont>(),
-			                                  this);
-			if (ok)
-				styleModel->setData(index, font);
-		}
-		break;
-
-	case QVariant::Color:
-		{
-			QColor color = QColorDialog::getColor(editData.value<QColor>(),
-			                                      this);
-			if (color.isValid())
-				styleModel->setData(index, color);
-		}
-		break;
-
-	default:
-		;
-	}
-}
-
 void ConfigDialog::resetStyles()
 {
-	globalFontCheck_->setChecked(false);
+	LexerStyleModel* styleModel
+		= static_cast<LexerStyleModel*>(styleView_->model());
+	styleModel->resetStyles();
 }
 
 void ConfigDialog::indentLanguageChanged(int id)
@@ -166,30 +114,48 @@ void ConfigDialog::indentLanguageChanged(int id)
 	(void)id;
 }
 
-/**
- * Called when a different item is selected in the styles language combo-box.
- * Updates the style view to reflect the settings for the newly selected
- * language.
- * @param  index The selected combo-box item
- */
-void ConfigDialog::styleLanguageChanged(int index)
+void ConfigDialog::editStyle(const QModelIndex& index)
 {
-	// Get the current item from the language model.
-	QStandardItem* item = lexerModel_->item(index);
-	if (item == NULL)
+	QModelIndex propRoot = index.child(0, 2);
+	propView_->setRootIndex(propRoot);
+}
+
+void ConfigDialog::editProperty(const QModelIndex& index,
+                                const QVariant& currentValue)
+{
+	QVariant newValue;
+
+	switch (currentValue.type()) {
+	case QVariant::Font:
+		{
+			bool ok;
+			QFont font = QFontDialog::getFont(&ok, currentValue.value<QFont>(),
+			                                  this);
+			if (!ok)
+				return;
+
+			newValue.setValue(font);
+		}
+		break;
+
+	case QVariant::Color:
+		{
+			QColor clr = QColorDialog::getColor(currentValue.value<QColor>(),
+			                                    this);
+			if (!clr.isValid())
+				return;
+
+			newValue.setValue(clr);
+		}
+		break;
+
+	default:
+		Q_ASSERT(false);
 		return;
+	}
 
-	// Get the lexer stored in the item.
-	QsciLexer* lexer = static_cast<QsciLexer*>(item->data().value<void*>());
-
-	// Apply the lexer to the style model.
-	LexerStyleModel* styleModel
-		= static_cast<LexerStyleModel*>(styleView_->model());
-	styleModel->setLexer(lexer);
-
-	// Update the global font check box.
-	globalFontCheck_->setChecked(dynamic_cast<LexerExInterface*>(lexer)
-	                             ->useGlobalFont());
+	LexerStyleModel* model = static_cast<LexerStyleModel*>(styleView_->model());
+	model->setData(index, newValue, Qt::EditRole);
 }
 
 } // namespace Editor

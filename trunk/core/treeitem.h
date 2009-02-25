@@ -89,6 +89,19 @@ public:
 	 * @return Pointer to the requested child, NULL if the index is out of
 	 *         bounds
 	 */
+	SelfT* child(int index) {
+		if (index < 0 || index >= childList_.size())
+			return NULL;
+
+		return &childList_[index];
+	}
+
+	/**
+	 * Child accessor (const version).
+	 * @param  index  The ordinal number of the requested child
+	 * @return Pointer to the requested child, NULL if the index is out of
+	 *         bounds
+	 */
 	const SelfT* child(int index) const {
 		if (index < 0 || index >= childList_.size())
 			return NULL;

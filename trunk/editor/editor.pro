@@ -5,7 +5,8 @@ DEPENDPATH += ". ../core"
 CONFIG += dll
 
 # Input
-HEADERS += lexerstylemodel.h \
+HEADERS += lexerstyledelegate.h \
+    lexerstylemodel.h \
     editor.h \
     configdialog.h \
     fileiothread.h \
