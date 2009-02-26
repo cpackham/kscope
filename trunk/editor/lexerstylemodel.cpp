@@ -67,6 +67,7 @@ LexerStyleModel::LexerStyleModel(const Config::LexerList& lexers,
  */
 LexerStyleModel::~LexerStyleModel()
 {
+	deleteStyleNode(root_.child(0));
 }
 
 /**
@@ -344,6 +345,15 @@ Qt::ItemFlags LexerStyleModel::flags(const QModelIndex& index) const
 	return flags;
 }
 
+/**
+ * Allocates a new node for the given lexer and style.
+ * Always use this method to create a new node, to ensure that the proeprties
+ * for this style are also created.
+ * @param  parent Pointer to the parent node
+ * @param  lexer  The lexer to use
+ * @param  style  The style ID
+ * @return A pointer to the new node
+ */
 LexerStyleModel::Node* LexerStyleModel::createStyleNode(Node* parent,
                                                         QsciLexer* lexer,
                                                         int style)
@@ -360,6 +370,28 @@ LexerStyleModel::Node* LexerStyleModel::createStyleNode(Node* parent,
 	}
 
 	return node;
+}
+
+/**
+ * Recursively deteles style nodes.
+ * @param  node The node to delete
+ */
+void LexerStyleModel::deleteStyleNode(Node* node)
+{
+	// Recursive call first.
+	for (int i = 0; i < node->childCount(); i++)
+		deleteStyleNode(node->child(i));
+
+	// Delete all property data.
+	StyleData* data = static_cast<StyleData*>(node->data());
+	for (int i = 0; i < data->propRoot_.childCount(); i++) {
+		Node* child = data->propRoot_.child(i);
+		delete child->data();
+		data->propRoot_.clear();
+	}
+
+	// Delete the node's data.
+	delete data;
 }
 
 /**

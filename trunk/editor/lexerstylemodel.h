@@ -252,6 +252,7 @@ private:
 	static const QString inheritValue_;
 
 	Node* createStyleNode(Node*, QsciLexer*, int style = -1);
+	void deleteStyleNode(Node*);
 	void loadStyle(const QSettings&, Node*);
 	void storeStyle(QSettings&, const Node*) const;
 	void copyStyle(Node*, const Node*);
