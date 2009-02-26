@@ -64,6 +64,7 @@ private slots:
 	void indentLanguageChanged(int);
 	void editStyle(const QModelIndex&);
 	void editProperty(const QModelIndex&, const QVariant&);
+	void applyInheritance();
 };
 
 } // namespace Editor

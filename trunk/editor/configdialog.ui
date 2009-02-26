@@ -171,7 +171,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6" >
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" >
+        <layout class="QHBoxLayout" name="horizontalLayout_4" >
          <item>
           <layout class="QVBoxLayout" name="verticalLayout" >
            <item>
@@ -205,6 +205,33 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2" >
+             <item>
+              <spacer name="horizontalSpacer_3" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="applyInheritButton_" >
+               <property name="toolTip" >
+                <string>Make child styles inherit this property</string>
+               </property>
+               <property name="text" >
+                <string>Apply to Sub-Styles</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -261,8 +288,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>242</x>
-     <y>363</y>
+     <x>251</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel" >
      <x>359</x>
@@ -277,8 +304,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>176</x>
-     <y>363</y>
+     <x>185</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel" >
      <x>355</x>
@@ -309,8 +336,8 @@
    <slot>indentLanguageChanged(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>142</x>
-     <y>172</y>
+     <x>170</x>
+     <y>171</y>
     </hint>
     <hint type="destinationlabel" >
      <x>429</x>
@@ -325,8 +352,8 @@
    <slot>resetStyles()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>514</x>
-     <y>308</y>
+     <x>580</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel" >
      <x>443</x>
@@ -334,9 +361,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>applyInheritButton_</sender>
+   <signal>clicked()</signal>
+   <receiver>ConfigDialog</receiver>
+   <slot>applyInheritance()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>538</x>
+     <y>368</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>598</x>
+     <y>353</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>indentLanguageChanged(int)</slot>
   <slot>resetStyles()</slot>
+  <slot>applyInheritance()</slot>
  </slots>
 </ui>

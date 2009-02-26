@@ -107,20 +107,29 @@ void LexerStyleModel::updateLexers() const
 }
 
 /**
+ * Forces all child styles to inherit the given property.
+ * @param  index Corresponds to a property node in the parent style
+ */
+void LexerStyleModel::applyInheritance(const QModelIndex& index)
+{
+	// Ensure the index corresponds to a property node.
+	Node* node = nodeFromIndex(index);
+	if ((node == NULL) || (node->data() == NULL)
+	    || (node->data()->type() != PropertyNode)) {
+		return;
+	}
+
+	// Apply inheritance to child styles.
+	PropertyData* data = static_cast<PropertyData*>(node->data());
+	inheritProperty(data->value_, data->styleNode_, data->prop_, true);
+}
+
+/**
  * Restores the default styles.
  */
 void LexerStyleModel::resetStyles()
 {
-#if 0
-	for (int i = 0; i < styleNum_; i++) {
-		lexer_->setFont(lexer_->defaultFont(i), i);
-		lexer_->setColor(lexer_->defaultColor(i), i);
-		lexer_->setPaper(lexer_->defaultPaper(i), i);
-	}
-
-	dynamic_cast<LexerExInterface*>(lexer_)->setUseGlobalFont(false);
-#endif
-
+	resetStyle(root_.child(0));
 	reset();
 }
 
@@ -278,10 +287,12 @@ QVariant LexerStyleModel::data(const QModelIndex& index, int role) const
 
 /**
  * Modifies a style's property.
- * @param index
- * @param value
- * @param role
- * @return
+ * The method updates the property to which the index corresponds, as well as
+ * the same property for all child styles that inherit this property.
+ * @param  index Corresponds to a property node
+ * @param  value The new value to set
+ * @param  role  Must be Qt::EditRole
+ * @return true if the property was updated, false otherwise
  */
 bool LexerStyleModel::setData(const QModelIndex& index, const QVariant& value,
                               int role)
@@ -305,7 +316,7 @@ bool LexerStyleModel::setData(const QModelIndex& index, const QVariant& value,
 	emit dataChanged(styleIndex, styleIndex);
 
 	// Apply property to inheriting styles.
-	inheritProperty(value, styleNode, data->prop_);
+	inheritProperty(value, styleNode, data->prop_, false);
 
 	return true;
 }
@@ -477,6 +488,27 @@ void LexerStyleModel::updateLexerStyle(const Node* node) const
 }
 
 /**
+ * Resets the style to use the default properties.
+ * @param  node The style node to reset
+ */
+void LexerStyleModel::resetStyle(Node* node)
+{
+	StyleData* data = static_cast<StyleData*>(node->data());
+	QsciLexer* lexer = data->lexer_;
+	int style = data->style_;
+
+	for (uint i = 0; i != _LastProperty; i++) {
+		StyleProperty prop = static_cast<StyleProperty>(i);
+		setProperty(QVariant(), node, prop,
+		            propertyDefaultValue(lexer, style, prop));
+	}
+
+	// Recursive call.
+	for (int i = 0; i < node->childCount(); i++)
+		resetStyle(node->child(i));
+}
+
+/**
  * Assigns a value to a property.
  * The val parameter that is passed to this method can have one of three types
  * of values:
@@ -543,18 +575,24 @@ void LexerStyleModel::setProperty(const QVariant& val, Node* node,
 
 /**
  * Recursively applies a property to all inheriting styles.
- * @param  val  The new property value
- * @param  node The parent style node
- * @param  prop The property to set
+ * @param  val   The new property value
+ * @param  node  The parent style node
+ * @param  prop  The property to set
+ * @param  force true to apply always inheritance, false to apply only if the
+ *               property is currently marked as inherited
  */
 void LexerStyleModel::inheritProperty(const QVariant& val, Node* node,
-                                      StyleProperty prop)
+                                      StyleProperty prop, bool force)
 {
 	PropertyData* data = propertyDataFromNode(node, prop);
 	for (int i = 0; i < node->childCount(); i++) {
 		// Get the child node information.
 		Node* child = node->child(i);
 		PropertyData* childData = propertyDataFromNode(child, prop);
+
+		// Force inheritance, if requested.
+		if (force)
+			childData->inherited_ = true;
 
 		// Check if this property is inherited by the child.
 		if (childData->inherited_) {
@@ -566,7 +604,7 @@ void LexerStyleModel::inheritProperty(const QVariant& val, Node* node,
 			emit dataChanged(index, index);
 
 			// Recursive application.
-			inheritProperty(val, child, prop);
+			inheritProperty(val, child, prop, force);
 		}
 	}
 }

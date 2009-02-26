@@ -80,6 +80,7 @@ public:
 	void store(QSettings&) const;
 	void copy(const LexerStyleModel&);
 	void updateLexers() const;
+	void applyInheritance(const QModelIndex&);
 
 	// QAbstractItemModel implementation.
 	QModelIndex index(int, int,
@@ -255,8 +256,9 @@ private:
 	void storeStyle(QSettings&, const Node*) const;
 	void copyStyle(Node*, const Node*);
 	void updateLexerStyle(const Node*) const;
+	void resetStyle(Node*);
 	void setProperty(const QVariant&, Node*, StyleProperty, const QVariant&);
-	void inheritProperty(const QVariant&, Node*, StyleProperty);
+	void inheritProperty(const QVariant&, Node*, StyleProperty, bool);
 	QVariant styleData(const Node*, int) const;
 	QString propertyName(StyleProperty) const;
 	QVariant::Type propertyType(StyleProperty) const;

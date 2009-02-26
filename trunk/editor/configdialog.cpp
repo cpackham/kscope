@@ -46,11 +46,13 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 	indentTabsCheck_->setChecked(config.indentTabs_);
 	tabWidthSpin_->setValue(config.tabWidth_);
 
-	// Prepare the style editor.
 	// We use a copy of the style model managed by the Config object, so that
 	// changes to the model do not persist in case the dialogue is cancelled.
 	styleModel_ = new LexerStyleModel(config.lexers_, this);
 	styleModel_->copy(*config.styleModel_);
+	connect(resetButton_, SIGNAL(clicked()), styleModel_, SLOT(resetStyles()));
+
+	// Prepare the style editor.
 	styleView_->setModel(styleModel_);
 	propView_->setModel(styleModel_);
 	connect(styleView_->selectionModel(),
@@ -162,6 +164,13 @@ void ConfigDialog::editProperty(const QModelIndex& index,
 
 	LexerStyleModel* model = static_cast<LexerStyleModel*>(styleView_->model());
 	model->setData(index, newValue, Qt::EditRole);
+}
+
+void ConfigDialog::applyInheritance()
+{
+	QModelIndex index = propView_->selectionModel()->currentIndex();
+	if (index.isValid())
+		styleModel_->applyInheritance(index);
 }
 
 } // namespace Editor
