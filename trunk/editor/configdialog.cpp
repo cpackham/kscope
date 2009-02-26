@@ -20,6 +20,8 @@
 
 #include <QFontDialog>
 #include <QColorDialog>
+#include <QFileDialog>
+#include <core/exception.h>
 #include "configdialog.h"
 #include "lexerstylemodel.h"
 #include "lexerstyledelegate.h"
@@ -104,6 +106,12 @@ void ConfigDialog::getConfig(Config& config)
 	config.styleModel_->updateLexers();
 }
 
+void ConfigDialog::indentLanguageChanged(int id)
+{
+	// TODO: Implement.
+	(void)id;
+}
+
 /**
  * Changes all styles to use their default values.
  * If the "Use default font" check-box is checked, then the font property is
@@ -116,10 +124,47 @@ void ConfigDialog::resetStyles()
 	styleModel->resetStyles();
 }
 
-void ConfigDialog::indentLanguageChanged(int id)
+/**
+ * Prompts the user for a settings file containing a style scheme, and loads
+ * the styles into the model.
+ */
+void ConfigDialog::importStyles()
 {
-	// TODO: Implement.
-	(void)id;
+	// Prompt for a file.
+	QString file = QFileDialog::getOpenFileName(this, tr("Import Styles"));
+	if (file.isEmpty())
+		return;
+
+	// Load the styles.
+	QSettings settings(file, QSettings::IniFormat);
+	try {
+		styleModel_->load(settings, false);
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
+}
+
+/**
+ * Allows the user to save the current style scheme to an external file.
+ */
+void ConfigDialog::exportStyles()
+{
+	// Prompt for a file.
+	QString file = QFileDialog::getSaveFileName(this, tr("Export Styles"));
+	if (file.isEmpty())
+		return;
+
+	// Store the styles.
+	QSettings settings(file, QSettings::IniFormat);
+	try {
+		styleModel_->store(settings, false);
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
 }
 
 void ConfigDialog::editStyle(const QModelIndex& index)

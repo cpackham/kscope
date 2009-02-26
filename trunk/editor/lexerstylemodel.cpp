@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QDebug>
+#include <core/exception.h>
 #include "lexerstylemodel.h"
 #include "config.h"
 
@@ -29,6 +30,8 @@ namespace Editor
 {
 
 const QString LexerStyleModel::inheritValue_ = "<Inherit>";
+
+const QString LexerStyleModel::styleMagic_ = "Grqt237gva5FA8A3";
 
 /**
  * Class constructor.
@@ -72,20 +75,46 @@ LexerStyleModel::~LexerStyleModel()
 
 /**
  * Reads style data from a QSettings object
- * @param  settings The object to read from
+ * @param  settings  The object to read from
+ * @param  force     Trust the given settings file, and try to load styles even
+ *                   if the magic key is not found
+ * @throw  Exception If force is not set, thrown in case the magic key is not
+ *                   found
  */
-void LexerStyleModel::load(const QSettings& settings)
+void LexerStyleModel::load(QSettings& settings, bool force)
 {
+	// Check for a magic key, identifying the settings object as a valid style
+	// scheme.
+	settings.beginGroup("EditorStyles");
+	if (!force) {
+		if ((settings.status() != QSettings::NoError)
+		    || (settings.value("KScopeStyleSchemeMagic", "").toString()
+                != styleMagic_)) {
+			settings.endGroup();
+			throw new Core::Exception(tr("Not a valid style scheme"));
+		}
+	}
+
+	// Recursively load styles.
 	loadStyle(settings, root_.child(0));
+	settings.endGroup();
 }
 
 /**
  * Writes style data to a QSettings object
- * @param  settings The object to write to
+ * @param  settings  The object to write to
+ * @param  force     Ignore errors
+ * @throw  Exception
  */
-void LexerStyleModel::store(QSettings& settings) const
+void LexerStyleModel::store(QSettings& settings, bool force) const
 {
+	if (!force && (settings.status() != QSettings::NoError))
+		throw new Core::Exception(tr("Failed to write style scheme"));
+
+	settings.beginGroup("EditorStyles");
+	settings.setValue("KScopeStyleSchemeMagic", styleMagic_);
 	storeStyle(settings, root_.child(0));
+	settings.endGroup();
 }
 
 /**
@@ -400,7 +429,7 @@ void LexerStyleModel::deleteStyleNode(Node* node)
  * @param  settings The QSettings object to read from
  * @param  node     The style node
  */
-void LexerStyleModel::loadStyle(const QSettings& settings, Node* node)
+void LexerStyleModel::loadStyle(QSettings& settings, Node* node)
 {
 	// Get the lexer and style ID from the node data.
 	StyleData* data = static_cast<StyleData*>(node->data());

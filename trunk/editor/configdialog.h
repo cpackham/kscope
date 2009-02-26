@@ -60,8 +60,10 @@ private:
 	LexerStyleModel* styleModel_;
 
 private slots:
-	void resetStyles();
 	void indentLanguageChanged(int);
+	void resetStyles();
+	void importStyles();
+	void exportStyles();
 	void editStyle(const QModelIndex&);
 	void editProperty(const QModelIndex&, const QVariant&);
 	void applyInheritance();

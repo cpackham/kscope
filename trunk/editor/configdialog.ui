@@ -227,7 +227,7 @@
                 <string>Make child styles inherit this property</string>
                </property>
                <property name="text" >
-                <string>Apply to Sub-Styles</string>
+                <string>&amp;Apply to Sub-Styles</string>
                </property>
               </widget>
              </item>
@@ -239,6 +239,26 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3" >
+         <item>
+          <widget class="QPushButton" name="importButton_" >
+           <property name="toolTip" >
+            <string>Load styles from an external file</string>
+           </property>
+           <property name="text" >
+            <string>&amp;Import...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="exportButton_" >
+           <property name="toolTip" >
+            <string>Store styles in an external file</string>
+           </property>
+           <property name="text" >
+            <string>&amp;Export...</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <spacer name="horizontalSpacer_2" >
            <property name="orientation" >
@@ -254,8 +274,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="resetButton_" >
+           <property name="toolTip" >
+            <string>Revert to default styles</string>
+           </property>
            <property name="text" >
-            <string>Reset Styles</string>
+            <string>&amp;Reset Styles</string>
            </property>
           </widget>
          </item>
@@ -336,8 +359,8 @@
    <slot>indentLanguageChanged(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>170</x>
-     <y>171</y>
+     <x>119</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel" >
      <x>429</x>
@@ -377,10 +400,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>importButton_</sender>
+   <signal>clicked()</signal>
+   <receiver>ConfigDialog</receiver>
+   <slot>importStyles()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>74</x>
+     <y>402</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>4</x>
+     <y>431</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportButton_</sender>
+   <signal>clicked()</signal>
+   <receiver>ConfigDialog</receiver>
+   <slot>exportStyles()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>159</x>
+     <y>402</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>101</x>
+     <y>471</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>indentLanguageChanged(int)</slot>
   <slot>resetStyles()</slot>
   <slot>applyInheritance()</slot>
+  <slot>importStyles()</slot>
+  <slot>exportStyles()</slot>
  </slots>
 </ui>

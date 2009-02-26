@@ -158,7 +158,7 @@ Config::~Config()
  * Reads editor configuration parameters from a QSettings object.
  * @param  settings The object to read from
  */
-void Config::load(const QSettings& settings)
+void Config::load(QSettings& settings)
 {
 	// Get the current (default) configuration.
 	Editor editor;
@@ -171,7 +171,10 @@ void Config::load(const QSettings& settings)
 	loadValue(settings, tabWidth_, "TabWidth", editor.tabWidth());
 
 	// Load the C lexer parameters.
-	styleModel_->load(settings);
+	// Ignore the exception thrown by load(), which is the result of not
+	// finding the style magic key in the settings file. This happens if styles
+	// were never modified by the user, and is thus benign.
+	styleModel_->load(settings, true);
 	styleModel_->updateLexers();
 
 	// Create the file to lexer map.
@@ -197,7 +200,7 @@ void Config::store(QSettings& settings) const
 	settings.setValue("LineNumbersInMargin", marginLineNumbers_);
 	settings.setValue("IndentWithTabs", indentTabs_);
 	settings.setValue("TabWidth", tabWidth_);
-	styleModel_->store(settings);
+	styleModel_->store(settings, true);
 }
 
 /**

@@ -76,8 +76,8 @@ public:
 	LexerStyleModel(const Config::LexerList&, QObject* parent = NULL);
 	~LexerStyleModel();
 
-	void load(const QSettings&);
-	void store(QSettings&) const;
+	void load(QSettings&, bool);
+	void store(QSettings&, bool) const;
 	void copy(const LexerStyleModel&);
 	void updateLexers() const;
 	void applyInheritance(const QModelIndex&);
@@ -249,11 +249,19 @@ private:
 		return static_cast<PropertyData*>(propNode->data());
 	}
 
+	/**
+	 * Identifies the special property value, marking a property as inherited.
+	 */
 	static const QString inheritValue_;
+
+	/**
+	 * Used to verify that a settings object contains a valid style scheme.
+	 */
+	static const QString styleMagic_;
 
 	Node* createStyleNode(Node*, QsciLexer*, int style = -1);
 	void deleteStyleNode(Node*);
-	void loadStyle(const QSettings&, Node*);
+	void loadStyle(QSettings&, Node*);
 	void storeStyle(QSettings&, const Node*) const;
 	void copyStyle(Node*, const Node*);
 	void updateLexerStyle(const Node*) const;

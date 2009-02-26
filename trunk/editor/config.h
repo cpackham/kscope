@@ -49,7 +49,7 @@ public:
 	Config(QObject* parent = NULL);
 	~Config();
 
-	void load(const QSettings&);
+	void load(QSettings&);
 	void store(QSettings&) const;
 	void apply(Editor*) const;
 	QsciLexer* lexer(const QString&) const;
