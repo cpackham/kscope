@@ -60,7 +60,6 @@ private:
 	LexerStyleModel* styleModel_;
 
 private slots:
-	void selectDefaultFont();
 	void resetStyles();
 	void indentLanguageChanged(int);
 	void editStyle(const QModelIndex&);
