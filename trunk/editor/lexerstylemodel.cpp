@@ -366,8 +366,7 @@ void LexerStyleModel::loadStyle(const QSettings& settings, Node* node)
 
 	// Create a key template for the settings object, of the form
 	// LEXER\STYLE\%1, where %1 will be replaced by the property name.
-	QString key = QString("%1\\%2\\%3").arg(lexer->lexer())
-	                                   .arg(lexer->description(style));
+	QString key = QString("Style/%1/%2/%3").arg(lexer->lexer()).arg(style);
 
 	// Get the properties.
 	for (uint i = 0; i != _LastProperty; i++) {
@@ -396,8 +395,7 @@ void LexerStyleModel::storeStyle(QSettings& settings, const Node* node) const
 
 	// Create a key template for the settings object, of the form
 	// LEXER\STYLE\%1, where %1 will be replaced by the property name.
-	QString key = QString("%1\\%2\\%3").arg(lexer->lexer())
-	                                   .arg(lexer->description(style));
+	QString key = QString("Style/%1/%2/%3").arg(lexer->lexer()).arg(style);
 
 	// Get the properties.
 	for (uint i = 0; i != _LastProperty; i++) {
@@ -462,6 +460,16 @@ void LexerStyleModel::updateLexerStyle(const Node* node) const
 	QColor background
 		= propertyDataFromNode(node, Background)->value_.value<QColor>();
 	lexer->setPaper(background, style);
+
+	// This is really nasty, but Scintilla leaves us no choice...
+	// The EOL Fill flag needs to be set in order for whitespace past the end
+	// of line to be drawn in the desired background colour. We apply this flag
+	// to the default style, as well as any styles that have the same background
+	// colour as the default.
+	if ((style == lexer->defaultStyle())
+	    || (lexer->paper(style) == lexer->paper(lexer->defaultStyle()))) {
+		lexer->setEolFill(true, style);
+	}
 
 	// Recursive call.
 	for (int i = 0; i < node->childCount(); i++)
@@ -693,18 +701,25 @@ QString LexerStyleModel::propertyKey(StyleProperty prop) const
 	return QString();
 }
 
+/**
+ * Determines the default value for a given style's property.
+ * @param  lexer The lexer to which the style belong
+ * @param  style The style to use
+ * @param  prop  The property for which the value is requested
+ * @return The default value of the property for this lexer and style
+ */
 QVariant LexerStyleModel::propertyDefaultValue(QsciLexer* lexer, int style,
                                                StyleProperty prop) const
 {
 	switch (prop) {
 	case Font:
-		return lexer->font(style);
+		return lexer->defaultFont(style);
 
 	case Foreground:
-		return lexer->color(style);
+		return lexer->defaultColor(style);
 
 	case Background:
-		return lexer->paper(style);
+		return lexer->defaultPaper(style);
 
 	default:
 		// Must not get here.

@@ -35,58 +35,7 @@ namespace Editor
 
 class Editor;
 class LexerStyleModel;
-
-/**
- * A special lexer used to create a common default style for all other lexers.
- * This class serves two purposes:
- * 1. Allows style properties to be inherited by all lexers (e.g., for setting
- *    a single, common font);
- * 2. Provides a default lexer for files that are not handled by any of the
- *    pre-defined lexers.
- * @author Elad Lahav
- */
-class CommonLexer : public QsciLexer
-{
-public:
-	/**
-	 * Class constructor.
-	 * @param  parent Parent object
-	 */
-	CommonLexer(QObject* parent) : QsciLexer(parent) {}
-
-	/**
-	 * Class destructor.
-	 */
-	~CommonLexer() {}
-
-	/**
-	 * @return A string identifying the language handled by the lexer
-	 */
-	const char* language() const { return tr("Common").toLatin1(); }
-
-	/**
-	 * @return A string identifying the lexer
-	 */
-	const char* lexer() const { return tr("Common").toLatin1(); }
-
-	/**
-	 * Provides a name for the given style ID.
-	 * @param  style The style ID
-	 * @return The name of the style, or an empty string if the style does not
-	 *         exist
-	 */
-	QString description(int style) const {
-		if (style == 0)
-			return tr("Default");
-
-		return QString();
-	}
-
-	/**
-	 * @return The ID of the default style for this lexer
-	 */
-	int defaultStyle() const { return 0; }
-};
+class CommonLexer;
 
 /**
  * Manages editor configuration.
@@ -150,8 +99,6 @@ private:
 
 	/**
 	 * A list of the above lexers for batch operations.
-	 * All objects in this list must inherit from both QsciLexer and
-	 * LexerExInterface.
 	 */
 	LexerList lexers_;
 

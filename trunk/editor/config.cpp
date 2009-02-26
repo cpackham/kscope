@@ -30,6 +30,107 @@ namespace Editor
 {
 
 /**
+ * A special lexer used to create a common default style for all other lexers.
+ * This class serves two purposes:
+ * 1. Allows style properties to be inherited by all lexers (e.g., for setting
+ *    a single, common font);
+ * 2. Provides a default lexer for files that are not handled by any of the
+ *    pre-defined lexers.
+ * @author Elad Lahav
+ */
+class CommonLexer : public QsciLexer
+{
+public:
+	/**
+	 * Class constructor.
+	 * @param  parent Parent object
+	 */
+	CommonLexer(QObject* parent) : QsciLexer(parent) {}
+
+	/**
+	 * Class destructor.
+	 */
+	~CommonLexer() {}
+
+	/**
+	 * @return A string identifying the language handled by the lexer
+	 */
+	const char* language() const { return tr("Common").toLatin1(); }
+
+	/**
+	 * @return A string identifying the lexer
+	 */
+	const char* lexer() const { return "common"; }
+
+	/**
+	 * Provides a name for the given style ID.
+	 * @param  style The style ID
+	 * @return The name of the style, or an empty string if the style does not
+	 *         exist
+	 */
+	QString description(int style) const {
+		if (style == 0)
+			return tr("Default");
+
+		return QString();
+	}
+
+	/**
+	 * @return The ID of the default style for this lexer
+	 */
+	int defaultStyle() const { return 0; }
+};
+
+/**
+ * The sole purpose of this class is to provide a fix a couple of bugs in
+ * QsciLexerCPP:
+ * 1. The description of the UUID style is not handled, causing the style
+ *    detection mechanism to stop before all styles are found.;
+ * 2. The default text colour is set to grey, rather than black
+ * @author Elad Lahav
+ */
+class CPPLexer : public QsciLexerCPP
+{
+public:
+	/**
+	 * Class constructor.
+	 * @param  parent Parent object
+	 */
+	CPPLexer(QObject* parent) : QsciLexerCPP(parent) {}
+
+	/**
+	 * Class destructor.
+	 */
+	~CPPLexer() {}
+
+	/**
+	 * Provides a description string for each style.
+	 * Fixes the bug in QsciLexerCPP::description().
+	 * @param  style The style ID
+	 * @return The style description or an empty string if the style does not
+	 *         exist
+	 */
+	QString description(int style) const {
+		if (style == UUID)
+			return "UUID";
+
+		return QsciLexerCPP::description(style);
+	}
+
+	/**
+	 * Returns the default text colour for the given style.
+	 * @param  style The requested style
+	 * @return The style's default colour
+	 */
+	QColor defaultColor(int style) const {
+		if (style == Default)
+			return QColor(0, 0, 0);
+
+		return QsciLexerCPP::defaultColor(style);
+	}
+};
+
+/**
  * Class constructor.
  * @param  parent Parent object
  */
@@ -37,7 +138,7 @@ Config::Config(QObject* parent) : QObject(parent)
 {
 	// Create the lexers.
 	commonLexer_ = new CommonLexer(this);
-	cppLexer_ = new QsciLexerCPP(this);
+	cppLexer_ = new CPPLexer(this);
 	makeLexer_ = new QsciLexerMakefile(this);
 	bashLexer_ = new QsciLexerBash(this);
 	lexers_ << commonLexer_ << cppLexer_ << makeLexer_ << bashLexer_;
@@ -110,6 +211,9 @@ void Config::apply(Editor* editor) const
 	editor->setTabWidth(tabWidth_);
 	editor->setCaretLineVisible(hlCurLine_);
 	editor->setMarginLineNumbers(0, marginLineNumbers_);
+	editor->setFont(commonLexer_->font(0));
+	editor->setColor(commonLexer_->color(0));
+	editor->setPaper(commonLexer_->paper(0));
 
 	if (editor->lexer())
 		editor->lexer()->refreshProperties();
