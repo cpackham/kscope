@@ -542,15 +542,16 @@ void LexerStyleModel::setProperty(const QVariant& val, Node* node,
 void LexerStyleModel::inheritProperty(const QVariant& val, Node* node,
                                       StyleProperty prop)
 {
+	PropertyData* data = propertyDataFromNode(node, prop);
 	for (int i = 0; i < node->childCount(); i++) {
 		// Get the child node information.
 		Node* child = node->child(i);
-		PropertyData* data = propertyDataFromNode(child, prop);
+		PropertyData* childData = propertyDataFromNode(child, prop);
 
 		// Check if this property is inherited by the child.
-		if (data->inherited_) {
+		if (childData->inherited_) {
 			// Set the new value.
-			setProperty(val, child, prop, QVariant());
+			childData->value_ = data->value_;
 
 			// Notify views of the change.
 			QModelIndex index = createIndex(i, 1, (void*)child);
