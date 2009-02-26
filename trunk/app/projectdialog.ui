@@ -107,8 +107,6 @@
               </layout>
              </item>
             </layout>
-            <zorder>radioButton_2</zorder>
-            <zorder>projectPathEdit_</zorder>
             <zorder></zorder>
            </widget>
           </item>
@@ -147,14 +145,7 @@
   <tabstop>browseProjectPathButton_</tabstop>
   <tabstop>hiddenDirButton_</tabstop>
   <tabstop>buttonBox</tabstop>
-  <tabstop>nameEdit_1</tabstop>
-  <tabstop>rootPathEdit_1</tabstop>
-  <tabstop>browseRootPathButton_1</tabstop>
-  <tabstop>radioButton_3</tabstop>
   <tabstop>configTabs_</tabstop>
-  <tabstop>projectPathEdit_1</tabstop>
-  <tabstop>browseProjectPathButton_1</tabstop>
-  <tabstop>radioButton_4</tabstop>
  </tabstops>
  <resources/>
  <connections>
