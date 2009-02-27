@@ -24,14 +24,13 @@
 #include <QObject>
 #include <QAction>
 #include <QMenu>
+#include "editor.h"
 
 namespace KScope
 {
 
 namespace Editor
 {
-
-class Editor;
 
 /**
  * Manages actions for an editor.
@@ -49,40 +48,117 @@ public:
 	Actions(QObject* parent = 0);
 	~Actions();
 
-	void setup(QMenu*);
+	void setupMenu(QMenu*);
 	void setEditor(Editor*);
 
 public slots:
-	void copy();
-	void cut();
-	void paste();
-	void undo();
-	void redo();
-	void find();
-	void findNext();
-	void gotoLine();
+	/**
+	 * Copies the current selection to the clipboard.
+	 */
+	void copy() { editor_->copy(); }
+
+	/**
+	 * Copies the current selection to the clipboard and deletes it from the
+	 * text.
+	 */
+	void cut() { editor_->cut(); }
+
+	/**
+	 * Paste clipboard contents in the current cursor position.
+	 */
+	void paste() { editor_->paste(); }
+
+	/**
+	 * Cancels the last operation.
+	 */
+	void undo() { editor_->undo(); }
+
+	/**
+	 * Re-executes a cancelled operation.
+	 */
+	void redo() { editor_->redo(); }
+
+	/**
+	 * Prompts the user for a pattern to search in the file.
+	 */
+	void find() { editor_->search(); }
+
+	/**
+	 * Repeats the last search, starting at the current potision.
+	 */
+	void findNext() { editor_->searchNext(); }
+
+	/**
+	 * Prompts the user for a line number, and moves the cursor to that line.
+	 */
+	void gotoLine() { editor_->gotoLine(); }
+
+	/**
+	 * Moves the cursor to the beginning of the current block.
+	 */
+	void gotoBlockBegin() { editor_->gotoBlockBegin(); }
 
 signals:
-	void hasEditor(bool has);
+	/**
+	 * Emitted when a new editor is set.
+	 * @param  valid true if the editor object pointer is valid, false otherwise
+	 */
+	void editorChanged(bool valid);
 
 private:
+	/**
+	 * The managed editor object.
+	 * May be NULL, in which case all actions should be disabled.
+	 */
 	Editor* editor_;
 
+	/**
+	 * Copy text action.
+	 */
 	QAction* actCopy_;
 
+	/**
+	 * Cut text action.
+	 */
 	QAction* actCut_;
 
+	/**
+	 * Paste text action.
+	 */
 	QAction* actPaste_;
 
+	/**
+	 * Undo action.
+	 */
 	QAction* actUndo_;
 
+	/**
+	 * Redo action.
+	 */
 	QAction* actRedo_;
 
+	/**
+	 * Search text action.
+	 */
 	QAction* actFind_;
 
+	/**
+	 * Repeat search action.
+	 */
 	QAction* actFindNext_;
 
+	/**
+	 * Go to line action.
+	 */
 	QAction* actGotoLine_;
+
+	QAction* actBlockBegin_;
+
+	/**
+	 * Allows all actions to be enabled when the editor pointer is valid, and
+	 * disabled when it does not.
+	 */
+	QActionGroup* editorGroup_;
 };
 
 } // namespace Editor

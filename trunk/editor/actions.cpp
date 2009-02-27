@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QDebug>
 #include "actions.h"
-#include "editor.h"
 
 namespace KScope
 {
@@ -27,119 +27,124 @@ namespace KScope
 namespace Editor
 {
 
+/**
+ * Class constructor.
+ * Creates the actions.
+ * @param  parent Owner object
+ */
 Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 {
-}
+	// Disable all actions when the editor pointer is invalid.
+	editorGroup_ = new QActionGroup(this);
+	editorGroup_->setEnabled(false);
+	connect(this, SIGNAL(editorChanged(bool)), editorGroup_,
+	        SLOT(setEnabled(bool)));
 
-Actions::~Actions()
-{
-}
-
-void Actions::setup(QMenu* menu)
-{
-	connect(this, SIGNAL(hasEditor(bool)), menu, SLOT(setEnabled(bool)));
-
+	// Copy selected text.
 	actCopy_ = new QAction(tr("&Copy"), this);
 	actCopy_->setShortcut(QKeySequence("Ctrl+C"));
 	actCopy_->setStatusTip(tr("Copy selected text"));
 	connect(actCopy_, SIGNAL(triggered()), this, SLOT(copy()));
-	menu->addAction(actCopy_);
+	editorGroup_->addAction(actCopy_);
 
+	// Cut selected text.
 	actCut_ = new QAction(tr("Cu&t"), this);
 	actCut_->setShortcut(QKeySequence("Ctrl+X"));
 	actCut_->setStatusTip(tr("Cut selected text"));
 	connect(actCut_, SIGNAL(triggered()), this, SLOT(cut()));
-	menu->addAction(actCut_);
+	editorGroup_->addAction(actCut_);
 
+	// Patse clipboard contents.
 	actPaste_ = new QAction(tr("&Paste"), this);
 	actPaste_->setShortcut(QKeySequence("Ctrl+V"));
 	actPaste_->setStatusTip(tr("Paste clipboard contents"));
 	connect(actPaste_, SIGNAL(triggered()), this, SLOT(paste()));
-	menu->addAction(actPaste_);
+	editorGroup_->addAction(actPaste_);
 
-	menu->addSeparator();
-
+	// Undo last action.
 	actUndo_ = new QAction(tr("&Undo"), this);
 	actUndo_->setShortcut(QKeySequence("Ctrl+Z"));
 	actUndo_->setStatusTip(tr("Undo last action"));
 	connect(actUndo_, SIGNAL(triggered()), this, SLOT(undo()));
-	menu->addAction(actUndo_);
+	editorGroup_->addAction(actUndo_);
 
+	// Repeat undone action.
 	actRedo_ = new QAction(tr("&Redo"), this);
 	actRedo_->setShortcut(QKeySequence("Ctrl+Y"));
 	actRedo_->setStatusTip(tr("Repeat undone action"));
 	connect(actRedo_, SIGNAL(triggered()), this, SLOT(redo()));
-	menu->addAction(actRedo_);
+	editorGroup_->addAction(actRedo_);
 
-	menu->addSeparator();
-
+	// Search text in file.
 	actFind_ = new QAction(tr("&Find..."), this);
 	actFind_->setShortcut(QKeySequence("Ctrl+F"));
-	actFind_->setStatusTip(tr("Find text in file"));
+	actFind_->setStatusTip(tr("Search text in file"));
 	connect(actFind_, SIGNAL(triggered()), this, SLOT(find()));
-	menu->addAction(actFind_);
+	editorGroup_->addAction(actFind_);
 
+	// Repeat last search.
 	actFindNext_ = new QAction(tr("Find &Next"), this);
 	actFindNext_->setShortcut(QKeySequence("F3"));
-	actFindNext_->setStatusTip(tr("Find next occurrence of last search"));
+	actFindNext_->setStatusTip(tr("Repeat last search"));
 	connect(actFindNext_, SIGNAL(triggered()), this, SLOT(findNext()));
-	menu->addAction(actFindNext_);
+	editorGroup_->addAction(actFindNext_);
 
-	menu->addSeparator();
-
+	// Go to line.
 	actGotoLine_ = new QAction(tr("&Go to Line..."), this);
 	actGotoLine_->setShortcut(QKeySequence("Ctrl+G"));
 	actGotoLine_->setStatusTip(tr("Move cursor to a different line"));
 	connect(actGotoLine_, SIGNAL(triggered()), this, SLOT(gotoLine()));
-	menu->addAction(actGotoLine_);
+	editorGroup_->addAction(actGotoLine_);
 
-	emit hasEditor(editor_ != NULL);
+	actBlockBegin_ = new QAction(tr("&Block Beginning"), this);
+	actBlockBegin_->setShortcut(QKeySequence("Ctrl+{"));
+	actBlockBegin_->setStatusTip(tr("Go to the beginning of the current "
+	                                "block"));
+	connect(actBlockBegin_, SIGNAL(triggered()), this, SLOT(gotoBlockBegin()));
+	editorGroup_->addAction(actBlockBegin_);
 }
 
+/**
+ * Class destructor.
+ */
+Actions::~Actions()
+{
+}
+
+/**
+ * Fills a menu with editor actions.
+ * @param  menu A menu to which actions should be added
+ */
+void Actions::setupMenu(QMenu* menu)
+{
+	menu->addAction(actCopy_);
+	menu->addAction(actCut_);
+	menu->addAction(actPaste_);
+
+	menu->addSeparator();
+
+	menu->addAction(actUndo_);
+	menu->addAction(actRedo_);
+
+	menu->addSeparator();
+
+	menu->addAction(actFind_);
+	menu->addAction(actFindNext_);
+
+	menu->addSeparator();
+
+	menu->addAction(actGotoLine_);
+	menu->addAction(actBlockBegin_);
+}
+
+/**
+ * Sets a new managed editor.
+ * @param  editor The editor to manage, or NULL if no editor is available
+ */
 void Actions::setEditor(Editor* editor)
 {
 	editor_ = editor;
-	emit hasEditor(editor_ != NULL);
-}
-
-void Actions::copy()
-{
-	editor_->copy();
-}
-
-void Actions::cut()
-{
-	editor_->cut();
-}
-
-void Actions::paste()
-{
-	editor_->paste();
-}
-
-void Actions::undo()
-{
-	editor_->undo();
-}
-
-void Actions::redo()
-{
-	editor_->redo();
-}
-
-void Actions::find()
-{
-	editor_->search();
-}
-
-void Actions::findNext()
-{
-	editor_->searchNext();
-}
-
-void Actions::gotoLine()
-{
-	editor_->gotoLine();
+	emit editorChanged(editor_ != NULL);
 }
 
 } // namespace Editor

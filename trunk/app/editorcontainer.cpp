@@ -61,7 +61,7 @@ EditorContainer::~EditorContainer()
 
 void EditorContainer::initActions(QMenu* menu)
 {
-	actions_.setup(menu);
+	actions_.setupMenu(menu);
 }
 
 /**
