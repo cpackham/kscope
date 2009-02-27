@@ -98,6 +98,7 @@ public slots:
 	void search();
 	void searchNext();
 	void gotoLine();
+	void gotoBlockBegin();
 
 signals:
 	/**

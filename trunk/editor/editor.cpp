@@ -351,6 +351,17 @@ void Editor::gotoLine()
 }
 
 /**
+ * Moves the cursor to the beginning of the current block.
+ */
+void Editor::gotoBlockBegin()
+{
+	int line, column, newline;
+	getCursorPosition(&line, &column);
+	newline = SendScintilla(QsciScintillaBase::SCI_GETFOLDPARENT, line);
+	setCursorPosition(newline + 1, 1);
+}
+
+/**
  * Called before the editor window is closed.
  * Checks whether the editor can be closed, and if so, accepts the event.
  * @param  event  The close event
