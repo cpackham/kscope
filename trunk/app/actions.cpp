@@ -95,31 +95,7 @@ void Actions::setup()
 
 	// Edit menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Edit"));
-
-	// A group for file editing actions.
-	// Only enabled when there is an active editor.
-	group = new QActionGroup(this);
-	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), group,
-	        SLOT(setEnabled(bool)));
-	group->setEnabled(false);
-
-	// Find text in file.
-	action = new QAction(tr("&Find..."), this);
-	action->setShortcut(tr("Ctrl+F"));
-	action->setStatusTip(tr("Find text in this file"));
-	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
-	        SIGNAL(find()));
-	menu->addAction(action);
-	group->addAction(action);
-
-	// Find the next occurrence of the text.
-	action = new QAction(tr("Find &Next"), this);
-	action->setShortcut(tr("F3"));
-	action->setStatusTip(tr("Find next occurrence of text in this file"));
-	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
-	        SIGNAL(findNext()));
-	menu->addAction(action);
-	group->addAction(action);
+	mainWnd()->editCont_->initActions(menu);
 
 	// View menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&View"));

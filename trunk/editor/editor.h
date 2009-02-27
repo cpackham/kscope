@@ -97,6 +97,7 @@ public:
 public slots:
 	void search();
 	void searchNext();
+	void gotoLine();
 
 signals:
 	/**

@@ -21,6 +21,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QDebug>
 #include <qscilexercpp.h>
 #include "editor.h"
@@ -329,6 +330,24 @@ void Editor::searchNext()
 		QString msg = tr("No more matches.");
 		QMessageBox::warning(this, tr("Pattern not found"), msg);
 	}
+}
+
+/**
+ * Prompts the user for a line number and moves the cursor to the selected line.
+ */
+void Editor::gotoLine()
+{
+	// Get the current line number.
+	int line, column;
+	getCursorPosition(&line, &column);
+	line++;
+
+	// Prompt for a new line number.
+	bool ok;
+	line = QInputDialog::getInteger(this, tr("Enter Line Number"),
+	                                tr("Line"), line, 1, lines(), 1, &ok);
+	if (ok)
+		setCursorPosition(line, 1);
 }
 
 /**

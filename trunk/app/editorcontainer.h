@@ -28,6 +28,7 @@
 #include <core/globals.h>
 #include <editor/editor.h>
 #include <editor/config.h>
+#include <editor/actions.h>
 #include "locationhistory.h"
 #include "session.h"
 
@@ -51,6 +52,7 @@ public:
 	EditorContainer(QWidget* parent = 0);
 	~EditorContainer();
 
+	void initActions(QMenu*);
 	void populateWindowMenu(QMenu*) const;
 	bool canClose();
 	void saveSession(Session&);
@@ -91,6 +93,7 @@ private:
 	LocationHistory history_;
 	bool windowActivationBlocked_;
 	Editor::Config config_;
+	Editor::Actions actions_;
 
 	bool gotoLocationInternal(const Core::Location&);
 	Editor::Editor* findEditor(const QString&);

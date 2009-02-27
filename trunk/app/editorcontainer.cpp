@@ -59,6 +59,11 @@ EditorContainer::~EditorContainer()
 {
 }
 
+void EditorContainer::initActions(QMenu* menu)
+{
+	actions_.setup(menu);
+}
+
 /**
  * Fills the "Window" menu with a list of all open sub-window titles.
  * @param  wndMenu  The menu to populate
@@ -508,6 +513,10 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 
 	// Update the active editor.
 	Editor::Editor* editor = currentEditor();
+
+	// Route editor actions to the active editor.
+	actions_.setEditor(editor);
+
 	if (!editor) {
 		qDebug() << "No current editor";
 		emit cursorPositionChanged(0, 0);
@@ -521,8 +530,6 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 	editor->setFocus();
 
 	// Forward signals.
-	connect(this, SIGNAL(find()), editor, SLOT(search()));
-	connect(this, SIGNAL(findNext()), editor, SLOT(searchNext()));
 	connect(editor, SIGNAL(cursorPositionChanged(int, int)), this,
 	        SLOT(updateCursorPosition(int, int)));
 
