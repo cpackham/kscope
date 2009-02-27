@@ -44,7 +44,10 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 
 	// Update the controls to reflect the given configuration.
 	hlCurLineCheck_->setChecked(config.hlCurLine_);
+	visibleWSpaceCheck_->setChecked(config.visibleWSpace_);
 	marginLineNumbersCheck_->setChecked(config.marginLineNumbers_);
+	eolMarkerCheck_->setChecked(config.eolMarkerColumn_ > 0);
+	eolMarkerSpin_->setValue(config.eolMarkerColumn_);
 	indentTabsCheck_->setChecked(config.indentTabs_);
 	tabWidthSpin_->setValue(config.tabWidth_);
 
@@ -99,7 +102,10 @@ ConfigDialog::~ConfigDialog()
 void ConfigDialog::getConfig(Config& config)
 {
 	config.hlCurLine_ = hlCurLineCheck_->isChecked();
+	config.visibleWSpace_ = visibleWSpaceCheck_->isChecked();
 	config.marginLineNumbers_ = marginLineNumbersCheck_->isChecked();
+	config.eolMarkerColumn_
+		= eolMarkerCheck_->isChecked() ? eolMarkerSpin_->value() : 0;
 	config.indentTabs_ = indentTabsCheck_->isChecked();
 	config.tabWidth_ = tabWidthSpin_->value();
 	config.styleModel_->copy(*styleModel_);

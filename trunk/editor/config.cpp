@@ -165,7 +165,9 @@ void Config::load(QSettings& settings)
 
 	// Read values from the settings object.
 	loadValue(settings, hlCurLine_, "HighlightCurrentLine", false);
+	loadValue(settings, visibleWSpace_, "VisibleWhitespace", false);
 	loadValue(settings, marginLineNumbers_, "LineNumbersInMargin", false);
+	loadValue(settings, eolMarkerColumn_, "EOLMarkerColumn", 0);
 	loadValue(settings, indentTabs_, "IndentWithTabs",
 	          editor.indentationsUseTabs());
 	loadValue(settings, tabWidth_, "TabWidth", editor.tabWidth());
@@ -197,7 +199,9 @@ void Config::store(QSettings& settings) const
 {
 	// Store editor configuration.
 	settings.setValue("HighlightCurrentLine", hlCurLine_);
+	settings.setValue("VisibleWhitespace", visibleWSpace_);
 	settings.setValue("LineNumbersInMargin", marginLineNumbers_);
+	settings.setValue("EOLMarkerColumn", eolMarkerColumn_);
 	settings.setValue("IndentWithTabs", indentTabs_);
 	settings.setValue("TabWidth", tabWidth_);
 	styleModel_->store(settings, true);
@@ -210,10 +214,30 @@ void Config::store(QSettings& settings) const
  */
 void Config::apply(Editor* editor) const
 {
+	editor->setCaretLineVisible(hlCurLine_);
+	editor->setWhitespaceVisibility
+		(visibleWSpace_ ? QsciScintilla::WsVisible
+		                : QsciScintilla::WsInvisible);
+	if (marginLineNumbers_) {
+		editor->setMarginLineNumbers(2, true);
+		QFont font = commonLexer_->font(0);
+		int width = QFontMetrics(font).width("8888");
+		editor->setMarginsFont(font);
+		editor->setMarginWidth(2, width);
+	}
+	else {
+		editor->setMarginLineNumbers(2, false);
+		editor->setMarginWidth(2, 0);
+	}
+	if (eolMarkerColumn_ > 0) {
+		editor->setEdgeMode(QsciScintilla::EdgeLine);
+		editor->setEdgeColumn(eolMarkerColumn_);
+	}
+	else {
+		editor->setEdgeMode(QsciScintilla::EdgeNone);
+	}
 	editor->setIndentationsUseTabs(indentTabs_);
 	editor->setTabWidth(tabWidth_);
-	editor->setCaretLineVisible(hlCurLine_);
-	editor->setMarginLineNumbers(0, marginLineNumbers_);
 	editor->setFont(commonLexer_->font(0));
 	editor->setColor(commonLexer_->color(0));
 	editor->setPaper(commonLexer_->paper(0));

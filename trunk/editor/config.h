@@ -63,9 +63,19 @@ private:
 	bool hlCurLine_;
 
 	/**
+	 * Whether whitespace markers should be shown.
+	 */
+	bool visibleWSpace_;
+
+	/**
 	 * Whether to show line numbers in the margin.
 	 */
 	bool marginLineNumbers_;
+
+	/**
+	 * The column in which to place the end-of-line marker (0 to disable).
+	 */
+	int eolMarkerColumn_;
 
 	/**
 	 * Whether to use tabs for indentation.
