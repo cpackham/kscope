@@ -207,7 +207,7 @@ QModelIndex LocationListModel::index(int row, int column,
 	if (row < 0 || row >= locList_.size())
 		return QModelIndex();
 
-	return createIndex(row, column, NULL);
+	return createIndex(row, column);
 }
 
 /**
