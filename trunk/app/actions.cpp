@@ -333,8 +333,8 @@ void Actions::setup()
 	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
 	        SLOT(setEnabled(bool)));
 	action->setEnabled(false);
+	menu->addAction(action);
 	projectGroup->addAction(action);
-	queryGroup->addAction(action);
 
 	menu->addSeparator();
 
@@ -344,7 +344,6 @@ void Actions::setup()
 	action->setStatusTip(tr("Create a call tree"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(promptCallTree()));
 	menu->addAction(action);
-	projectGroup->addAction(action);
 
 	// Settings menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Settings"));
