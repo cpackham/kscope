@@ -138,6 +138,10 @@ private:
 				loc.tag_.type_ = Core::Tag::Define;
 				break;
 
+			case 't':
+				loc.tag_.type_ = Core::Tag::Typedef;
+				break;
+
 			default:
 				loc.tag_.type_ = Core::Tag::UnknownTag;
 			}
