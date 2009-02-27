@@ -22,7 +22,6 @@
 #define __CORE_GLOBALS_H__
 
 #include <QString>
-#include <QIcon>
 
 namespace KScope
 {
@@ -80,100 +79,10 @@ struct Tag
 	QString scope_;
 
 	/**
-	 * Generates an icon for a given tag type.
-	 * TODO This should probably be moved somewhere else (like a Strings class)
-	 * @param  type  The type for which a name is requested
-	 * @return The matching name
+	 * Default constructor.
+	 * Creates an empty (invalid) tag.
 	 */
-	static QString name(Type type) {
-		switch (type) {
-		case Variable:
-			return "Variable";
-
-		case Function:
-			return "Function";
-
-		case Struct:
-			return "Struct";
-
-		case Union:
-			return "Union";
-
-		case Member:
-			return "Struct/Union Member";
-
-		case Enum:
-			return "Enumeration";
-
-		case Enumerator:
-			return "Enumeration Value";
-
-		case Typedef:
-			return "Type Definition";
-
-		case Define:
-			return "Preprorcessor Definition";
-
-		case Include:
-			return "#include Directive";
-
-		case Label:
-			return "Go-to Label";
-
-		default:
-			;
-		}
-
-		return QString();
-	}
-
-	/**
-	 * Generates an icon for a given tag type.
-	 * TODO This should probably be moved somewhere else (like an Images class)
-	 * @param  type  The type for which an icon is requested
-	 * @return The matching icon
-	 */
-	static QIcon icon(Type type) {
-		switch (type) {
-		case Variable:
-			return QIcon(":/images/variable");
-
-		case Function:
-			return QIcon(":/images/function");
-
-		case Struct:
-			return QIcon(":/images/struct");
-
-		case Union:
-			return QIcon(":/images/union");
-
-		case Member:
-			return QIcon(":/images/member");
-
-		case Enum:
-			return QIcon(":/images/enum");
-
-		case Enumerator:
-			return QIcon(":/images/enumerator");
-
-		case Typedef:
-			return QIcon(":/images/typedef");
-
-		case Define:
-			return QIcon(":/images/define");
-
-		case Include:
-			return QIcon(":/images/include");
-
-		case Label:
-			return QIcon(":/images/label");
-
-		default:
-			;
-		}
-
-		return QIcon();
-	}
+	Tag() : type_(UnknownTag) {}
 };
 
 /**

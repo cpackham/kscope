@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 #include "locationmodel.h"
+#include "strings.h"
+#include "images.h"
 
 namespace KScope
 {
@@ -117,7 +119,7 @@ QVariant LocationModel::locationData(const Location& loc, uint col,
 	case Qt::DecorationRole:
 		if ((colList_[col] == Location::TagName)
 		    && (loc.tag_.type_ != Tag::UnknownTag)) {
-			return Tag::icon(loc.tag_.type_);
+			return Images::tagIcon(loc.tag_.type_);
 		}
 		return QVariant();
 
@@ -151,7 +153,7 @@ QVariant LocationModel::locationData(const Location& loc, uint col,
 
 	case Location::TagType:
 		// Tag type.
-		return Tag::name(loc.tag_.type_);
+		return Strings::tagName(loc.tag_.type_);
 
 	case Location::Scope:
 		// Scope.
