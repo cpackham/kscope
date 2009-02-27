@@ -53,7 +53,6 @@ void Actions::setup()
 {
 	QMenu* menu;
 	QAction* action;
-	QActionGroup* group;
 
 	// File menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&File"));
@@ -101,8 +100,8 @@ void Actions::setup()
 	menu = mainWnd()->menuBar()->addMenu(tr("&View"));
 
 	// Exclusive group for setting the editor view mode.
-	group = new QActionGroup(this);
-	connect(group, SIGNAL(triggered(QAction*)), this,
+	QActionGroup* viewModeGroup = new QActionGroup(this);
+	connect(viewModeGroup, SIGNAL(triggered(QAction*)), this,
 	        SLOT(setEditorViewMode(QAction*)));
 
 	// Display editors as sub-windows.
@@ -113,7 +112,7 @@ void Actions::setup()
 	                   == QMdiArea::SubWindowView);
 	action->setData(QMdiArea::SubWindowView);
 	menu->addAction(action);
-	group->addAction(action);
+	viewModeGroup->addAction(action);
 
 	// Display editors as tabs.
 	action = new QAction(tr("&Tabbed Mode"), this);
@@ -123,19 +122,23 @@ void Actions::setup()
 	                   == QMdiArea::TabbedView);
 	action->setData(QMdiArea::TabbedView);
 	menu->addAction(action);
-	group->addAction(action);
+	viewModeGroup->addAction(action);
 
 	menu->addSeparator();
 
 	// Show/hide the query dock.
 	menu->addAction(mainWnd()->queryDock_->toggleViewAction());
 
+	// A group for project actions requiring an open project.
+	// Only enabled when there is an active project.
+	QActionGroup* projectGroup = new QActionGroup(this);
+	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)),
+	        projectGroup, SLOT(setEnabled(bool)));
+	projectGroup->setEnabled(false);
+
 	// Navigate menu.
 	// Enabled only when there is an active project.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Navigate"));
-	menu->setEnabled(false);
-	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), menu,
-	        SLOT(setEnabled(bool)));
 
 	// Go to the next location in the navigation history.
 	action = new QAction(tr("Next &Location"), this);
@@ -144,6 +147,7 @@ void Actions::setup()
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
 	        SLOT(gotoNextLocation()));
 	menu->addAction(action);
+	projectGroup->addAction(action);
 
 	// Go to the previous location in the navigation history.
 	action = new QAction(tr("Previous L&ocation"), this);
@@ -152,6 +156,7 @@ void Actions::setup()
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
 	        SLOT(gotoPrevLocation()));
 	menu->addAction(action);
+	projectGroup->addAction(action);
 
 	// Select the next query result.
 	action = new QAction(tr("Next &Result"), this);
@@ -160,6 +165,7 @@ void Actions::setup()
 	connect(action, SIGNAL(triggered()), mainWnd()->queryDock_,
 	        SLOT(selectNextResult()));
 	menu->addAction(action);
+	projectGroup->addAction(action);
 
 	// Select the previous query result.
 	action = new QAction(tr("Previous R&esult"), this);
@@ -168,6 +174,7 @@ void Actions::setup()
 	connect(action, SIGNAL(triggered()), mainWnd()->queryDock_,
 	        SLOT(selectPrevResult()));
 	menu->addAction(action);
+	projectGroup->addAction(action);
 
 	menu->addSeparator();
 
@@ -178,6 +185,7 @@ void Actions::setup()
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
 	        SLOT(browseHistory()));
 	menu->addAction(action);
+	projectGroup->addAction(action);
 
 	// Project menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Project"));
@@ -195,13 +203,6 @@ void Actions::setup()
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(openProject()));
 	menu->addAction(action);
 
-	// A group for project actions requiring an open project.
-	// Only enabled when there is an active project.
-	group = new QActionGroup(this);
-	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), group,
-	        SLOT(setEnabled(bool)));
-	group->setEnabled(false);
-
 	menu->addSeparator();
 
 	// Manage project files.
@@ -210,14 +211,14 @@ void Actions::setup()
 	action->setStatusTip(tr("Manage project files"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(projectFiles()));
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
 
 	// View/edit project parameters.
 	action = new QAction(tr("&Properties..."), this);
 	action->setStatusTip(tr("View/edit project parameters"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(projectProperties()));
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
 
 	// Build the project's database.
 	action = new QAction(tr("&Build Database"), this);
@@ -225,7 +226,7 @@ void Actions::setup()
 	action->setStatusTip(tr("Build the project database"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(buildProject()));
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
 
 	menu->addSeparator();
 
@@ -234,14 +235,11 @@ void Actions::setup()
 	action->setStatusTip(tr("Close the active project"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(closeProject()));
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
 
 	// Query menu.
 	// Enabled only when there is an active project.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Query"));
-	menu->setEnabled(false);
-	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), menu,
-	        SLOT(setEnabled(bool)));
 
 	// Quick definition.
 	// Needs an active editor to be enabled.
@@ -253,13 +251,15 @@ void Actions::setup()
 	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
 	        SLOT(setEnabled(bool)));
 	menu->addAction(action);
+	projectGroup->addAction(action);
 
 	menu->addSeparator();
 
 	// A group for all query actions.
 	// Handles all of these actions with a single slot.
-	group = new QActionGroup(this);
-	connect(group, SIGNAL(triggered(QAction*)), this, SLOT(query(QAction*)));
+	QActionGroup* queryGroup = new QActionGroup(this);
+	connect(queryGroup, SIGNAL(triggered(QAction*)), this,
+	        SLOT(query(QAction*)));
 
 	// Query references.
 	action = new QAction(tr("&References"), this);
@@ -267,7 +267,8 @@ void Actions::setup()
 	action->setStatusTip(tr("Find all symbol references"));
 	action->setData(Core::Query::References);
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	// Query definition.
 	action = new QAction(tr("&Definition"), this);
@@ -275,7 +276,8 @@ void Actions::setup()
 	action->setStatusTip(tr("Find symbol definition"));
 	action->setData(Core::Query::Definition);
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	// Query called functions.
 	action = new QAction(tr("&Called Functions"), this);
@@ -283,7 +285,8 @@ void Actions::setup()
 	action->setStatusTip(tr("Show functions called from function"));
 	action->setData(Core::Query::CalledFunctions);
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	// Query calling functions.
 	action = new QAction(tr("C&alling Functions"), this);
@@ -291,7 +294,8 @@ void Actions::setup()
 	action->setStatusTip(tr("Find functions calling function"));
 	action->setData(Core::Query::CallingFunctions);
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	// Query text.
 	action = new QAction(tr("&Text"), this);
@@ -299,7 +303,8 @@ void Actions::setup()
 	action->setStatusTip(tr("Find text in files"));
 	action->setData(Core::Query::Text);
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	// Find file.
 	action = new QAction(tr("&File"), this);
@@ -307,7 +312,8 @@ void Actions::setup()
 	action->setStatusTip(tr("Find a file"));
 	action->setData(Core::Query::FindFile);
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	// Find including files.
 	action = new QAction(tr("&Including Files"), this);
@@ -315,7 +321,8 @@ void Actions::setup()
 	action->setStatusTip(tr("Find files #including a given file"));
 	action->setData(Core::Query::IncludingFiles);
 	menu->addAction(action);
-	group->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	// Show local tags.
 	action = new QAction(tr("Local &Tags"), this);
@@ -326,7 +333,8 @@ void Actions::setup()
 	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
 	        SLOT(setEnabled(bool)));
 	action->setEnabled(false);
-	menu->addAction(action);
+	projectGroup->addAction(action);
+	queryGroup->addAction(action);
 
 	menu->addSeparator();
 
@@ -336,6 +344,7 @@ void Actions::setup()
 	action->setStatusTip(tr("Create a call tree"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(promptCallTree()));
 	menu->addAction(action);
+	projectGroup->addAction(action);
 
 	// Settings menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Settings"));
