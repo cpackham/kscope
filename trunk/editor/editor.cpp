@@ -43,7 +43,8 @@ Editor::Editor(QWidget* parent) : QsciScintilla(parent),
 	isLoading_(false),
 	onLoadLine_(0),
 	onLoadColumn_(0),
-	onLoadFocus_(false)
+	onLoadFocus_(false),
+	viMode_(this)
 {
 }
 
@@ -177,7 +178,7 @@ bool Editor::canClose()
  * @param  line    1-based line number, 0 to keep the current line
  * @param  column  1-based column number, 0 to keep the current column
  */
-void Editor::setCursorPosition(uint line, uint column)
+void Editor::moveCursor(uint line, uint column)
 {
 	// Wait for file loading to complete before setting a new position.
 	if (isLoading_) {
@@ -296,6 +297,17 @@ QString Editor::title() const
 }
 
 /**
+ * @return The current editing mode
+ */
+Editor::Modes Editor::editMode() const
+{
+	if (viMode_.isEnabled())
+		return NormalMode;
+
+	return InsertMode;
+}
+
+/**
  * Searches for text inside the document.
  * Prompts the user for the text to find.
  */
@@ -340,14 +352,13 @@ void Editor::gotoLine()
 	// Get the current line number.
 	int line, column;
 	getCursorPosition(&line, &column);
-	line++;
 
 	// Prompt for a new line number.
 	bool ok;
 	line = QInputDialog::getInteger(this, tr("Enter Line Number"),
-	                                tr("Line"), line, 1, lines(), 1, &ok);
+	                                tr("Line"), line + 1, 1, lines(), 1, &ok);
 	if (ok)
-		setCursorPosition(line, 1);
+		setCursorPosition(line - 1, 0);
 }
 
 /**
@@ -358,7 +369,7 @@ void Editor::gotoBlockBegin()
 	int line, column, newline;
 	getCursorPosition(&line, &column);
 	newline = SendScintilla(QsciScintillaBase::SCI_GETFOLDPARENT, line);
-	setCursorPosition(newline + 1, 1);
+	setCursorPosition(newline, 0);
 }
 
 /**
@@ -378,6 +389,35 @@ void Editor::closeEvent(QCloseEvent* event)
 }
 
 /**
+ * Handles a key press.
+ * If Vi mode is enabled, the even is forwarded to the Vi mode object.
+ * Otherwise, if the ESC key is pressed, Vi mode is enabled. All other keys are
+ * handled by Scintilla.
+ * @param  event The key event
+ */
+void Editor::keyPressEvent(QKeyEvent* event)
+{
+	if (viMode_.isEnabled()) {
+		viMode_.processKey(event);
+		if (!viMode_.sequence().isEmpty())
+			emit message(viMode_.sequence(), 1000);
+		if (!viMode_.isEnabled())
+			emit modeChanged(InsertMode);
+	}
+	else {
+		if ((event->key() == Qt::Key_Escape)
+		    && (event->modifiers() == Qt::NoModifier)) {
+			viMode_.setEnabled(true);
+			emit modeChanged(NormalMode);
+			event->setAccepted(true);
+		}
+		else {
+			QsciScintilla::keyPressEvent(event);
+		}
+	}
+}
+
+/**
  * Called when the thread loading the file for the editor terminates.
  * Invokes any methods that were deferred while the file was loading.
  * @param  text  The contents of the file
@@ -387,7 +427,7 @@ void Editor::loadDone(const QString& text)
 	setText(text);
 	setModified(false);
 	isLoading_ = false;
-	setCursorPosition(onLoadLine_, onLoadColumn_);
+	moveCursor(onLoadLine_, onLoadColumn_);
 	setEnabled(true);
 
 	if (onLoadFocus_) {

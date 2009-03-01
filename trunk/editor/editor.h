@@ -24,6 +24,7 @@
 #include <QSettings>
 #include <qsciscintilla.h>
 #include <core/globals.h>
+#include "vimode.h"
 
 namespace KScope
 {
@@ -74,14 +75,22 @@ public:
 		bool backward_;
 	};
 
+	enum Modes
+	{
+		InsertMode,
+		NormalMode,
+		NoMode
+	};
+
 	bool load(const QString&, QsciLexer* lexer);
 	bool save();
 	bool canClose();
-	void setCursorPosition(uint, uint);
+	void moveCursor(uint, uint);
 	QString currentSymbol() const;
 	void setFocus();
 	void getCurrentLocation(Core::Location&);
 	QString title() const;
+	Modes editMode() const;
 
 	/**
 	 * @return The path of the file loaded in the editor, an empty string for
@@ -115,8 +124,22 @@ signals:
 	 */
 	void titleChanged(const QString& oldTitle, const QString& newTitle);
 
+	/**
+	 * Sends a message to be displayed by the application.
+	 * @param  msg       The message to display
+	 * @param  msTimeOut How long to display the message, in milliseconds
+	 */
+	void message(const QString& msg, int msTimeOut);
+
+	/**
+	 * Emitted when the editing mode changes.
+	 * @param  mode The new mode
+	 */
+	void modeChanged(Editor::Editor::Modes mode);
+
 protected:
 	void closeEvent(QCloseEvent*);
+	void keyPressEvent(QKeyEvent*);
 
 private:
 	/**
@@ -149,6 +172,11 @@ private:
 	 * Whether to set the keyboard focus when loading finishes.
 	 */
 	bool onLoadFocus_;
+
+	/**
+	 * Handles Vi-like Ex mode.
+	 */
+	ViMode viMode_;
 
 private slots:
 	void loadDone(const QString&);
