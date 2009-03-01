@@ -85,12 +85,6 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 	// Rebuild the project when signalled by the project manager.
 	connect(ProjectManager::signalProxy(), SIGNAL(buildProject()), this,
 	        SLOT(buildProject()));
-
-	// Display the current cursor position in the status bar.
-	cursorPositionLabel_ = new QLabel(tr("Line: N/A Column: N/A"), statusBar());
-	statusBar()->addPermanentWidget(cursorPositionLabel_);
-	connect(editCont_, SIGNAL(cursorPositionChanged(uint, uint)), this,
-	        SLOT(showCursorPosition(uint, uint)));
 }
 
 /**
@@ -230,7 +224,7 @@ void MainWindow::buildProject()
 		}
 		else {
 			QWidget* widget = buildProgress_.init(false, this);
-			widget->setMaximumHeight(cursorPositionLabel_->height());
+			//widget->setMaximumHeight(cursorPositionLabel_->height());
 			statusBar()->addWidget(widget);
 		}
 
@@ -499,27 +493,6 @@ void MainWindow::projectOpenedClosed(bool opened)
 		e->showMessage();
 		delete e;
 	}
-}
-
-/**
- * Updates the current line and column numbers displayed in the status bar.
- * @param  line    The line number
- * @param  column  The column number
- */
-void MainWindow::showCursorPosition(uint line, uint column)
-{
-	QString text;
-	if (line)
-		text = QString(tr("Line: %1 ")).arg(line);
-	else
-		text = tr("Line: N/A ");
-
-	if (column)
-		text += QString(tr("Column: %1 ")).arg(column);
-	else
-		text += tr("Column: N/A ");
-
-	cursorPositionLabel_->setText(text);
 }
 
 } // namespace App

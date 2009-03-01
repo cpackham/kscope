@@ -22,6 +22,7 @@
 #define __APP_EDITORCONTAINER_H
 
 #include <QMdiArea>
+#include <QMainWindow>
 #include <QMdiSubWindow>
 #include <QMap>
 #include <QMenu>
@@ -49,7 +50,7 @@ class EditorContainer : public QMdiArea
 	Q_OBJECT
 
 public:
-	EditorContainer(QWidget* parent = 0);
+	EditorContainer(QMainWindow* parent);
 	~EditorContainer();
 
 	void initActions(QMenu*);
@@ -76,15 +77,6 @@ public slots:
 
 signals:
 	void hasActiveEditor(bool has);
-	void find();
-	void findNext();
-
-	/**
-	 * Emitted when the cursor position of the active editor changes.
-	 * @param  line   1-based index of the current cursor line
-	 * @param  column 1-based index of the current cursor column
-	 */
-	void cursorPositionChanged(uint line, uint column);
 
 private:
 	QMdiSubWindow* currentWindow_;
@@ -94,6 +86,16 @@ private:
 	bool windowActivationBlocked_;
 	Editor::Config config_;
 	Editor::Actions actions_;
+
+	/**
+	 * Displays the current cursor position in the status bar.
+	 */
+	QLabel* cursorPositionLabel_;
+
+	/**
+	 * Displays the edit mode for the current editor.
+	 */
+	QLabel* editModeLabel_;
 
 	bool gotoLocationInternal(const Core::Location&);
 	Editor::Editor* findEditor(const QString&);
@@ -112,7 +114,8 @@ private slots:
 	void windowActivated(QMdiSubWindow*);
 	void removeEditor(const QString&);
 	void remapEditor(const QString&, const QString&);
-	void updateCursorPosition(int, int);
+	void showCursorPosition(int, int);
+	void showEditMode(Editor::Editor::Modes);
 };
 
 } // namespace App

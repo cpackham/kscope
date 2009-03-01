@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QFileDialog>
+#include <QStatusBar>
 #include <QDebug>
 #include <editor/configdialog.h>
 #include "application.h"
@@ -35,7 +36,7 @@ namespace App
  * Class constructor.
  * @param  parent  Parent widget
  */
-EditorContainer::EditorContainer(QWidget* parent)
+EditorContainer::EditorContainer(QMainWindow* parent)
 	: QMdiArea(parent),
 	  currentWindow_(NULL),
 	  newFileIndex_(1),
@@ -50,6 +51,14 @@ EditorContainer::EditorContainer(QWidget* parent)
 	// Notify when an active editor is available.
 	connect(this, SIGNAL(subWindowActivated(QMdiSubWindow*)), this,
 	        SLOT(windowActivated(QMdiSubWindow*)));
+
+	// Display the edit mode for the current editor the status bar.
+	editModeLabel_ = new QLabel(tr("N/A"), this);
+	parent->statusBar()->addPermanentWidget(editModeLabel_);
+
+	// Display the current cursor position in the status bar.
+	cursorPositionLabel_ = new QLabel(tr("Line: N/A Column: N/A"), this);
+	parent->statusBar()->addPermanentWidget(cursorPositionLabel_);
 }
 
 /**
@@ -353,7 +362,7 @@ bool EditorContainer::gotoLocationInternal(const Core::Location& loc)
 	}
 
 	// Set the cursor position for the editor.
-	editor->setCursorPosition(loc.line_, loc.column_);
+	editor->moveCursor(loc.line_, loc.column_);
 	return true;
 }
 
@@ -412,6 +421,11 @@ Editor::Editor* EditorContainer::createEditor(const QString& path)
 	connect(editor, SIGNAL(titleChanged(const QString&, const QString&)),
 	        this, SLOT(remapEditor(const QString&, const QString&)));
 
+	// Show editor messages in the status bar.
+	connect(editor, SIGNAL(message(const QString&, int)),
+	        static_cast<QMainWindow*>(parent())->statusBar(),
+	        SLOT(showMessage(const QString&, int)));
+
 	// Create a new sub window for the editor.
 	QMdiSubWindow* window = addSubWindow(editor);
 	window->setAttribute(Qt::WA_DeleteOnClose);
@@ -461,7 +475,8 @@ void EditorContainer::closeAll()
 
 	// No current window.
 	currentWindow_ = NULL;
-	emit cursorPositionChanged(0, 0);
+	showCursorPosition(0, 0);
+	showEditMode(Editor::Editor::NoMode);
 	emit hasActiveEditor(false);
 
 	// Re-enable handling of changes to active windows.
@@ -519,7 +534,8 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 
 	if (!editor) {
 		qDebug() << "No current editor";
-		emit cursorPositionChanged(0, 0);
+		showCursorPosition(-1, -1);
+		showEditMode(Editor::Editor::NoMode);
 		emit hasActiveEditor(false);
 		return;
 	}
@@ -529,9 +545,11 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 	// Acquire keyboard focus.
 	editor->setFocus();
 
-	// Forward signals.
+	// Show information in the status bar.
 	connect(editor, SIGNAL(cursorPositionChanged(int, int)), this,
-	        SLOT(updateCursorPosition(int, int)));
+	        SLOT(showCursorPosition(int, int)));
+	connect(editor, SIGNAL(modeChanged(Editor::Editor::Modes)), this,
+	        SLOT(showEditMode(Editor::Editor::Modes)));
 
 	// Update the current cursor position.
 	// TODO: We have to update here, in case windowActivated() was called due
@@ -541,7 +559,8 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 	// required.
 	int line, column;
 	editor->getCursorPosition(&line, &column);
-	emit cursorPositionChanged(line + 1, column + 1);
+	showCursorPosition(line, column);
+	showEditMode(editor->editMode());
 
 	emit hasActiveEditor(true);
 }
@@ -575,13 +594,45 @@ void EditorContainer::remapEditor(const QString& oldTitle,
 }
 
 /**
- * Emits the cursorPositionChanged() signal on behalf of the current editor.
- * @param  line   0-based index of the current cursor line
- * @param  column 0-based index of the current cursor column
+ * Updates the current line and column numbers displayed in the status bar.
+ * @param  line    The line number
+ * @param  column  The column number
  */
-void EditorContainer::updateCursorPosition(int line, int column)
+void EditorContainer::showCursorPosition(int line, int column)
 {
-	emit cursorPositionChanged(line + 1, column + 1);
+	QString text;
+	if (line >= 0)
+		text = QString(tr("Line: %1 ")).arg(line + 1);
+	else
+		text = tr("Line: N/A ");
+
+	if (column >= 0)
+		text += QString(tr("Column: %1 ")).arg(column + 1);
+	else
+		text += tr("Column: N/A ");
+
+	cursorPositionLabel_->setText(text);
+}
+
+/**
+ * Displays the edit mode of the current editor in the status bar.
+ * @param  mode The mode to show
+ */
+void EditorContainer::showEditMode(Editor::Editor::Modes mode)
+{
+	switch (mode) {
+	case Editor::Editor::InsertMode:
+		editModeLabel_->setText(tr("INSERT"));
+		break;
+
+	case Editor::Editor::NormalMode:
+		editModeLabel_->setText(tr("VI:NORMAL"));
+		break;
+
+	case Editor::Editor::NoMode:
+		editModeLabel_->setText(tr("N/A"));
+		break;
+	}
 }
 
 } // namespace App
