@@ -18,11 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
-#ifndef __EDITOR_VIMODE_H__
-#define __EDITOR_VIMODE_H__
+#ifndef __EDITOR_VISCINTILLA_H__
+#define __EDITOR_VISCINTILLA_H__
 
 #include <QKeyEvent>
 #include <QMultiHash>
+#include <qsciscintilla.h>
 
 namespace KScope
 {
@@ -30,17 +31,32 @@ namespace KScope
 namespace Editor
 {
 
-class Editor;
-
 /**
- * An implementation of a Vi-like Ex mode.
+ * An implementation of a Vi-style commands on top of Scintilla.
  * @author Elad Lahav
  */
-class ViMode
+class ViScintilla : public QsciScintilla
 {
+	Q_OBJECT
+
 public:
-	ViMode(Editor*);
-	~ViMode();
+	ViScintilla(QWidget*);
+	~ViScintilla();
+
+	/**
+	 * Editing modes.
+	 */
+	enum EditMode
+	{
+		/** Vi compatibility is disabled. */
+		Disabled,
+		/** Scintilla's default. */
+		InsertMode,
+		/** Vi normal mode. */
+		NormalMode,
+		/** Vi visual mode. */
+		VisualMode,
+	};
 
 	struct Command
 	{
@@ -51,34 +67,37 @@ public:
 			NotHandled
 		};
 
-		virtual ProcessResult processKey(QKeyEvent* event, Editor* editor,
+		virtual ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
 		                                 QString& seq) = 0;
 		virtual QString name() const = 0;
 	};
 
-	void processKey(QKeyEvent*);
-	void setEnabled(bool enabled);
+	void setEditMode(EditMode mode);
 
 	/**
-	 * @return true if the mode is enabled, false otherwise
+	 * @return The current edit mode
 	 */
-	bool isEnabled() const { return enabled_; }
+	EditMode editMode() const { return mode_; }
+
+signals:
+	/**
+	 * Emitted when the editing mode changes.
+	 * @param  mode The new mode
+	 */
+	void editModeChanged(Editor::ViScintilla::EditMode mode);
 
 	/**
-	 * @return The current command sequence
+	 * Sends a message to be displayed by the application.
+	 * @param  msg       The message to display
+	 * @param  msTimeOut How long to display the message, in milliseconds
 	 */
-	const QString& sequence() const { return cmdSequence_; }
+	void message(const QString& msg, int msTimeOut);
 
-private:
+protected:
 	/**
-	 * The controlled editor.
+	 * The current editing mode.
 	 */
-	Editor* editor_;
-
-	/**
-	 * Whether the mode is enabled.
-	 */
-	bool enabled_;
+	EditMode mode_;
 
 	/**
 	 * The current command, based on the first key in the sequence, NULL if no
@@ -91,6 +110,9 @@ private:
 	 */
 	QString cmdSequence_;
 
+	void keyPressEvent(QKeyEvent*);
+
+private:
 	/**
 	 * Maps keys to lists of commands.
 	 * Commands hashed to the same key are differentiated by modifier keys.
@@ -113,4 +135,4 @@ private:
 
 } // namespace KScope
 
-#endif  // __EDITOR_VIMODE_H__
+#endif  // __EDITOR_VISCINTILLA_H__

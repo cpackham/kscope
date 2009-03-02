@@ -19,8 +19,7 @@
  ***************************************************************************/
 
 #include <QDebug>
-#include "vimode.h"
-#include "editor.h"
+#include "viscintilla.h"
 
 namespace KScope
 {
@@ -34,9 +33,10 @@ namespace Editor
  * from this class and reimplement action().
  * @author Elad Lahav
  */
-struct MoveCommand : public ViMode::Command
+struct MoveCommand : public ViScintilla::Command
 {
-	ProcessResult processKey(QKeyEvent* event, Editor* editor, QString& seq) {
+	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
+	                         QString& seq) {
 		// Abort early on unhandled keys.
 		if ((event->modifiers() & ~Qt::ShiftModifier) != Qt::NoModifier)
 			return NotHandled;
@@ -139,8 +139,8 @@ struct MoveCommand : public ViMode::Command
 
 	QString name() const { return "Move"; }
 
-	virtual void action(Editor* editor, int curLine, int curColumn, int newLine,
-	                    int newColumn) {
+	virtual void action(ViScintilla* editor, int curLine, int curColumn,
+	                    int newLine, int newColumn) {
 		(void)curLine;
 		(void)curColumn;
 		editor->setCursorPosition(newLine, newColumn);
@@ -165,7 +165,8 @@ struct MoveCommand : public ViMode::Command
  */
 struct YankCommand : public MoveCommand
 {
-	ProcessResult processKey(QKeyEvent* event, Editor* editor, QString& seq) {
+	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
+	                         QString& seq) {
 		// Check for the first "y".
 		if (seq.isEmpty()) {
 			if (event->text() == "y") {
@@ -200,8 +201,8 @@ struct YankCommand : public MoveCommand
 
 	QString name() const { return "Yank"; }
 
-	virtual void action(Editor* editor, int curLine, int curColumn, int newLine,
-	                    int newColumn) {
+	virtual void action(ViScintilla* editor, int curLine, int curColumn,
+	                    int newLine, int newColumn) {
 		editor->setSelection(curLine, curColumn, newLine, newColumn);
 		editor->copy();
 	}
@@ -218,7 +219,8 @@ struct YankCommand : public MoveCommand
  */
 struct CutCommand : public MoveCommand
 {
-	ProcessResult processKey(QKeyEvent* event, Editor* editor, QString& seq) {
+	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
+	                         QString& seq) {
 		// Check for the first "d".
 		if (seq.isEmpty()) {
 			if (event->text() == "d") {
@@ -253,8 +255,8 @@ struct CutCommand : public MoveCommand
 
 	QString name() const { return "Cut"; }
 
-	virtual void action(Editor* editor, int curLine, int curColumn, int newLine,
-	                    int newColumn) {
+	virtual void action(ViScintilla* editor, int curLine, int curColumn,
+	                    int newLine, int newColumn) {
 		editor->setSelection(curLine, curColumn, newLine, newColumn);
 		editor->cut();
 	}
@@ -264,9 +266,10 @@ struct CutCommand : public MoveCommand
  * Pastes text from the clipboard.
  * @author Elad Lahav
  */
-struct PasteCommand : public ViMode::Command
+struct PasteCommand : public ViScintilla::Command
 {
-	ProcessResult processKey(QKeyEvent* event, Editor* editor, QString& seq) {
+	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
+	                         QString& seq) {
 		(void)seq;
 
 		if (event->text() == "p") {
@@ -289,9 +292,10 @@ struct PasteCommand : public ViMode::Command
  * - A: End of current line
  * @author Elad Lahav
  */
-struct InsertCommand : public ViMode::Command
+struct InsertCommand : public ViScintilla::Command
 {
-	ProcessResult processKey(QKeyEvent* event, Editor* editor, QString& seq) {
+	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
+	                         QString& seq) {
 		(void)seq;
 
 		// Abort early on unhandled keys.
@@ -338,9 +342,10 @@ struct InsertCommand : public ViMode::Command
  * Performs the undo (u) and redo (Ctrl+r) actions.
  * @author Elad Lahav
  */
-struct UndoRedoCommand : public ViMode::Command
+struct UndoRedoCommand : public ViScintilla::Command
 {
-	ProcessResult processKey(QKeyEvent* event, Editor* editor, QString& seq) {
+	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
+	                         QString& seq) {
 		(void)seq;
 
 		// Get the current cursor position.
@@ -360,48 +365,93 @@ struct UndoRedoCommand : public ViMode::Command
 	QString name() const { return "UndoRedo"; }
 };
 
-ViMode::CommandHash ViMode::commandHash_;
+ViScintilla::CommandHash ViScintilla::commandHash_;
 
 /**
  * Class constructor.
- * @param  editor The editor to manage
+ * @param  parent Parent widget
  */
-ViMode::ViMode(Editor* editor)
-	: editor_(editor), enabled_(false), curCommand_(NULL)
+ViScintilla::ViScintilla(QWidget* parent)
+	: QsciScintilla(parent), mode_(Disabled), curCommand_(NULL)
 {
 }
 
 /**
  * Class destructor.
  */
-ViMode::~ViMode()
+ViScintilla::~ViScintilla()
 {
 }
 
 /**
- * Toggles Vi mode.
- * @param  enabled true to enable, false to disable
+ * Changes the edit mode.
+ * @param  mode The new mode to set
  */
-void ViMode::setEnabled(bool enabled)
+void ViScintilla::setEditMode(EditMode mode)
 {
-	enabled_ = enabled;
-	qDebug() << "ViMode:" << enabled_;
+	if (mode != mode_) {
+		// Set the new mode.
+		qDebug() << __func__ << mode;
+		mode_ = mode;
+
+		// Change the caret style.
+		// TODO: Handle overwrite in disabled/insert mode.
+		switch (mode_) {
+		case Disabled:
+		case InsertMode:
+			SendScintilla(SCI_SETCARETSTYLE, CARETSTYLE_LINE);
+			break;
+
+		case NormalMode:
+		case VisualMode:
+			SendScintilla(SCI_SETCARETSTYLE, CARETSTYLE_BLOCK);
+			break;
+		}
+
+		// Notify of the change.
+		emit editModeChanged(mode_);
+	}
 }
 
 /**
- * Handles a key in Vi mode.
- * If there is an active command, the key is forwarded to that command for
- * processing. Otherwise, the method looks for a command that handles the key.
- * If the key is handled, the event is marked as accepted.
+ * Handles a key press.
+ * If Vi compatibility is disabled or the current editing mode is insert, the
+ * event is handled by Scintilla. Otherwise, the key is intercepted and
+ * interpreted by the Vi command structure.
  * @param  event The key event
  */
-void ViMode::processKey(QKeyEvent* event)
+void ViScintilla::keyPressEvent(QKeyEvent* event)
 {
+	switch (mode_) {
+	case Disabled:
+		// Let Scintilla handle all events.
+		QsciScintilla::keyPressEvent(event);
+		return;
+
+	case InsertMode:
+		// Intercept the ESC key for entering normal mode.
+		if ((event->key() == Qt::Key_Escape)
+		    && (event->modifiers() == Qt::NoModifier)) {
+			setEditMode(NormalMode);
+			event->setAccepted(true);
+		}
+		else {
+			// Anything but ESC.
+			QsciScintilla::keyPressEvent(event);
+		}
+		return;
+
+	case NormalMode:
+	case VisualMode:
+		break;
+	}
+
+	// Process the key event.
 	Command::ProcessResult result;
 
 	if (curCommand_) {
 		// If a command is in progress, let it process the the key.
-		result = curCommand_->processKey(event, editor_, cmdSequence_);
+		result = curCommand_->processKey(event, this, cmdSequence_);
 	}
 	else {
 		// This is the first key in a new command.
@@ -410,7 +460,7 @@ void ViMode::processKey(QKeyEvent* event)
 		cmdSequence_ = "";
 		QList<Command*> cmdList = commandHash_.values(event->key());
 		foreach (Command* cmd, cmdList) {
-			if ((result = cmd->processKey(event, editor_, cmdSequence_))
+			if ((result = cmd->processKey(event, this, cmdSequence_))
 			    != Command::NotHandled) {
 				curCommand_ = cmd;
 				qDebug() << "Command:" << cmd->name();
@@ -421,10 +471,12 @@ void ViMode::processKey(QKeyEvent* event)
 
 	switch (result) {
 	case Command::Continue:
+		// A command is in progress.
 		break;
 
 	case Command::Exit:
-		enabled_ = false;
+		// Return to insert mode.
+		setEditMode(InsertMode);
 		// Fall through...
 
 	case Command::Done:
@@ -433,13 +485,25 @@ void ViMode::processKey(QKeyEvent* event)
 		break;
 
 	case Command::NotHandled:
+		// Unrecognised command sequence.
+		curCommand_ = NULL;
+		emit message(tr("Bad sequence: %1").arg(cmdSequence_), 2000);
+		cmdSequence_ = "";
 		return event->setAccepted(false);
 	}
+
+	// Report a non-empty sequence, so that it can be displayed.
+	if (!cmdSequence_.isEmpty())
+		emit message(cmdSequence_, 1000);
 
 	event->setAccepted(true);
 }
 
-ViMode::CommandHash::CommandHash()
+/**
+ * Class constructor.
+ * Creates the command objects, and puts them in the key-to-command hash.
+ */
+ViScintilla::CommandHash::CommandHash()
 {
 	MoveCommand* moveCmd = new MoveCommand;
 	YankCommand* yankCmd = new YankCommand;
@@ -465,6 +529,8 @@ ViMode::CommandHash::CommandHash()
 	insert(Qt::Key_K, moveCmd);
 	insert(Qt::Key_J, moveCmd);
 	insert(Qt::Key_W, moveCmd);
+	insert(Qt::Key_Left, moveCmd);
+	insert(Qt::Key_Right, moveCmd);
 	insert(Qt::Key_Up, moveCmd);
 	insert(Qt::Key_Down, moveCmd);
 	insert(Qt::Key_Dollar, moveCmd);
@@ -477,7 +543,11 @@ ViMode::CommandHash::CommandHash()
 	insert(Qt::Key_R, undoCmd);
 }
 
-ViMode::CommandHash::~CommandHash()
+/**
+ * Class destructor.
+ * Deletes the command objects.
+ */
+ViScintilla::CommandHash::~CommandHash()
 {
 	foreach (Command* cmd, cmdList_)
 		delete cmd;

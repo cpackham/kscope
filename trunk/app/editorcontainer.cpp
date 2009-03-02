@@ -476,7 +476,7 @@ void EditorContainer::closeAll()
 	// No current window.
 	currentWindow_ = NULL;
 	showCursorPosition(0, 0);
-	showEditMode(Editor::Editor::NoMode);
+	showEditMode(Editor::ViScintilla::Disabled);
 	emit hasActiveEditor(false);
 
 	// Re-enable handling of changes to active windows.
@@ -535,7 +535,7 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 	if (!editor) {
 		qDebug() << "No current editor";
 		showCursorPosition(-1, -1);
-		showEditMode(Editor::Editor::NoMode);
+		showEditMode(Editor::ViScintilla::Disabled);
 		emit hasActiveEditor(false);
 		return;
 	}
@@ -548,8 +548,8 @@ void EditorContainer::windowActivated(QMdiSubWindow* window)
 	// Show information in the status bar.
 	connect(editor, SIGNAL(cursorPositionChanged(int, int)), this,
 	        SLOT(showCursorPosition(int, int)));
-	connect(editor, SIGNAL(modeChanged(Editor::Editor::Modes)), this,
-	        SLOT(showEditMode(Editor::Editor::Modes)));
+	connect(editor, SIGNAL(editModeChanged(Editor::ViScintilla::EditMode)),
+	        this, SLOT(showEditMode(Editor::ViScintilla::EditMode)));
 
 	// Update the current cursor position.
 	// TODO: We have to update here, in case windowActivated() was called due
@@ -618,18 +618,22 @@ void EditorContainer::showCursorPosition(int line, int column)
  * Displays the edit mode of the current editor in the status bar.
  * @param  mode The mode to show
  */
-void EditorContainer::showEditMode(Editor::Editor::Modes mode)
+void EditorContainer::showEditMode(Editor::ViScintilla::EditMode mode)
 {
 	switch (mode) {
-	case Editor::Editor::InsertMode:
+	case Editor::ViScintilla::InsertMode:
 		editModeLabel_->setText(tr("INSERT"));
 		break;
 
-	case Editor::Editor::NormalMode:
+	case Editor::ViScintilla::NormalMode:
 		editModeLabel_->setText(tr("VI:NORMAL"));
 		break;
 
-	case Editor::Editor::NoMode:
+	case Editor::ViScintilla::VisualMode:
+		editModeLabel_->setText(tr("VI:VISUAL"));
+		break;
+
+	case Editor::ViScintilla::Disabled:
 		editModeLabel_->setText(tr("N/A"));
 		break;
 	}

@@ -38,13 +38,12 @@ namespace Editor
  * Class constructor.
  * @param  parent  Owner object
  */
-Editor::Editor(QWidget* parent) : QsciScintilla(parent),
+Editor::Editor(QWidget* parent) : ViScintilla(parent),
 	newFileIndex_(0),
 	isLoading_(false),
 	onLoadLine_(0),
 	onLoadColumn_(0),
-	onLoadFocus_(false),
-	viMode_(this)
+	onLoadFocus_(false)
 {
 }
 
@@ -208,7 +207,7 @@ void Editor::moveCursor(uint line, uint column)
 		column--;
 
 	// Set the new cursor position.
-	QsciScintilla::setCursorPosition(line, column);
+	ViScintilla::setCursorPosition(line, column);
 }
 
 /**
@@ -297,17 +296,6 @@ QString Editor::title() const
 }
 
 /**
- * @return The current editing mode
- */
-Editor::Modes Editor::editMode() const
-{
-	if (viMode_.isEnabled())
-		return NormalMode;
-
-	return InsertMode;
-}
-
-/**
  * Searches for text inside the document.
  * Prompts the user for the text to find.
  */
@@ -385,35 +373,6 @@ void Editor::closeEvent(QCloseEvent* event)
 	}
 	else {
 		event->ignore();
-	}
-}
-
-/**
- * Handles a key press.
- * If Vi mode is enabled, the even is forwarded to the Vi mode object.
- * Otherwise, if the ESC key is pressed, Vi mode is enabled. All other keys are
- * handled by Scintilla.
- * @param  event The key event
- */
-void Editor::keyPressEvent(QKeyEvent* event)
-{
-	if (viMode_.isEnabled()) {
-		viMode_.processKey(event);
-		if (!viMode_.sequence().isEmpty())
-			emit message(viMode_.sequence(), 1000);
-		if (!viMode_.isEnabled())
-			emit modeChanged(InsertMode);
-	}
-	else {
-		if ((event->key() == Qt::Key_Escape)
-		    && (event->modifiers() == Qt::NoModifier)) {
-			viMode_.setEnabled(true);
-			emit modeChanged(NormalMode);
-			event->setAccepted(true);
-		}
-		else {
-			QsciScintilla::keyPressEvent(event);
-		}
 	}
 }
 

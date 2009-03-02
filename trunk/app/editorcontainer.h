@@ -115,7 +115,7 @@ private slots:
 	void removeEditor(const QString&);
 	void remapEditor(const QString&, const QString&);
 	void showCursorPosition(int, int);
-	void showEditMode(Editor::Editor::Modes);
+	void showEditMode(Editor::ViScintilla::EditMode);
 };
 
 } // namespace App
