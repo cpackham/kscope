@@ -26,6 +26,7 @@
 #include <qscilexercpp.h>
 #include <qscilexermakefile.h>
 #include <qscilexerbash.h>
+#include "viscintilla.h"
 
 namespace KScope
 {
@@ -86,6 +87,11 @@ private:
 	 * The tab width, in characters.
 	 */
 	int tabWidth_;
+
+	/**
+	 * The Vi mode in which editors should be started.
+	 */
+	ViScintilla::EditMode viDefaultMode_;
 
 	/**
 	 * The common defaults lexers.

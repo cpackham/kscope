@@ -172,6 +172,10 @@ void Config::load(QSettings& settings)
 	          editor.indentationsUseTabs());
 	loadValue(settings, tabWidth_, "TabWidth", editor.tabWidth());
 
+	uint viMode;
+	loadValue(settings, viMode, "ViMode", (uint)ViScintilla::Disabled);
+	viDefaultMode_ = static_cast<ViScintilla::EditMode>(viMode);
+
 	// Load the C lexer parameters.
 	// Ignore the exception thrown by load(), which is the result of not
 	// finding the style magic key in the settings file. This happens if styles
@@ -204,6 +208,7 @@ void Config::store(QSettings& settings) const
 	settings.setValue("EOLMarkerColumn", eolMarkerColumn_);
 	settings.setValue("IndentWithTabs", indentTabs_);
 	settings.setValue("TabWidth", tabWidth_);
+	settings.setValue("ViMode", viDefaultMode_);
 	styleModel_->store(settings, true);
 }
 
@@ -241,6 +246,7 @@ void Config::apply(Editor* editor) const
 	editor->setFont(commonLexer_->font(0));
 	editor->setColor(commonLexer_->color(0));
 	editor->setPaper(commonLexer_->paper(0));
+	editor->setEditMode(viDefaultMode_);
 
 	if (editor->lexer())
 		editor->lexer()->refreshProperties();

@@ -18,7 +18,7 @@
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="DisplayTab_" >
       <attribute name="title" >
        <string>Display</string>
       </attribute>
@@ -97,7 +97,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2" >
+     <widget class="QWidget" name="indentTab_" >
       <attribute name="title" >
        <string>Indentation</string>
       </attribute>
@@ -210,7 +210,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3" >
+     <widget class="QWidget" name="styleTab_" >
       <attribute name="title" >
        <string>Styles</string>
       </attribute>
@@ -328,6 +328,53 @@
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="miscTab_" >
+      <attribute name="title" >
+       <string>Miscellaneous</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8" >
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7" >
+         <item>
+          <widget class="QLabel" name="label_6" >
+           <property name="text" >
+            <string>Default Vi Mode</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6" >
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="viModeCombo_" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>337</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

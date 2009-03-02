@@ -86,6 +86,13 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 	}
 
 	indentLanguageCombo_->setModel(lexerModel_);
+
+	// Set up the Vi mode combo-box.
+	viModeCombo_->insertItem(0, tr("Disabled"), ViScintilla::Disabled);
+	viModeCombo_->insertItem(1, tr("Insert"), ViScintilla::InsertMode);
+	viModeCombo_->insertItem(2, tr("Normal"), ViScintilla::NormalMode);
+	int modeIndex = viModeCombo_->findData(config.viDefaultMode_);
+	viModeCombo_->setCurrentIndex(modeIndex);
 }
 
 /**
@@ -108,7 +115,13 @@ void ConfigDialog::getConfig(Config& config)
 		= eolMarkerCheck_->isChecked() ? eolMarkerSpin_->value() : 0;
 	config.indentTabs_ = indentTabsCheck_->isChecked();
 	config.tabWidth_ = tabWidthSpin_->value();
-	config.styleModel_->copy(*styleModel_);
+
+	int modeIndex = viModeCombo_->currentIndex();
+	config.viDefaultMode_
+		= static_cast<ViScintilla::EditMode>
+	      (viModeCombo_->itemData(modeIndex).toUInt());
+
+		config.styleModel_->copy(*styleModel_);
 	config.styleModel_->updateLexers();
 }
 
