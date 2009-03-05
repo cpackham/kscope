@@ -24,65 +24,266 @@
 namespace KScope
 {
 
+namespace QtKey
+{
+
+/**
+ * Defines a set of functions for comparing two keys.
+ * @author Elad Lahav
+ */
+template<int Key1, int Key2>
+struct Compare
+{
+	static const bool gt_ = (Key1 > Key2);
+	static const bool lt_ = (Key1 < Key2);
+	static const bool ge_ = (Key1 >= Key2);
+	static const bool le_ = (Key1 <= Key2);
+};
+
+/**
+ * Determines whether the template parameter is a letter key.
+ */
+template<int Key>
+struct IsLetter
+{
+	static const bool result_
+		= (Compare<Key, Qt::Key_A>::ge_) && (Compare<Key, Qt::Key_Z>::le_);
+};
+
+/**
+ * Determines whether the template parameter is a digit key.
+ * @author Elad Lahav
+ */
+template<int Key>
+struct IsDigit
+{
+	static const bool result_
+		= (Compare<Key, Qt::Key_0>::ge_) && (Compare<Key, Qt::Key_9>::le_);
+};
+
+/**
+ * Provides compile- and run-time functions for translating a key into an ASCII
+ * character.
+ * @author Elad Lahav
+ */
+template<int Key = 0>
+struct ToChar
+{
+	static const char char_ = (IsLetter<Key>::result_
+	                           ? (Key - Qt::Key_A) + 'A'
+	                           : (IsDigit<Key>::result_
+	                              ? (Key - Qt::Key_0) + '0' : 0));
+	static char transform(char c) {
+		if (c >= Qt::Key_0 && c <= Qt::Key_9)
+			return (c - Qt::Key_0) + '0';
+		if (c >= Qt::Key_A && c <= Qt::Key_Z)
+			return (c - Qt::Key_A) + 'A';
+		return 0;
+	}
+};
+
+/**
+ * Provides compile- and run-time functions for translating a key into an ASCII
+ * control character.
+ * @author Elad Lahav
+ */
+template<int Key = 0>
+struct ToControlChar
+{
+	static const char char_ = (IsLetter<Key>::result_
+	                           ? (Key - Qt::Key_A) + 1 : 0);
+	static const uchar uchar_ = static_cast<uchar>(char_);
+	static char transform(char c) {
+		if (c >= Qt::Key_A && c <= Qt::Key_Z)
+			return (c - Qt::Key_A) + 1;
+		return 0;
+	}
+};
+
+} // namespace QtKey
+
 namespace Editor
 {
 
 /**
- * Handles cursor movement commands.
- * Commands that depend on movement, such as delete and copy, should inherit
- * from this class and reimplement action().
+ * Implements the empty (move) action for a move command.
  * @author Elad Lahav
  */
-struct MoveCommand : public ViScintilla::Command
+struct MoveAction
 {
-	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
-	                         QString& seq) {
-		// Abort early on unhandled keys.
-		if ((event->modifiers() & ~Qt::ShiftModifier) != Qt::NoModifier)
-			return NotHandled;
+	static ViCommand::ProcessResult
+	action(ViScintilla* editor) {
+		(void)editor;
+		return ViCommand::Done;
+	}
+};
 
-		if (event->text().length() > 1)
-			return NotHandled;
+/**
+ * Implements the yank action for a move command.
+ * @author Elad Lahav
+ */
+struct YankAction
+{
+	static ViCommand::ProcessResult
+	action(ViScintilla* editor) {
+		// Copy selected text.
+		editor->copy();
 
-		// Translate keys.
-		char key;
-		switch (event->key()) {
-		case Qt::Key_Left:
-			key = 'h';
+		// Clear selection.
+		int position
+			= editor->SendScintilla(QsciScintillaBase::SCI_GETSELECTIONSTART);
+		editor->SendScintilla(QsciScintillaBase::SCI_GOTOPOS, position);
+		return ViCommand::Done;
+	}
+};
+
+/**
+ * Implements the cut action for a move command.
+ * @author Elad Lahav
+ */
+struct CutAction
+{
+	static ViCommand::ProcessResult
+	action(ViScintilla* editor) {
+		// Cut selected text.
+		editor->cut();
+		return ViCommand::Done;
+	}
+};
+
+/**
+ * Implements the change (delete+exit normal mode) action for a move command.
+ * @author Elad Lahav
+ */
+struct ChangeAction
+{
+	static ViCommand::ProcessResult
+	action(ViScintilla* editor) {
+		// Delete selected text and exit normal mode.
+		editor->removeSelectedText();
+		return ViCommand::Exit;
+	}
+};
+
+/**
+ * Handles cursor movement commands.
+ * @author Elad Lahav
+ */
+template<bool Select = false, class ActionT = MoveAction>
+struct MoveCommand : public ViCommand
+{
+	ProcessResult processKey(char key, ViScintilla* editor,
+	                         const CharSequence& seq) {
+		bool relative;
+		uint message;
+
+		switch (key) {
+		case 'l':
+			// Go right <NUM> characters.
+			relative = true;
+			message = Select ? QsciScintillaBase::SCI_CHARRIGHTEXTEND
+			                 : QsciScintillaBase::SCI_CHARRIGHT;
 			break;
 
-		case Qt::Key_Right:
-			key = 'l';
+		case 'h':
+			// Go left <NUM> characters.
+			relative = true;
+			message = Select ? QsciScintillaBase::SCI_CHARLEFTEXTEND
+			                 : QsciScintillaBase::SCI_CHARLEFT;
 			break;
 
-		case Qt::Key_Up:
-			key = 'k';
+		case 'k':
+			// Go up <NUM> lines.
+			relative = true;
+			message = Select ? QsciScintillaBase::SCI_LINEUPEXTEND
+			                 : QsciScintillaBase::SCI_LINEUP;
 			break;
 
-		case Qt::Key_Down:
-			key = 'j';
+		case 'j':
+			// Go down <NUM> lines.
+			relative = true;
+			message = Select ? QsciScintillaBase::SCI_LINEDOWNEXTEND
+			                 : QsciScintillaBase::SCI_LINEDOWN;
+			break;
+
+		case 'w':
+			// Go left <NUM> words
+			relative = true;
+			message = Select ? QsciScintillaBase::SCI_WORDRIGHTEXTEND
+			                 : QsciScintillaBase::SCI_WORDRIGHT;
+			break;
+
+		case '0':
+			// Go to the beginning of the line.
+			relative = false;
+			message = Select ? QsciScintillaBase::SCI_HOMEEXTEND
+			                 : QsciScintillaBase::SCI_HOME;
+			break;
+
+		case '$':
+			// Go to the end of the line.
+			relative = false;
+			message = Select ? QsciScintillaBase::SCI_LINEENDEXTEND
+			                 : QsciScintillaBase::SCI_LINEEND;
+			break;
+
+		case 'g':
+			// Go to the beginning of the file.
+			relative = false;
+			message = Select ? QsciScintillaBase::SCI_DOCUMENTSTARTEXTEND
+			                 : QsciScintillaBase::SCI_DOCUMENTSTART;
+			break;
+
+		case 'G':
+			// Go to the end of the file.
+			relative = false;
+			message = Select ? QsciScintillaBase::SCI_DOCUMENTENDEXTEND
+			                 : QsciScintillaBase::SCI_DOCUMENTEND;
 			break;
 
 		default:
-			if (event->text().length() == 1)
-				key = event->text()[0].toLatin1();
-			else
+			return NotHandled;
+		}
+
+		// Compute the multiplier value.
+		int multiplier = 1;
+		if (relative && seq.length() > 1) {
+			bool ok;
+			multiplier = CharSequence(seq, 0, -1).toUInt(&ok);
+			if (!ok)
 				return NotHandled;
 		}
 
-		// Get the current position.
-		int curLine, curColumn, newLine, newColumn;
-		editor->getCursorPosition(&curLine, &curColumn);
+		// Move the cursor.
+		for (int i = 0; i < multiplier; i++)
+			editor->SendScintilla(message);
 
+		return ActionT::action(editor);
+	}
+};
+
+/**
+ * Common handler for commands that take the form <CHAR> <ARG> <CHAR>. Examples
+ * include yank, cut and change.
+ * Supported variants include:
+ * - <CHAR><CHAR>: do action on a the current line,
+ * - <CHAR><NUMBER><CHAR>: do action on <NUMBER> lines,
+ * - <CHAR><MOVE_COMMAND>: do action on a range starting from the current cursor
+ *                         position to the one resulting from the move command.
+ * @author Elad Lahav
+ */
+template<char C, class ActionT>
+struct XyXCommand : public ViCommand
+{
+	ProcessResult processKey(char key, ViScintilla* editor,
+	                         const CharSequence& seq) {
 		switch (key) {
-		case '0':
-			if (seq.isEmpty()) {
-				// Move to the beginning of the line.
-				newLine = curLine;
-				newColumn = 0;
-				break;
-			}
-			// Fall through...
+		case C:
+			// Check if this is the first occurrence of C.
+			if (seq.length() == 1)
+				return Continue;
+			break;
+
 		case '1':
 		case '2':
 		case '3':
@@ -92,173 +293,37 @@ struct MoveCommand : public ViScintilla::Command
 		case '7':
 		case '8':
 		case '9':
-			seq.append(event->text());
 			return Continue;
 
-		case 'l':
-			newLine = curLine;
-			newColumn = curColumn + stringToMultiplier(seq);
-			break;
-
-		case 'h':
-			newLine = curLine;
-			newColumn = curColumn - stringToMultiplier(seq);
-			break;
-
-		case 'k':
-			newLine = curLine - stringToMultiplier(seq);
-			newColumn = curColumn;
-			break;
-
-		case 'j':
-			newLine = curLine + stringToMultiplier(seq);
-			newColumn = curColumn;
-			break;
-
-		case 'w':
-			break;
-
-		case '$':
-			newLine = curLine;
-			newColumn = editor->lineLength(curLine) - 1;
-			break;
+		case '0':
+			if (seq.length() > 2)
+				return Continue;
+			// Fall through...
 
 		default:
-			return NotHandled;
-		}
-
-		action(editor, curLine, curColumn, newLine, newColumn);
-
-		// On multi-key sequences, add the last character so that the entire
-		// sequence can be displayed.
-		if (!seq.isEmpty())
-			seq.append(key);
-
-		return Done;
-	}
-
-	QString name() const { return "Move"; }
-
-	virtual void action(ViScintilla* editor, int curLine, int curColumn,
-	                    int newLine, int newColumn) {
-		(void)curLine;
-		(void)curColumn;
-		editor->setCursorPosition(newLine, newColumn);
-	}
-
-	static int stringToMultiplier(const QString& str) {
-		if (str.isEmpty())
-			return 1;
-
-		return str.toInt();
-	}
-};
-
-/**
- * Copies (yanks) text.
- * Supported variants include:
- * - yy: Copy line,
- * - y<NUMBER>y: Copy <NUMBER> lines,
- * - y<MOVE_COMMAND>: Copy from the current position to the new one, based
- *   on the move command used.
- * @author Elad Lahav
- */
-struct YankCommand : public MoveCommand
-{
-	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
-	                         QString& seq) {
-		// Check for the first "y".
-		if (seq.isEmpty()) {
-			if (event->text() == "y") {
-				seq = "y";
-				return Continue;
+			{
+				MoveCommand<true, ActionT> moveCmd;
+				return moveCmd.processKey(key, editor, CharSequence(seq, 1, 0));
 			}
-
-			return NotHandled;
 		}
 
-		// Non-empty sequence that begins with a "d".
-		// A second "d" means delete the number of lines stored in the
-		// multiplier.
-		if (event->text() == "y")
-		{
-			// Get the current line number.
-			int line, col;
-			editor->getCursorPosition(&line, &col);
-
-			// Get the number of lines to delete.
-			int lines = stringToMultiplier(seq.mid(1));
-
-			// Delete the lines.
-			action(editor, line, 0, line + lines, 0);
-			seq.append("y");
-			return Done;
+		// Got here on a second occurrence of C.
+		// Perform the action on a number of whole lines.
+		int multiplier = 1;
+		if (seq.length() > 2) {
+			bool ok;
+			multiplier = CharSequence(seq, 1, -1).toUInt(&ok);
+			if (!ok)
+				return NotHandled;
 		}
 
-		// Not a "y", use the move command to interpret the key.
-		return MoveCommand::processKey(event, editor, seq);
-	}
+		// Select the given number of lines.
+		editor->SendScintilla(QsciScintillaBase::SCI_VCHOME);
+		for (int i = 0; i < multiplier; i++)
+			editor->SendScintilla(QsciScintillaBase::SCI_LINEDOWNEXTEND);
 
-	QString name() const { return "Yank"; }
-
-	virtual void action(ViScintilla* editor, int curLine, int curColumn,
-	                    int newLine, int newColumn) {
-		editor->setSelection(curLine, curColumn, newLine, newColumn);
-		editor->copy();
-	}
-};
-
-/**
- * Cuts text.
- * Supported variants include:
- * - dd: Cut line,
- * - d<NUMBER>d: Cut <NUMBER> lines,
- * - d<MOVE_COMMAND>: Copy from the current position to the new one, based
- *   on the move command used.
- * @author Elad Lahav
- */
-struct CutCommand : public MoveCommand
-{
-	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
-	                         QString& seq) {
-		// Check for the first "d".
-		if (seq.isEmpty()) {
-			if (event->text() == "d") {
-				seq = "d";
-				return Continue;
-			}
-
-			return NotHandled;
-		}
-
-		// Non-empty sequence that begins with a "d".
-		// A second "d" means delete the number of lines stored in the
-		// multiplier.
-		if (event->text() == "d")
-		{
-			// Get the current line number.
-			int line, col;
-			editor->getCursorPosition(&line, &col);
-
-			// Get the number of lines to delete.
-			int lines = stringToMultiplier(seq.mid(1));
-
-			// Delete the lines.
-			action(editor, line, 0, line + lines, 0);
-			seq.append("d");
-			return Done;
-		}
-
-		// Not a "d", use the move command to interpret the key.
-		return MoveCommand::processKey(event, editor, seq);
-	}
-
-	QString name() const { return "Cut"; }
-
-	virtual void action(ViScintilla* editor, int curLine, int curColumn,
-	                    int newLine, int newColumn) {
-		editor->setSelection(curLine, curColumn, newLine, newColumn);
-		editor->cut();
+		// Perform the action on the selected lines.
+		return ActionT::action(editor);
 	}
 };
 
@@ -266,21 +331,40 @@ struct CutCommand : public MoveCommand
  * Pastes text from the clipboard.
  * @author Elad Lahav
  */
-struct PasteCommand : public ViScintilla::Command
+struct PasteCommand : public ViCommand
 {
-	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
-	                         QString& seq) {
+	ProcessResult processKey(char key, ViScintilla* editor,
+	                         const CharSequence& seq) {
 		(void)seq;
 
-		if (event->text() == "p") {
+		switch (key) {
+		case 'P':
+			// Paste here.
 			editor->paste();
 			return Done;
+
+		case 'p':
+			break;
+
+		default:
+			return NotHandled;
 		}
 
-		return NotHandled;
-	}
+		// Get the current cursor position.
+		int line, column;
+		editor->getCursorPosition(&line, &column);
 
-	QString name() const { return "Paste"; }
+		// TODO: Is this the right behaviour?
+		if (column == 0)
+			line++;
+		else
+			column++;
+
+		// Move to the new position and paste.
+		editor->setCursorPosition(line, column);
+		editor->paste();
+		return Done;
+	}
 };
 
 /**
@@ -292,80 +376,143 @@ struct PasteCommand : public ViScintilla::Command
  * - A: End of current line
  * @author Elad Lahav
  */
-struct InsertCommand : public ViScintilla::Command
+struct InsertCommand : public ViCommand
 {
-	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
-	                         QString& seq) {
+	ProcessResult processKey(char key, ViScintilla* editor,
+	                         const CharSequence& seq) {
 		(void)seq;
 
-		// Abort early on unhandled keys.
-		if ((event->modifiers() & ~Qt::ShiftModifier) != Qt::NoModifier)
-			return NotHandled;
-
-		if (event->text().length() > 1)
-			return NotHandled;
-
 		// Get the current cursor position.
-		int line, col;
-		editor->getCursorPosition(&line, &col);
+		int line, column;
+		editor->getCursorPosition(&line, &column);
 
-		char key = event->text()[0].toLatin1();
 		switch (key) {
 		case 'i':
-			return Exit;
-
-		case 'I':
-			col = 0;
 			break;
 
 		case 'a':
-			col++;
+			column++;
+			break;
+
+		case 'I':
+			column = 0;
 			break;
 
 		case 'A':
-			col = editor->lineLength(line) - 1;
+			column = editor->lineLength(line) - 1;
 			break;
 
 		default:
 			return NotHandled;
 		}
 
-		// Move the cursor and exit ExMode.
-		editor->setCursorPosition(line, col);
+		// Move to the new position and exit normal mode.
+		editor->setCursorPosition(line, column);
 		return Exit;
 	}
-
-	QString name() const { return "Insert"; }
 };
 
 /**
  * Performs the undo (u) and redo (Ctrl+r) actions.
  * @author Elad Lahav
  */
-struct UndoRedoCommand : public ViScintilla::Command
+struct UndoRedoCommand : public ViCommand
 {
-	ProcessResult processKey(QKeyEvent* event, ViScintilla* editor,
-	                         QString& seq) {
+	ProcessResult processKey(char key, ViScintilla* editor,
+	                         const CharSequence& seq) {
+		int multiplier = 1;
+		if (seq.length() > 1) {
+			bool ok;
+			multiplier = CharSequence(seq, 0, -1).toUInt(&ok);
+			if (!ok)
+				return NotHandled;
+		}
+
+		// Get the current cursor position.
+		switch (key) {
+		case 'u':
+			for (int i = 0; i < multiplier; i++)
+				editor->undo();
+			break;
+
+		case QtKey::ToControlChar<Qt::Key_R>::char_:
+			for (int i = 0; i < multiplier; i++)
+				editor->redo();
+			break;
+
+		default:
+			return NotHandled;
+		}
+
+		return Done;
+	}
+};
+
+/**
+ * Creates a new line, either above or below the current one, and exits normal
+ * mode.
+ */
+struct OpenLineCommand : public ViCommand
+{
+	ProcessResult processKey(char key, ViScintilla* editor,
+	                         const CharSequence& seq) {
 		(void)seq;
 
 		// Get the current cursor position.
-		if (event->text() == "u") {
-			editor->undo();
-			return Done;
+		int line, column;
+		editor->getCursorPosition(&line, &column);
+
+		switch (key) {
+		case 'o':
+			line++;
+			break;
+
+		case 'O':
+			break;
+
+		default:
+			return NotHandled;
 		}
-		else if ((event->key() == Qt::Key_R)
-		         && (event->modifiers() == Qt::ControlModifier)) {
-			editor->redo();
-			return Done;
+
+		// Add a line at the new position and exit normal mode.
+		editor->setCursorPosition(line, 0);
+		editor->insert("\n");
+		return Exit;
+	}
+};
+
+/**
+ * Handles all commands that start with a number (other than 0).
+ * Currently supports movement, undo and redo only. Yank, delete, change, etc.
+ * must start with a character (e.g., d2d rather than 2dd).
+ * @author Elad Lahav
+ */
+struct NumPrefixCommand : public ViCommand
+{
+	ProcessResult processKey(char key, ViScintilla* editor,
+	                         const CharSequence& seq) {
+		// Consume digits.
+		if (key >= '0' && key <= '9')
+			return Continue;
+
+		switch (key) {
+		case 'l':
+		case 'h':
+		case 'k':
+		case 'j':
+		case 'w':
+			return MoveCommand<>().processKey(key, editor, seq);
+
+		case 'u':
+		case QtKey::ToControlChar<Qt::Key_R>::char_:
+			return UndoRedoCommand().processKey(key, editor, seq);
 		}
 
 		return NotHandled;
 	}
-
-	QString name() const { return "UndoRedo"; }
 };
 
-ViScintilla::CommandHash ViScintilla::commandHash_;
+ViScintilla::CommandMap ViScintilla::commandMap_;
 
 /**
  * Class constructor.
@@ -391,7 +538,6 @@ void ViScintilla::setEditMode(EditMode mode)
 {
 	if (mode != mode_) {
 		// Set the new mode.
-		qDebug() << __func__ << mode;
 		mode_ = mode;
 
 		// Change the caret style.
@@ -446,111 +592,197 @@ void ViScintilla::keyPressEvent(QKeyEvent* event)
 		break;
 	}
 
+	event->setAccepted(false);
+
+	// Translate keys, so that we only deal with ASCII characters.
+	char key, dispKey = 0;
+	switch (event->modifiers()) {
+	case Qt::ControlModifier:
+		key = QtKey::ToControlChar<>::transform(event->key());
+		dispKey = QtKey::ToChar<>::transform(event->key());
+		break;
+
+	case Qt::NoModifier:
+		switch (event->key()) {
+		case Qt::Key_Right:
+			key = 'l';
+			break;
+
+		case Qt::Key_Left:
+			key = 'h';
+			break;
+
+		case Qt::Key_Up:
+			key = 'k';
+			break;
+
+		case Qt::Key_Down:
+			key = 'j';
+			break;
+
+		case Qt::Key_Escape:
+			// Abort the current command.
+			if (curCommand_) {
+				emit message(QString("Aborted: ") + cmdString_, 1000);
+				curCommand_ = NULL;
+				cmdSequence_.clear();
+				cmdString_ = "";
+			}
+			event->setAccepted(true);
+			return;
+
+		default:
+			key = event->text()[0].toAscii();
+		}
+		break;
+
+	case Qt::ShiftModifier:
+		key = event->text()[0].toAscii();
+		break;
+
+	default:
+		return;
+	}
+
+	if (key == 0)
+		return;
+
+	// Add to the current command sequence.
+	cmdSequence_.append(key);
+	if (event->modifiers() & Qt::ControlModifier)
+		cmdString_.append("(Ctrl)");
+	cmdString_.append(dispKey ? dispKey : key);
+
 	// Process the key event.
-	Command::ProcessResult result;
+	ViCommand::ProcessResult result;
 
 	if (curCommand_) {
-		// If a command is in progress, let it process the the key.
-		result = curCommand_->processKey(event, this, cmdSequence_);
+		// If a command is in progress, let it process the key.
+		result = curCommand_->processKey(key, this, cmdSequence_);
 	}
 	else {
 		// This is the first key in a new command.
 		// Check which command is associated with this key.
-		result = Command::NotHandled;
-		cmdSequence_ = "";
-		QList<Command*> cmdList = commandHash_.values(event->key());
-		foreach (Command* cmd, cmdList) {
-			if ((result = cmd->processKey(event, this, cmdSequence_))
-			    != Command::NotHandled) {
-				curCommand_ = cmd;
-				qDebug() << "Command:" << cmd->name();
-				break;
-			}
-		}
+		curCommand_ = commandMap_.command(key);
+		if (curCommand_)
+			result = curCommand_->processKey(key, this, cmdSequence_);
+		else
+			result = ViCommand::NotHandled;
 	}
 
 	switch (result) {
-	case Command::Continue:
+	case ViCommand::Continue:
 		// A command is in progress.
+		emit message(cmdString_, 1000);
 		break;
 
-	case Command::Exit:
+	case ViCommand::Exit:
 		// Return to insert mode.
 		setEditMode(InsertMode);
 		// Fall through...
 
-	case Command::Done:
+	case ViCommand::Done:
 		curCommand_ = NULL;
-		// Do not clear the sequence, so that it is available for display.
+		// Report multi-character commands.
+		if (cmdSequence_.length() > 1)
+			emit message(cmdString_, 1000);
+		cmdSequence_.clear();
+		cmdString_ = "";
 		break;
 
-	case Command::NotHandled:
+	case ViCommand::NotHandled:
 		// Unrecognised command sequence.
 		curCommand_ = NULL;
-		emit message(tr("Bad sequence: %1").arg(cmdSequence_), 2000);
-		cmdSequence_ = "";
-		return event->setAccepted(false);
+		emit message(tr("Bad sequence: %1").arg(cmdString_), 2000);
+		cmdSequence_.clear();
+		cmdString_ = "";
+		return;
 	}
-
-	// Report a non-empty sequence, so that it can be displayed.
-	if (!cmdSequence_.isEmpty())
-		emit message(cmdSequence_, 1000);
 
 	event->setAccepted(true);
 }
 
 /**
  * Class constructor.
- * Creates the command objects, and puts them in the key-to-command hash.
+ * Creates the command objects, and puts them in the key-to-command map.
  */
-ViScintilla::CommandHash::CommandHash()
+ViScintilla::CommandMap::CommandMap()
 {
-	MoveCommand* moveCmd = new MoveCommand;
-	YankCommand* yankCmd = new YankCommand;
-	CutCommand* cutCmd = new CutCommand;
-	PasteCommand* pasteCmd = new PasteCommand;
-	InsertCommand* insCmd = new InsertCommand;
-	UndoRedoCommand* undoCmd = new UndoRedoCommand;
+	ViCommand* moveCmd = new MoveCommand<>;
+	ViCommand* yankCmd = new XyXCommand<'y', YankAction>;
+	ViCommand* cutCmd = new XyXCommand<'d', CutAction>;
+	ViCommand* changeCmd = new XyXCommand<'c', ChangeAction>;
+	ViCommand* pasteCmd = new PasteCommand;
+	ViCommand* insCmd = new InsertCommand;
+	ViCommand* undoCmd = new UndoRedoCommand;
+	ViCommand* numCmd = new NumPrefixCommand;
+	ViCommand* openCmd = new OpenLineCommand;
 
-	cmdList_ << moveCmd << yankCmd << cutCmd << pasteCmd << insCmd << undoCmd;
+	// Add all commands to a list, so they can be deleted when the map is
+	// destroyed.
+	cmdList_ << moveCmd << yankCmd << cutCmd << changeCmd << pasteCmd << insCmd
+	         << undoCmd << numCmd;
 
-	insert(Qt::Key_0, moveCmd);
-	insert(Qt::Key_1, moveCmd);
-	insert(Qt::Key_2, moveCmd);
-	insert(Qt::Key_3, moveCmd);
-	insert(Qt::Key_4, moveCmd);
-	insert(Qt::Key_5, moveCmd);
-	insert(Qt::Key_6, moveCmd);
-	insert(Qt::Key_7, moveCmd);
-	insert(Qt::Key_8, moveCmd);
-	insert(Qt::Key_9, moveCmd);
-	insert(Qt::Key_L, moveCmd);
-	insert(Qt::Key_H, moveCmd);
-	insert(Qt::Key_K, moveCmd);
-	insert(Qt::Key_J, moveCmd);
-	insert(Qt::Key_W, moveCmd);
-	insert(Qt::Key_Left, moveCmd);
-	insert(Qt::Key_Right, moveCmd);
-	insert(Qt::Key_Up, moveCmd);
-	insert(Qt::Key_Down, moveCmd);
-	insert(Qt::Key_Dollar, moveCmd);
-	insert(Qt::Key_Y, yankCmd);
-	insert(Qt::Key_D, cutCmd);
-	insert(Qt::Key_P, pasteCmd);
-	insert(Qt::Key_I, insCmd);
-	insert(Qt::Key_A, insCmd);
-	insert(Qt::Key_U, undoCmd);
-	insert(Qt::Key_R, undoCmd);
+	// Clear the map.
+	memset(cmdMap_, 0, sizeof(cmdMap_));
+
+	// Insert commands to the map.
+	cmdMap_['0'] = moveCmd;
+	cmdMap_['1'] = numCmd;
+	cmdMap_['2'] = numCmd;
+	cmdMap_['3'] = numCmd;
+	cmdMap_['4'] = numCmd;
+	cmdMap_['5'] = numCmd;
+	cmdMap_['6'] = numCmd;
+	cmdMap_['7'] = numCmd;
+	cmdMap_['8'] = numCmd;
+	cmdMap_['9'] = numCmd;
+	cmdMap_['l'] = moveCmd;
+	cmdMap_['h'] = moveCmd;
+	cmdMap_['k'] = moveCmd;
+	cmdMap_['j'] = moveCmd;
+	cmdMap_['w'] = moveCmd;
+	cmdMap_['$'] = moveCmd;
+	cmdMap_['g'] = moveCmd;
+	cmdMap_['G'] = moveCmd;
+	cmdMap_['y'] = yankCmd;
+	cmdMap_['d'] = cutCmd;
+	cmdMap_['c'] = changeCmd;
+	cmdMap_['p'] = pasteCmd;
+	cmdMap_['P'] = pasteCmd;
+	cmdMap_['i'] = insCmd;
+	cmdMap_['a'] = insCmd;
+	cmdMap_['I'] = insCmd;
+	cmdMap_['A'] = insCmd;
+	cmdMap_['u'] = undoCmd;
+	cmdMap_[QtKey::ToControlChar<Qt::Key_R>::uchar_] = undoCmd;
+	cmdMap_['o'] = openCmd;
+	cmdMap_['O'] = openCmd;
 }
 
 /**
  * Class destructor.
  * Deletes the command objects.
  */
-ViScintilla::CommandHash::~CommandHash()
+ViScintilla::CommandMap::~CommandMap()
 {
-	foreach (Command* cmd, cmdList_)
+	foreach (ViCommand* cmd, cmdList_)
 		delete cmd;
+}
+
+/**
+ * Returns the command handling the given character.
+ * @param  c The character to map
+ * @return The handling command, NULL if no command is assigned to this
+ *         character.
+ */
+ViCommand* ViScintilla::CommandMap::command(char c)
+{
+	int index = static_cast<uint>(c);
+	if (index < 0 || index >= 0x100)
+		return NULL;
+
+	return cmdMap_[index];
 }
 
 } // namespace Editor
