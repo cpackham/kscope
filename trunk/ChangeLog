@@ -1,3 +1,14 @@
+1.9.3 (2009-03-05)
+* New: Limited Vi compatibility (several movement and editing commands implemented)
+* New: Hierarchical editor styles
+* New: Import/export editor styles
+* New: More visual options for the editor
+* New: Go to beginning of block menu action
+* Improved: Better handling of editor menu actions
+* Bug fix: Show typedefs in local tags
+* Bug fix: Clear the query type list before prompting for a new query
+* Compilation fix: Avoid error in createIndex() on a 64-bit OS
+
 1.9.2 (2009-02-13)
 * New: "Open Project" dialogue with recent projects
 * New: Added a "Close All" action to the file menu
