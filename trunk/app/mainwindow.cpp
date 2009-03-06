@@ -311,7 +311,13 @@ void MainWindow::openProject()
 	OpenProjectDialog dlg(this);
 	switch (dlg.exec()) {
 	case OpenProjectDialog::Open:
-		ProjectManager::load<Cscope::ManagedProject>(dlg.path());
+		try {
+			ProjectManager::load<Cscope::ManagedProject>(dlg.path());
+		}
+		catch (Core::Exception* e) {
+			e->showMessage();
+			delete e;
+		}
 		break;
 
 	case OpenProjectDialog::New:
