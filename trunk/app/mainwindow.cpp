@@ -397,7 +397,30 @@ void MainWindow::projectProperties()
 	Core::ProjectBase::Params params;
 	dlg.getParams<Cscope::ManagedProject>(params);
 
-	// TODO: Update project properties.
+	bool rebuild = false;
+	try {
+		// Update project properties.
+		ProjectManager::updateConfig(params);
+
+		// Check if the project needs to be rebuilt.
+		if (ProjectManager::engine().status() == Core::Engine::Rebuild)
+			rebuild = true;
+	}
+	catch (Core::Exception* e) {
+		e->showMessage();
+		delete e;
+	}
+
+	// Prompt the user for rebuilding the project.
+	if (rebuild) {
+		QString msg = tr("This project needs to be rebuilt.\nWould you like to"
+		                 " build it now?");
+		if (QMessageBox::question(this, tr("Rebuild Prject"), msg,
+		                          QMessageBox::Yes | QMessageBox::No)
+		    == QMessageBox::Yes) {
+			buildProject();
+		}
+	}
 }
 
 /**

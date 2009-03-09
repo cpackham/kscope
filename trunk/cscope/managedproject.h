@@ -46,6 +46,7 @@ public:
 	virtual ~ManagedProject();
 
 	void create(const Params&);
+	void updateConfig(const Params&);
 };
 
 }

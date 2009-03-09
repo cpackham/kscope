@@ -67,16 +67,37 @@ const ProjectManagerSignals* ProjectManager::signalProxy()
 	return &signals_;
 }
 
+void ProjectManager::updateConfig(Core::ProjectBase::Params& params)
+{
+	// Make sure a project is loaded.
+	if (proj_ == NULL)
+		throw new Core::Exception("No project is currently loaded");
+
+	// Update project parameters.
+	try {
+		proj_->updateConfig(params);
+	}
+	catch (Core::Exception* e) {
+		throw e;
+	}
+}
+
+/**
+ * Closes the current project.
+ */
 void ProjectManager::close()
 {
-		if (!proj_)
-			return;
+	// Nothing to do if there is no open project.
+	if (proj_ == NULL)
+		return;
 
-		proj_->close();
-		delete proj_;
-		proj_ = NULL;
+	// Close the project.
+	proj_->close();
+	delete proj_;
+	proj_ = NULL;
 
-		signals_.emitHasProject(false);
+	// Notify that the project is closed.
+	signals_.emitHasProject(false);
 }
 
 void ProjectManager::finishLoad()

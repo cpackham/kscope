@@ -90,6 +90,12 @@ public:
 	virtual void create(const Params& params) = 0;
 
 	/**
+	 * Modifies configuration parameters for this project.
+	 * @param  params  Project parameters
+	 */
+	virtual void updateConfig(const Params& params) = 0;
+
+	/**
 	 * Closes the project.
 	 */
 	virtual void close() = 0;
@@ -213,20 +219,30 @@ public:
 			                    .arg(dir.filePath(configFileName_)));
 		}
 
-		// Copy the given parameters.
+		// Copy the given parameters and update the configuration file.
 		params_ = params;
-
-		// Write the configuration file.
-		QSettings projConfig(dir.filePath(configFileName_),
-		                     QSettings::IniFormat);
-		projConfig.beginGroup("Project");
-		projConfig.setValue("Name", params_.name_);
-		projConfig.setValue("RootPath", params_.rootPath_);
-		projConfig.setValue("EngineString", params_.engineString_);
-		projConfig.setValue("CodebaseString", params_.codebaseString_);
-		projConfig.endGroup();
+		writeParams();
 
 		qDebug() << __func__ << dir.filePath(configFileName_);
+	}
+
+	/**
+	 * Applies a new set of configuration parameters to the project.
+	 * Not all parameters can be changed once a project is created.
+	 * At the very least, the project path must stay the same. An exception
+	 * is thrown if this parameter is modified. Inheriting classes can
+	 * throw exceptions if other read-only parameters are modified. Also,
+	 * inheriting classes should indicate whether the symbol database needs to
+	 * be rebuilt following the change to the project's parameters.
+	 * @param  params The new set of parameters to install
+	 * @throw  Exception
+	 */
+	virtual void updateConfig(const Params& params) {
+		if (params.projPath_ != params_.projPath_)
+			throw new Exception("The project path cannot be modified.");
+
+		params_ = params;
+		writeParams();
 	}
 
 	/**
@@ -372,6 +388,21 @@ protected:
 
 		loaded_ = true;
 		qDebug() << "Project loaded (name='" << params_.name_ << "')";
+	}
+
+	/**
+	 * Writes the current project parameters in the configuration file.
+	 */
+	void writeParams() {
+		// Write the configuration file.
+		QSettings projConfig(configPath(), QSettings::IniFormat);
+		projConfig.beginGroup("Project");
+		projConfig.setValue("Name", params_.name_);
+		projConfig.setValue("RootPath", params_.rootPath_);
+		projConfig.setValue("EngineString", params_.engineString_);
+		projConfig.setValue("CodebaseString", params_.codebaseString_);
+		projConfig.endGroup();
+
 	}
 
 	void finishOpen() {

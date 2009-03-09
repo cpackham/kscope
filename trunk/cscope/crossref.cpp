@@ -74,16 +74,25 @@ void Crossref::open(const QString& initString, Core::Callback<>* cb)
 	// querying, but needs to be rebuilt.
 	// We also ensure that if it exists it is readable.
 	QFileInfo fi(dir, "cscope.out");
+	Status status;
 	if (!fi.exists())
-		status_ = Build;
+		status = Build;
 	else if (!fi.isReadable())
 		throw new Core::Exception("Cannot read the 'cscope.out' file");
 	else
-		status_ = Ready;
+		status = Ready;
+
+	// Handle reopening with different parameters (i.e., after a change to the
+	// project parameters).
+	if (status_ != Unknown) {
+		if ((path != path_) || args != args_)
+			status = Rebuild;
+	}
 
 	// Store arguments for running Cscope.
 	path_ = path;
 	args_ = args;
+	status_ = status;
 
 	if (cb)
 		cb->call();

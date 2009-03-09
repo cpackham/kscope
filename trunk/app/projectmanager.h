@@ -94,6 +94,7 @@ public:
 		Application::settings().addRecentProject(projPath, proj_->name());
 	}
 
+	static void updateConfig(Core::ProjectBase::Params&);
 	static void close();
 
 private:
