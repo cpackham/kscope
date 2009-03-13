@@ -4,6 +4,7 @@
 * New: Import/export editor styles
 * New: More visual options for the editor
 * New: Go to beginning of block menu action
+* New: Handle changes to project configuration parameters
 * Improved: Better handling of editor menu actions
 * Bug fix: Show typedefs in local tags
 * Bug fix: Clear the query type list before prompting for a new query
