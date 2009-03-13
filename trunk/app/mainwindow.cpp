@@ -224,7 +224,7 @@ void MainWindow::buildProject()
 		}
 		else {
 			QWidget* widget = buildProgress_.init(false, this);
-			//widget->setMaximumHeight(cursorPositionLabel_->height());
+			widget->setMaximumHeight(statusBar()->height() - 4);
 			statusBar()->addWidget(widget);
 		}
 
