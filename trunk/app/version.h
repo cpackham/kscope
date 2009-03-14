@@ -73,7 +73,7 @@ struct Version
 /**
  * Specifies the application version.
  */
-typedef Version<1, 9, 3> AppVersion;
+typedef Version<1, 9, 4> AppVersion;
 
 } // namespace App
 
