@@ -221,6 +221,8 @@ public:
 
 		// Copy the given parameters and update the configuration file.
 		params_ = params;
+		if (!params_.projPath_.endsWith("/"))
+			params_.projPath_ += "/";
 		writeParams();
 
 		qDebug() << __func__ << dir.filePath(configFileName_);
