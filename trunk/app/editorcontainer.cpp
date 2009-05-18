@@ -68,11 +68,6 @@ EditorContainer::~EditorContainer()
 {
 }
 
-void EditorContainer::initActions(QMenu* menu)
-{
-	actions_.setupMenu(menu);
-}
-
 /**
  * Fills the "Window" menu with a list of all open sub-window titles.
  * @param  wndMenu  The menu to populate

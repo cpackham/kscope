@@ -53,7 +53,6 @@ public:
 	EditorContainer(QMainWindow* parent);
 	~EditorContainer();
 
-	void initActions(QMenu*);
 	void populateWindowMenu(QMenu*) const;
 	bool canClose();
 	void saveSession(Session&);
@@ -63,6 +62,8 @@ public:
 	inline Editor::Editor* currentEditor() {
 		return editorFromWindow(currentSubWindow());
 	}
+
+	const Editor::Actions& actions() const { return actions_; }
 
 public slots:
 	void newFile();

@@ -40,6 +40,13 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 	connect(this, SIGNAL(editorChanged(bool)), editorGroup_,
 	        SLOT(setEnabled(bool)));
 
+	// Save document.
+	actSave_ = new QAction(tr("&Save"), this);
+	actSave_->setShortcut(QKeySequence("Ctrl+S"));
+	actSave_->setStatusTip(tr("Save the document"));
+	connect(actSave_, SIGNAL(triggered()), this, SLOT(save()));
+	editorGroup_->addAction(actSave_);
+
 	// Copy selected text.
 	actCopy_ = new QAction(tr("&Copy"), this);
 	actCopy_->setShortcut(QKeySequence("Ctrl+C"));
@@ -112,10 +119,19 @@ Actions::~Actions()
 }
 
 /**
- * Fills a menu with editor actions.
+ * Fills a menu with file-related editor actions.
  * @param  menu A menu to which actions should be added
  */
-void Actions::setupMenu(QMenu* menu)
+void Actions::setupFileMenu(QMenu* menu) const
+{
+	menu->addAction(actSave_);
+}
+
+/**
+ * Fills a menu with editing-related editor actions.
+ * @param  menu A menu to which actions should be added
+ */
+void Actions::setupEditMenu(QMenu* menu) const
 {
 	menu->addAction(actCopy_);
 	menu->addAction(actCut_);

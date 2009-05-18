@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QMenuBar>
+#include <editor/actions.h>
 #include "actions.h"
 #include "mainwindow.h"
 #include "editorcontainer.h"
@@ -73,6 +74,9 @@ void Actions::setup()
 			SLOT(openFile()));
 	menu->addAction(action);
 
+	// Add editor-specific actions.
+	mainWnd()->editCont_->actions().setupFileMenu(menu);
+
 	// Close all open files.
 	action = new QAction(tr("Close &All"), this);
 	action->setStatusTip(tr("Close all open files"));
@@ -94,7 +98,7 @@ void Actions::setup()
 
 	// Edit menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&Edit"));
-	mainWnd()->editCont_->initActions(menu);
+	mainWnd()->editCont_->actions().setupEditMenu(menu);
 
 	// View menu.
 	menu = mainWnd()->menuBar()->addMenu(tr("&View"));

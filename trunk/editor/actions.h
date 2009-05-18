@@ -48,10 +48,16 @@ public:
 	Actions(QObject* parent = 0);
 	~Actions();
 
-	void setupMenu(QMenu*);
+	void setupFileMenu(QMenu*) const;
+	void setupEditMenu(QMenu*) const;
 	void setEditor(Editor*);
 
 public slots:
+	/**
+	 * Saves the current document.
+	 */
+	void save() { editor_->save(); }
+
 	/**
 	 * Copies the current selection to the clipboard.
 	 */
@@ -111,6 +117,11 @@ private:
 	 * May be NULL, in which case all actions should be disabled.
 	 */
 	Editor* editor_;
+
+	/**
+	 * Save document.
+	 */
+	QAction* actSave_;
 
 	/**
 	 * Copy text action.

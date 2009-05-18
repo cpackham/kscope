@@ -128,6 +128,7 @@ bool Editor::save()
 		emit titleChanged(oldTitle, title());
 	}
 
+	setModified(false);
 	return true;
 }
 
