@@ -73,7 +73,7 @@ execute(char *a, ...)	/* note: "exec" is already defined on u370 */
 {
 	va_list	ap;
 	int	exitcode = -1;	/* initialize, to avoid warning */
-	const char	*argv[BUFSIZ];
+	char	*argv[BUFSIZ];
 	pid_t	p;
 
 	/* fork and exec the program or shell script */
