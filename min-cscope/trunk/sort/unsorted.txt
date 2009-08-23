@@ -1,0 +1,4000 @@
+HAS_CURSES !!!!f#
+HAVE_DIRENT_H !!!!#
+HAVE_FCNTL_H !!!"=#
+HAVE_GETCWD !!!"Y#
+HAVE_INTTYPES_H !!!"t#
+HAVE_LSTAT !!!#4#
+HAVE_MEMCPY !!!#N#
+HAVE_MEMORY_H !!!#i#
+HAVE_MEMSET !!!$'#
+HAVE_REGCOMP !!!$B#
+HAVE_SIGNAL_H !!!$^#
+HAVE_SIGSETJMP !!!${#
+HAVE_SNPRINTF !!!%:#
+HAVE_STDINT_H !!!%W#
+HAVE_STDLIB_H !!!%t#
+HAVE_STRCHR !!!&2#
+HAVE_STRERROR !!!&M#
+HAVE_STRINGS_H !!!&j#
+HAVE_STRING_H !!!')#
+HAVE_SYS_STAT_H !!!'F#
+HAVE_SYS_TERMIOS_H !!!'e#
+HAVE_SYS_TYPES_H !!!()#
+HAVE_UNISTD_H !!!(J#
+HAVE_VSNPRINTF !!!(h#
+LSTAT_FOLLOWS_SLASHED_SYMLINK !!!)(#
+Linux !!!)V#
+PACKAGE !!!)k#
+PACKAGE_BUGREPORT !!!**#
+PACKAGE_NAME !!!*M#
+PACKAGE_STRING !!!*k#
+PACKAGE_TARNAME !!!+,#
+PACKAGE_VERSION !!!+M#
+RETSIGTYPE !!!+n#
+STDC_HEADERS !!!,*#
+USE_NCURSES !!!,G#
+VERSION !!!,c#
+YYTEXT_POINTER !!!-"#
+stdio.h !!!-_~
+START !!!-q#
+INLINE !!!.'#
+DEFINE !!!.=#
+REM1 !!!.S#
+REM2 !!!.h#
+REM_END !!!.}#
+REM_STAR !!!/6#
+REM_STAR_1 !!!/O#
+STRING !!!/j#
+ON !!!0'#
+OFF !!!09#
+MODE_KEYWORD !!!0L#
+MODE_REMARK !!!0h#
+MODE_REMARK_EOL !!!1$#
+MODE_DEFINE !!!1C#
+MODE_STRING !!!1^#
+is_delimeter !!!1y$
+c !!!1y  2!
+ii !!!23  2!
+dlms !!!2@  2!
+dlms !!!2P  2!
+ii !!!2P  2!
+c !!!2c  2!
+dlms !!!2c  2!
+ii !!!2c  2!
+is_keyword !!!3/$
+str !!!3/  36
+kwords !!!3K  36
+NULL !!!3^  36
+ii !!!3q  36
+jj !!!3~  36
+check !!!4*  36
+kwords !!!49  36
+ii !!!49  36
+jj !!!4N  36
+check !!!4]  36
+kwords !!!4o  36
+ii !!!4o  36
+jj !!!4o  36
+check !!!4o  36
+str !!!56  36
+jj !!!56  36
+kwords !!!56  36
+ii !!!56  36
+check !!!5^  36
+jj !!!5p  36
+check !!!5}  36
+ii !!!64  36
+set_mode !!!6L$
+on_off !!!6L  6T
+mode !!!6L  6T
+tags !!!6q  6T
+NULL !!!7$  6T
+fprintf !!!76` 6T
+stdout !!!76  6T
+tags !!!76  6T
+mode !!!76  6T
+on_off !!!76  6T
+print_char_html !!!7v$
+c !!!7v  7~
+c !!!84  7~
+fprintf !!!8?` 7~
+stdout !!!8?  7~
+fprintf !!!8_` 7~
+stdout !!!8_  7~
+fprintf !!!8` 7~
+stdout !!!8  7~
+fprintf !!!9B` 7~
+stdout !!!9B  7~
+fprintf !!!9c` 7~
+stdout !!!9c  7~
+fprintf !!!:(` 7~
+stdout !!!:(  7~
+c !!!:(  7~
+main !!!:U$
+_argc !!!:U  :]
+_argv !!!:U  :]
+FILE !!!:x  :]
+in !!!:x  :]
+out !!!:x  :]
+c !!!;3  :]
+mode !!!;>  :]
+buf !!!;L  :]
+bufidx !!!;]  :]
+progress !!!;q  :]
+echo !!!<&  :]
+saved_mode !!!<4  :]
+kw !!!<G  :]
+tmpc !!!<S  :]
+prevc !!!<a  :]
+_argc !!!<o  :]
+fprintf !!!=$` :]
+stderr !!!=$  :]
+in !!!=;  :]
+fopen !!!=;` :]
+_argv !!!=;  :]
+NULL !!!=;  :]
+fprintf !!!=l` :]
+stderr !!!=l  :]
+fprintf !!!>$` :]
+stdout !!!>$  :]
+mode !!!>F  :]
+START !!!>F  :]
+feof !!!>]` :]
+in !!!>]  :]
+progress !!!>]  :]
+echo !!!>}  :]
+prevc !!!?/  :]
+c !!!?/  :]
+c !!!?B  :]
+fgetc !!!?B` :]
+in !!!?B  :]
+c !!!?\  :]
+mode !!!?\  :]
+REM1 !!!?\  :]
+saved_mode !!!@$  :]
+mode !!!@$  :]
+mode !!!@?  :]
+REM1 !!!@?  :]
+mode !!!@U  :]
+REM1 !!!@c  :]
+echo !!!@q  :]
+mode !!!A#  :]
+REM2 !!!A#  :]
+REM2 !!!A9  :]
+c !!!AG  :]
+saved_mode !!!AY  :]
+DEFINE !!!AY  :]
+set_mode !!!Ay` :]
+OFF !!!Ay  :]
+MODE_DEFINE !!!Ay  :]
+mode !!!BB  :]
+REM_END !!!BB  :]
+set_mode !!!B[` :]
+ON !!!B[  :]
+MODE_REMARK_EOL !!!B[  :]
+c !!!C'  :]
+saved_mode !!!C:  :]
+DEFINE !!!C:  :]
+set_mode !!!CZ` :]
+OFF !!!CZ  :]
+MODE_DEFINE !!!CZ  :]
+mode !!!D#  :]
+REM_STAR !!!D#  :]
+set_mode !!!D=` :]
+ON !!!D=  :]
+MODE_REMARK !!!D=  :]
+mode !!!Dd  :]
+saved_mode !!!Dd  :]
+printf !!!D` :]
+REM_END !!!E4  :]
+c !!!EE  :]
+set_mode !!!EX` :]
+OFF !!!EX  :]
+MODE_REMARK_EOL !!!EX  :]
+REM_STAR !!!F%  :]
+c !!!F7  :]
+mode !!!FI  :]
+REM_STAR_1 !!!FI  :]
+REM_STAR_1 !!!Fe  :]
+c !!!Fy  :]
+mode !!!G,  :]
+INLINE !!!G,  :]
+fprintf !!!GD` :]
+stdout !!!GD  :]
+echo !!!Ga  :]
+set_mode !!!Gr` :]
+OFF !!!Gr  :]
+MODE_REMARK !!!Gr  :]
+mode !!!H;  :]
+REM_STAR !!!H;  :]
+START !!!HV  :]
+c !!!He  :]
+mode !!!Hw  :]
+DEFINE !!!Hw  :]
+set_mode !!!I0` :]
+ON !!!I0  :]
+MODE_DEFINE !!!I0  :]
+c !!!IW  :]
+mode !!!Im  :]
+INLINE !!!Im  :]
+INLINE !!!J&  :]
+c !!!J6  :]
+prevc !!!JJ  :]
+prevc !!!Ja  :]
+set_mode !!!Jv` :]
+ON !!!Jv  :]
+MODE_STRING !!!Jv  :]
+mode !!!K>  :]
+STRING !!!K>  :]
+STRING !!!KV  :]
+c !!!Kf  :]
+prevc !!!Kf  :]
+print_char_html !!!L+` :]
+set_mode !!!LG` :]
+OFF !!!LG  :]
+MODE_STRING !!!LG  :]
+echo !!!Lo  :]
+mode !!!M!  :]
+INLINE !!!M!  :]
+DEFINE !!!M9  :]
+c !!!MI  :]
+set_mode !!!M\` :]
+OFF !!!M\  :]
+MODE_DEFINE !!!M\  :]
+echo !!!N%  :]
+mode !!!N7  :]
+INLINE !!!N7  :]
+mode !!!NR  :]
+INLINE !!!NR  :]
+bufidx !!!Nl  :]
+buf !!!N}  :]
+bufidx !!!N}  :]
+c !!!N}  :]
+buf !!!O<  :]
+bufidx !!!O<  :]
+is_delimeter !!!OV` :]
+c !!!OV  :]
+kw !!!Or  :]
+bufidx !!!P"  :]
+kw !!!P6  :]
+is_keyword !!!P6` :]
+buf !!!P6  :]
+kw !!!PX  :]
+set_mode !!!Pf` :]
+ON !!!Pf  :]
+MODE_KEYWORD !!!Pf  :]
+tmpc !!!Q/  :]
+buf !!!Q/  :]
+bufidx !!!Q/  :]
+buf !!!QP  :]
+bufidx !!!QP  :]
+fprintf !!!Ql` :]
+stdout !!!Ql  :]
+buf !!!Ql  :]
+kw !!!R1  :]
+set_mode !!!R?` :]
+OFF !!!R?  :]
+MODE_KEYWORD !!!R?  :]
+print_char_html !!!Rh` :]
+tmpc !!!Rh  :]
+bufidx !!!S(  :]
+buf !!!S;  :]
+echo !!!SN  :]
+print_char_html !!!SN` :]
+c !!!SN  :]
+c !!!Su  :]
+mode !!!Su  :]
+REM_STAR !!!Su  :]
+mode !!!T@  :]
+START !!!T@  :]
+fclose !!!TW` :]
+in !!!TW  :]
+fprintf !!!Tk` :]
+stdout !!!Tk  :]
+fprintf !!!U0` :]
+stdout !!!U0  :]
+fprintf !!!UH` :]
+stdout !!!UH  :]
+stdio.h !!!Uz~
+string.h !!!V-~
+alloc.h !!!V?~
+global.h !!!VQ~
+rcsid !!!Vdg
+alloctest !!!WT 
+p !!!WT 
+STDC_HEADERS !!!Wl 
+stdlib.h !!!X#~
+calloc !!!X6 
+malloc !!!X6 
+realloc !!!X6 
+strcpy !!!X6 
+my_strdup !!!Xi$
+s !!!Xi  Xo
+strcpy !!!Y"` Xo
+mymalloc !!!Y"` Xo
+strlen !!!Y"` Xo
+s !!!Y"  Xo
+mymalloc !!!Y_$
+size_t !!!Y_  Ye
+size !!!Y_  Ye
+alloctest !!!Z!` Ye
+malloc !!!Z!` Ye
+size !!!Z!  Ye
+mycalloc !!!ZT$
+size_t !!!ZT  ZZ
+nelem !!!ZT  ZZ
+size !!!ZT  ZZ
+alloctest !!!["` ZZ
+calloc !!!["` ZZ
+nelem !!!["  ZZ
+size !!!["  ZZ
+myrealloc !!![^$
+p !!![^  [d
+size_t !!![^  [d
+size !!![^  [d
+alloctest !!!\'` [d
+realloc !!!\'` [d
+p !!!\'  [d
+size !!!\'  [d
+alloctest !!!\_$
+p !!!\_  \e
+p !!!\u  \e
+NULL !!!\u  \e
+postfatal !!!]-` \e
+argv0 !!!]-  \e
+p !!!][  \e
+CSCOPE_ALLOC_H !!!^! 
+CSCOPE_ALLOC_H !!!^<#
+string.h !!!^X~
+mycalloc !!!^j 
+size_t !!!^j 
+nelem !!!^j 
+size !!!^j 
+mymalloc !!!_9 
+size_t !!!_9 
+size !!!_9 
+myrealloc !!!_[ 
+p !!!_[ 
+size_t !!!_[ 
+size !!!_[ 
+my_strdup !!!`% 
+s !!!`% 
+rcsid !!!`Pg
+global.h !!!aD~
+mybasename !!!aW$
+path !!!aW  a]
+s !!!aq  a]
+s !!!a|  a]
+strrchr !!!a|` a]
+path !!!a|  a]
+s !!!bJ  a]
+path !!!bZ  a]
+stdio.h !!!c"~
+unistd.h !!!c3~
+string.h !!!cE~
+stdlib.h !!!cW~
+assert.h !!!cj~
+sys/mman.h !!!c|~
+NDEBUG !!!d2 
+ASSERT !!!dE#
+x !!!dE  dL
+assert !!!dE` dL
+ASSERT !!!di#
+x !!!di  dp
+PAGE_SIZE !!!e# 
+Page !!!e9 
+size !!!e9 
+must !!!e9 
+be !!!e9 
+defined !!!e9 
+u8 !!!edt
+u16 !!!est
+u32 !!!f$t
+u32 !!!f4 
+page_id_t !!!f4t
+PAGE_SIZE !!!fM 
+u16 !!!fl 
+rec_off_t !!!flt
+u32 !!!g& 
+rec_off_t !!!g&t
+rec_off_t !!!g? 
+rec_id_t !!!g?t
+PAGE_ID_NONE !!!g\#
+page_id_t !!!g\  gc
+page_id_t !!!h( 
+parent !!!h(m
+page_id_t !!!h@ 
+prev !!!h@m
+page_id_t !!!hX 
+next !!!hXm
+rec_id_t !!!hp 
+nrecords !!!hpm
+rec_off_t !!!i+ 
+recoff !!!i+m
+u8 !!!iE 
+level !!!iEm
+u8 !!!iW 
+flags !!!iWm
+page_hdr_t !!!ijt
+page_id_t !!!i 
+id !!!im
+page_hdr_t !!!j7 
+hdr !!!j7m
+u32 !!!jQ 
+ref !!!jQm
+page_t !!!jct
+PAGE_FLAG_SORT !!!jtm
+FILE !!!k2 
+file !!!k2m
+u32 !!!kG 
+size !!!kGm
+page_id_t !!!k[ 
+npages !!!k[m
+page_t !!!ku 
+root !!!kum
+page_t !!!l+ 
+tmppage !!!l+m
+btree_t !!!lCt
+page_id_t !!!lT 
+page !!!lTm
+key !!!lmm
+index_rec_t !!!lt
+u32 !!!m6 
+rec_hdr_size !!!m6g
+rec_off_t !!!m6 
+u32 !!!mg 
+page_hdr_size !!!mgg
+page_hdr_t !!!mg 
+u32 !!!n; 
+max_record_size !!!n;g
+PAGE_SIZE !!!n; 
+page_hdr_t !!!n; 
+rec_off_t !!!n; 
+anon_map !!!o)$
+u32 !!!o)  o3
+size !!!o)  o3
+ptr !!!oI  o3
+ptr !!!oW  o3
+mmap !!!oW` o3
+NULL !!!oW  o3
+size !!!oW  o3
+PROT_READ !!!oW  o3
+PROT_WRITE !!!oW  o3
+MAP_SHARED !!!oW  o3
+MAP_ANONYMOUS !!!oW  o3
+ptr !!!pX  o3
+MAP_FAILED !!!pX  o3
+perror !!!pw` o3
+NULL !!!q.  o3
+ptr !!!q=  o3
+file_map !!!qU$
+FILE !!!qU  q_
+file !!!qU  q_
+u32 !!!qU  q_
+offset !!!qU  q_
+size !!!qU  q_
+ptr !!!r3  q_
+ptr !!!rA  q_
+mmap !!!rA` q_
+NULL !!!rA  q_
+size !!!rA  q_
+PROT_READ !!!rA  q_
+PROT_WRITE !!!rA  q_
+MAP_SHARED !!!rA  q_
+fileno !!!s0` q_
+file !!!s0  q_
+offset !!!s0  q_
+ptr !!!sP  q_
+MAP_FAILED !!!sP  q_
+perror !!!so` q_
+NULL !!!t&  q_
+ptr !!!t5  q_
+file_unmap !!!tM$
+FILE !!!tM  tU
+file !!!tM  tU
+ptr !!!tM  tU
+u32 !!!tM  tU
+size !!!tM  tU
+file !!!u'  tU
+munmap !!!u6` tU
+ptr !!!u6  tU
+size !!!u6  tU
+file_grow !!!u_$
+FILE !!!u_  ug
+file !!!u_  ug
+u32 !!!u_  ug
+size !!!u_  ug
+curpos !!!v1  ug
+u32 !!!v@  ug
+move !!!v@  ug
+u32 !!!vS  ug
+dummy !!!vS  ug
+size !!!vp  ug
+NULL !!!vp  ug
+fprintf !!!w,` ug
+stderr !!!w,  ug
+size !!!w`  ug
+u32 !!!w`  ug
+move !!!w|  ug
+move !!!x.  ug
+size !!!x.  ug
+u32 !!!x.  ug
+curpos !!!xP  ug
+ftell !!!xP` ug
+file !!!xP  ug
+curpos !!!xo  ug
+fprintf !!!y'` ug
+stderr !!!y'  ug
+fseek !!!y\` ug
+file !!!y\  ug
+SEEK_END !!!y\  ug
+fprintf !!!z+` ug
+stderr !!!z+  ug
+fseek !!!zf` ug
+file !!!zf  ug
+move !!!zf  ug
+SEEK_CUR !!!zf  ug
+fprintf !!!{:` ug
+stderr !!!{:  ug
+fwrite !!!{u` ug
+dummy !!!{u  ug
+u32 !!!{u  ug
+file !!!{u  ug
+fprintf !!!|R` ug
+stderr !!!|R  ug
+size !!!})  ug
+move !!!})  ug
+u32 !!!})  ug
+page_hdr_t !!!}V 
+get_page !!!}V$
+btree_t !!!}V  }k
+btree !!!}V  }k
+page_t !!!}V  }k
+page !!!}V  }k
+page_hdr_t !!!~5  }k
+hdr !!!~5  }k
+page !!!~N  }k
+id !!!~N  }k
+btree !!!~N  }k
+npages !!!~N  }k
+fprintf !!!~v` }k
+stderr !!!~v  }k
+page !!!U  }k
+id !!!U  }k
+btree !!!U  }k
+npages !!!U  }k
+NULL !!!x  }k
+page !!"!(  }k
+ref !!"!(  }k
+page !!"!C  }k
+ref !!"!C  }k
+page !!"!W  }k
+hdr !!"!W  }k
+hdr !!"!l  }k
+page_hdr_t !!"!l  }k
+file_map !!"!l` }k
+btree !!"!l  }k
+file !!"!l  }k
+page !!"!l  }k
+id !!"!l  }k
+PAGE_SIZE !!"!l  }k
+hdr !!""h  }k
+NULL !!""h  }k
+NULL !!"#!  }k
+page !!"#0  }k
+hdr !!"#0  }k
+page !!"#I  }k
+ref !!"#I  }k
+page !!"#]  }k
+hdr !!"#]  }k
+page_hdr_t !!"#} 
+get_temp_page !!"#}$
+btree_t !!"#}  "$3
+btree !!"#}  "$3
+btree !!"$P  "$3
+tmppage !!"$P  "$3
+ref !!"$P  "$3
+btree !!"$m  "$3
+tmppage !!"$m  "$3
+hdr !!"$m  "$3
+put_page !!"%7$
+btree_t !!"%7  "%@
+btree !!"%7  "%@
+page_t !!"%7  "%@
+page !!"%7  "%@
+ASSERT !!"%j` "%@
+page !!"%j  "%@
+ref !!"%j  "%@
+hdr !!"%j  "%@
+NULL !!"%j  "%@
+page !!"&D  "%@
+ref !!"&D  "%@
+page !!"&X  "%@
+ref !!"&X  "%@
+file_unmap !!"&q` "%@
+btree !!"&q  "%@
+file !!"&q  "%@
+page !!"&q  "%@
+hdr !!"&q  "%@
+PAGE_SIZE !!"&q  "%@
+page !!"'N  "%@
+hdr !!"'N  "%@
+NULL !!"'N  "%@
+page_hdr_t !!"'u 
+add_page !!"'u$
+btree_t !!"'u  "(+
+btree !!"'u  "(+
+page_t !!"'u  "(+
+page !!"'u  "(+
+page_hdr_t !!"(U  "(+
+hdr !!"(U  "(+
+u32 !!"(n  "(+
+grow !!"(n  "(+
+btree !!")"  "(+
+npages !!")"  "(+
+PAGE_SIZE !!")"  "(+
+size !!")"  "(+
+grow !!")^  "(+
+PAGE_SIZE !!")^  "(+
+file_grow !!"*!` "(+
+btree !!"*!  "(+
+file !!"*!  "(+
+grow !!"*!  "(+
+NULL !!"*R  "(+
+grow !!"*a  "(+
+PAGE_SIZE !!"*a  "(+
+NULL !!"*  "(+
+btree !!"+/  "(+
+size !!"+/  "(+
+grow !!"+/  "(+
+page !!"+L  "(+
+id !!"+L  "(+
+btree !!"+L  "(+
+npages !!"+L  "(+
+hdr !!"+o  "(+
+get_page !!"+o` "(+
+btree !!"+o  "(+
+page !!"+o  "(+
+memset !!",7` "(+
+hdr !!",7  "(+
+page_hdr_size !!",7  "(+
+hdr !!",a  "(+
+recoff !!",a  "(+
+page_hdr_size !!",a  "(+
+btree !!"-(  "(+
+npages !!"-(  "(+
+hdr !!"-?  "(+
+page_hdr_t !!"-X 
+get_parent_page !!"-X$
+btree !!"-X  "-m
+page_t !!"-X  "-m
+page !!"-X  "-m
+parent !!"-X  "-m
+grow !!".E  "-m
+page_hdr_t !!".S  "-m
+hdr !!".S  "-m
+parent !!".l  "-m
+id !!".l  "-m
+page !!".l  "-m
+hdr !!".l  "-m
+parent !!"/6  "-m
+id !!"/6  "-m
+PAGE_ID_NONE !!"/6  "-m
+get_page !!"/\` "-m
+btree !!"/\  "-m
+parent !!"/\  "-m
+grow !!"/}  "-m
+NULL !!"0/  "-m
+hdr !!"0>  "-m
+add_page !!"0>` "-m
+btree !!"0>  "-m
+parent !!"0>  "-m
+NULL !!"0>  "-m
+NULL !!"0s  "-m
+put_page !!"1#` "-m
+btree !!"1#  "-m
+root !!"1#  "-m
+btree !!"1D  "-m
+root !!"1D  "-m
+hdr !!"1D  "-m
+get_record !!"1n$
+page_hdr_t !!"1n  "1y
+hdr !!"1n  "1y
+rec_off_t !!"1n  "1y
+rec !!"1n  "1y
+rec_off_t !!"2I  "1y
+rechdr !!"2I  "1y
+ASSERT !!"2b` "1y
+rec !!"2b  "1y
+hdr !!"2b  "1y
+nrecords !!"2b  "1y
+rechdr !!"35  "1y
+rec_off_t !!"35  "1y
+hdr !!"35  "1y
+PAGE_SIZE !!"35  "1y
+rec !!"3k  "1y
+rec_hdr_size !!"3k  "1y
+hdr !!"4,  "1y
+rechdr !!"4,  "1y
+search !!"4S$
+page_hdr_t !!"4S  "4\
+hdr !!"4S  "4\
+string !!"4S  "4\
+u32 !!"4S  "4\
+len !!"4S  "4\
+rec_off_t !!"4S  "4\
+rec !!"4S  "4\
+low !!"5E  "4\
+high !!"5E  "4\
+mid !!"5E  "4\
+key !!"5a  "4\
+cmp !!"5p  "4\
+low !!"5}  "4\
+high !!"6/  "4\
+hdr !!"6/  "4\
+nrecords !!"6/  "4\
+high !!"6N  "4\
+low !!"6N  "4\
+mid !!"6l  "4\
+low !!"6l  "4\
+high !!"6l  "4\
+key !!"70  "4\
+get_record !!"70` "4\
+hdr !!"70  "4\
+mid !!"70  "4\
+cmp !!"7\  "4\
+strcmp !!"7\` "4\
+key !!"7\  "4\
+string !!"7\  "4\
+cmp !!"8$  "4\
+rec !!"8:  "4\
+rec !!"8H  "4\
+rec_off_t !!"8H  "4\
+mid !!"8H  "4\
+cmp !!"8h  "4\
+low !!"8~  "4\
+mid !!"8~  "4\
+high !!"93  "4\
+mid !!"93  "4\
+rec !!"9H  "4\
+rec !!"9V  "4\
+rec_off_t !!"9V  "4\
+low !!"9V  "4\
+add_record !!":"$
+page_hdr_t !!":"  ":+
+hdr !!":"  ":+
+page_id_t !!":"  ":+
+page !!":"  ":+
+data !!":"  ":+
+u32 !!":j  ":+
+len !!":j  ":+
+u32 !!":{  ":+
+free !!":{  ":+
+rec_off_t !!";-  ":+
+rechdr !!";-  ":+
+u32 !!";G  ":+
+offset !!";G  ":+
+free !!";[  ":+
+PAGE_SIZE !!";[  ":+
+page_hdr_size !!";[  ":+
+hdr !!";[  ":+
+nrecords !!";[  ":+
+rec_hdr_size !!";[  ":+
+len !!"<Q  ":+
+free !!"<Q  ":+
+offset !!"<f  ":+
+hdr !!"<f  ":+
+recoff !!"<f  ":+
+page !!"=&  ":+
+PAGE_ID_NONE !!"=&  ":+
+page_id_t !!"=H  ":+
+hdr !!"=H  ":+
+offset !!"=H  ":+
+page !!"=H  ":+
+offset !!"=x  ":+
+page_id_t !!"=x  ":+
+memcpy !!">7` ":+
+hdr !!">7  ":+
+offset !!">7  ":+
+data !!">7  ":+
+len !!">7  ":+
+rechdr !!">i  ":+
+rec_off_t !!">i  ":+
+hdr !!">i  ":+
+PAGE_SIZE !!">i  ":+
+hdr !!"?A  ":+
+nrecords !!"?A  ":+
+rec_hdr_size !!"?A  ":+
+rechdr !!"?j  ":+
+hdr !!"?j  ":+
+recoff !!"?j  ":+
+hdr !!"@+  ":+
+nrecords !!"@+  ":+
+hdr !!"@C  ":+
+recoff !!"@C  ":+
+offset !!"@C  ":+
+len !!"@C  ":+
+hdr !!"@k  ":+
+flags !!"@k  ":+
+PAGE_FLAG_SORT !!"@k  ":+
+split !!"A> 
+btree_t !!"A> 
+btree !!"A> 
+page_t !!"A> 
+page !!"A> 
+newpage !!"A> 
+insert_record !!"A|$
+btree_t !!"A|  "B&
+btree !!"A|  "B&
+page_t !!"A|  "B&
+page !!"A|  "B&
+page_id_t !!"A|  "B&
+id !!"A|  "B&
+data !!"Bb  "B&
+u32 !!"Bb  "B&
+len !!"Bb  "B&
+page_t !!"C"  "B&
+newpage !!"C"  "B&
+add_record !!"C8` "B&
+page !!"C8  "B&
+hdr !!"C8  "B&
+id !!"C8  "B&
+data !!"C8  "B&
+len !!"C8  "B&
+split !!"Cs` "B&
+btree !!"Cs  "B&
+page !!"Cs  "B&
+newpage !!"Cs  "B&
+strcmp !!"DA` "B&
+get_record !!"DA` "B&
+newpage !!"DA  "B&
+hdr !!"DA  "B&
+data !!"DA  "B&
+put_page !!"E'` "B&
+page !!"E'  "B&
+page !!"E@  "B&
+newpage !!"E@  "B&
+put_page !!"EW` "B&
+newpage !!"EW  "B&
+comp_recs !!"E~$
+rechdr1 !!"E~  "F(
+rechdr2 !!"E~  "F(
+base !!"FU  "F(
+rec_off_t !!"Fh  "F(
+off1 !!"Fh  "F(
+rec_off_t !!"G!  "F(
+off2 !!"G!  "F(
+base !!"G9  "F(
+rechdr1 !!"G9  "F(
+PAGE_SIZE !!"G9  "F(
+ASSERT !!"Gs` "F(
+base !!"Gs  "F(
+rechdr2 !!"Gs  "F(
+PAGE_SIZE !!"Gs  "F(
+off1 !!"HZ  "F(
+rec_off_t !!"HZ  "F(
+rechdr1 !!"HZ  "F(
+off2 !!"I#  "F(
+rec_off_t !!"I#  "F(
+rechdr2 !!"I#  "F(
+strcmp !!"IK` "F(
+base !!"IK  "F(
+off1 !!"IK  "F(
+off2 !!"IK  "F(
+sort !!"J'$
+page_hdr_t !!"J'  "J0
+hdr !!"J'  "J0
+base !!"JJ  "J0
+base !!"JY  "J0
+hdr !!"JY  "J0
+PAGE_SIZE !!"JY  "J0
+nrecords !!"JY  "J0
+rec_hdr_size !!"JY  "J0
+qsort !!"KB` "J0
+base !!"KB  "J0
+hdr !!"KB  "J0
+nrecords !!"KB  "J0
+rec_hdr_size !!"KB  "J0
+comp_recs !!"KB  "J0
+hdr !!"L%  "J0
+flags !!"L%  "J0
+PAGE_FLAG_SORT !!"L%  "J0
+split !!"LX$
+btree_t !!"LX  "La
+btree !!"LX  "La
+page_t !!"LX  "La
+page !!"LX  "La
+newpage !!"LX  "La
+page_hdr_t !!"M8  "La
+tmphdr !!"M8  "La
+page_t !!"MT  "La
+parent !!"MT  "La
+rec_id_t !!"Mi  "La
+i !!"Mi  "La
+rec !!"M}  "La
+index_rec_t !!"N,  "La
+idxrec !!"N,  "La
+key !!"NG  "La
+result !!"NZ  "La
+page !!"Nh  "La
+hdr !!"Nh  "La
+flags !!"Nh  "La
+PAGE_FLAG_SORT !!"Nh  "La
+sort !!"O:` "La
+hdr !!"O:  "La
+tmphdr !!"OO  "La
+get_temp_page !!"OO` "La
+btree !!"OO  "La
+memcpy !!"Ov` "La
+tmphdr !!"Ov  "La
+hdr !!"Ov  "La
+page_hdr_size !!"Ov  "La
+tmphdr !!"PH  "La
+nrecords !!"PH  "La
+tmphdr !!"Pe  "La
+recoff !!"Pe  "La
+page_hdr_size !!"Pe  "La
+i !!"Q/  "La
+page !!"Q/  "La
+hdr !!"Q/  "La
+nrecords !!"Q/  "La
+rec !!"Qe  "La
+get_record !!"Qe` "La
+page !!"Qe  "La
+hdr !!"Qe  "La
+i !!"Qe  "La
+page !!"R2  "La
+hdr !!"R2  "La
+level !!"R2  "La
+idxrec !!"RQ  "La
+index_rec_t !!"RQ  "La
+rec !!"RQ  "La
+add_record !!"Rt` "La
+tmphdr !!"Rt  "La
+idxrec !!"Rt  "La
+page !!"Rt  "La
+key !!"Rt  "La
+strlen !!"SO` "La
+idxrec !!"SO  "La
+key !!"SO  "La
+add_record !!"Sn` "La
+tmphdr !!"Sn  "La
+PAGE_ID_NONE !!"Sn  "La
+rec !!"Sn  "La
+strlen !!"Sn` "La
+add_page !!"TT` "La
+btree !!"TT  "La
+newpage !!"TT  "La
+NULL !!"TT  "La
+newpage !!"U#  "La
+hdr !!"U#  "La
+parent !!"U#  "La
+newpage !!"UM  "La
+hdr !!"UM  "La
+prev !!"UM  "La
+page !!"UM  "La
+id !!"UM  "La
+newpage !!"Uw  "La
+hdr !!"Uw  "La
+next !!"Uw  "La
+newpage !!"V@  "La
+hdr !!"V@  "La
+level !!"V@  "La
+i !!"Vi  "La
+page !!"Vi  "La
+hdr !!"Vi  "La
+nrecords !!"Vi  "La
+rec !!"W7  "La
+get_record !!"W7` "La
+page !!"W7  "La
+hdr !!"W7  "La
+i !!"W7  "La
+page !!"Wc  "La
+hdr !!"Wc  "La
+level !!"Wc  "La
+idxrec !!"X#  "La
+index_rec_t !!"X#  "La
+rec !!"X#  "La
+add_record !!"XF` "La
+tmphdr !!"XF  "La
+idxrec !!"XF  "La
+page !!"XF  "La
+key !!"XF  "La
+strlen !!"Y!` "La
+idxrec !!"Y!  "La
+key !!"Y!  "La
+add_record !!"Y@` "La
+tmphdr !!"Y@  "La
+PAGE_ID_NONE !!"Y@  "La
+rec !!"Y@  "La
+strlen !!"Y@` "La
+memcpy !!"Z&` "La
+page !!"Z&  "La
+hdr !!"Z&  "La
+tmphdr !!"Z&  "La
+PAGE_SIZE !!"Z&  "La
+page !!"Z[  "La
+hdr !!"Z[  "La
+next !!"Z[  "La
+newpage !!"Z[  "La
+id !!"Z[  "La
+get_parent_page !!"[&` "La
+page !!"[&  "La
+parent !!"[&  "La
+NULL !!"[&  "La
+rec !!"[Y  "La
+get_record !!"[Y` "La
+newpage !!"[Y  "La
+hdr !!"[Y  "La
+newpage !!"\&  "La
+hdr !!"\&  "La
+level !!"\&  "La
+key !!"\E  "La
+index_rec_t !!"\E  "La
+rec !!"\E  "La
+key !!"\m  "La
+rec !!"\m  "La
+result !!"])  "La
+insert_record !!"])` "La
+btree !!"])  "La
+parent !!"])  "La
+newpage !!"])  "La
+id !!"])  "La
+key !!"])  "La
+strlen !!"]h` "La
+key !!"]h  "La
+put_page !!"^#` "La
+parent !!"^#  "La
+result !!"^=  "La
+btree_insert !!"^W$
+btree_t !!"^W  "^_
+btree !!"^W  "^_
+string !!"^W  "^_
+page_hdr_t !!"_)  "^_
+hdr !!"_)  "^_
+u32 !!"_B  "^_
+len !!"_B  "^_
+result !!"_S  "^_
+rec_id_t !!"_a  "^_
+rec !!"_a  "^_
+index_rec_t !!"_v  "^_
+idxrec !!"_v  "^_
+page_t !!"`2  "^_
+page !!"`2  "^_
+len !!"`F  "^_
+strlen !!"`F` "^_
+string !!"`F  "^_
+len !!"`g  "^_
+max_record_size !!"`g  "^_
+fprintf !!"a*` "^_
+stderr !!"a*  "^_
+len !!"at  "^_
+max_record_size !!"at  "^_
+page !!"b2  "^_
+id !!"b2  "^_
+btree !!"b2  "^_
+root !!"b2  "^_
+hdr !!"bU  "^_
+get_page !!"bU` "^_
+btree !!"bU  "^_
+page !!"bU  "^_
+ASSERT !!"b}` "^_
+hdr !!"b}  "^_
+NULL !!"b}  "^_
+hdr !!"c?  "^_
+level !!"c?  "^_
+result !!"cZ  "^_
+search !!"cZ` "^_
+hdr !!"cZ  "^_
+string !!"cZ  "^_
+len !!"cZ  "^_
+rec !!"cZ  "^_
+ASSERT !!"d/` "^_
+result !!"d/  "^_
+idxrec !!"dM  "^_
+index_rec_t !!"dM  "^_
+get_record !!"dM` "^_
+hdr !!"dM  "^_
+rec !!"dM  "^_
+put_page !!"e%` "^_
+page !!"e%  "^_
+page !!"e?  "^_
+id !!"e?  "^_
+idxrec !!"e?  "^_
+result !!"e`  "^_
+insert_record !!"e`` "^_
+btree !!"e`  "^_
+hdr !!"e`  "^_
+PAGE_ID_NONE !!"e`  "^_
+string !!"e`  "^_
+len !!"e`  "^_
+put_page !!"fI` "^_
+hdr !!"fI  "^_
+result !!"fb  "^_
+btree_create !!"f|$
+FILE !!"f|  "g%
+file !!"f|  "g%
+btree_t !!"f|  "g%
+btreep !!"f|  "g%
+btree_t !!"gO  "g%
+btree !!"gO  "g%
+page_hdr_t !!"gc  "g%
+hdr !!"gc  "g%
+btree !!"g|  "g%
+file !!"g|  "g%
+btree !!"h6  "g%
+size !!"h6  "g%
+btree !!"hM  "g%
+npages !!"hM  "g%
+hdr !!"he  "g%
+add_page !!"he` "g%
+btree !!"he  "g%
+hdr !!"i(  "g%
+NULL !!"i(  "g%
+hdr !!"i@  "g%
+parent !!"i@  "g%
+btree !!"i@  "g%
+root !!"i@  "g%
+id !!"i@  "g%
+add_page !!"ig` "g%
+btree !!"ig  "g%
+root !!"ig  "g%
+NULL !!"ig  "g%
+btree !!"j9  "g%
+root !!"j9  "g%
+hdr !!"j9  "g%
+parent !!"j9  "g%
+PAGE_ID_NONE !!"j9  "g%
+btree !!"ji  "g%
+root !!"ji  "g%
+hdr !!"ji  "g%
+level !!"ji  "g%
+btree !!"k-  "g%
+tmppage !!"k-  "g%
+id !!"k-  "g%
+PAGE_ID_NONE !!"k-  "g%
+btree !!"kX  "g%
+tmppage !!"kX  "g%
+hdr !!"kX  "g%
+page_hdr_t !!"kX  "g%
+anon_map !!"kX` "g%
+PAGE_SIZE !!"kX  "g%
+btree !!"l;  "g%
+tmppage !!"l;  "g%
+hdr !!"l;  "g%
+NULL !!"l;  "g%
+btree !!"lb  "g%
+tmppage !!"lb  "g%
+ref !!"lb  "g%
+insert_record !!"m!` "g%
+btree !!"m!  "g%
+root !!"m!  "g%
+hdr !!"m!  "g%
+id !!"m!  "g%
+btree_init !!"mq$
+sysconf !!"n%` "my
+_SC_PAGESIZE !!"n%  "my
+PAGE_SIZE !!"n%  "my
+fprintf !!"nX` "my
+stderr !!"nX  "my
+fprintf !!"o?` "my
+stderr !!"o?  "my
+fprintf !!"oi` "my
+stderr !!"oi  "my
+PAGE_SIZE !!"oi  "my
+fprintf !!"pA` "my
+stderr !!"pA  "my
+rec_hdr_size !!"pA  "my
+fprintf !!"q"` "my
+stderr !!"q"  "my
+page_hdr_size !!"q"  "my
+fprintf !!"qa` "my
+stderr !!"qa  "my
+max_record_size !!"qa  "my
+TEST_BTREE !!"rP 
+main !!"rh$
+btree_init !!"rx` "rp
+build.h !!"sF~
+global.h !!"sX~
+library.h !!"sk~
+alloc.h !!"s~
+scanner.h !!"t2~
+version.h !!"tD~
+vp.h !!"tW~
+defined !!"tg 
+USE_NCURSES !!"tg 
+RENAMED_NCURSES !!"tg 
+ncurses.h !!"uD~
+curses.h !!"uX~
+BOOL !!"uk 
+buildonly !!"ukg
+NO !!"uk 
+BOOL !!"v+ 
+unconditional !!"v+g
+NO !!"v+ 
+BOOL !!"vL 
+fileschanged !!"vLg
+invname_buf !!"vgg
+INVNAME !!"vg 
+invpost_buf !!"w*g
+INVPOST !!"w* 
+reffile_buf !!"wLg
+REFFILE !!"wL 
+invname !!"wng
+invname_buf !!"wn 
+invpost !!"x.g
+invpost_buf !!"x. 
+reffile !!"xMg
+reffile_buf !!"xM 
+newreffile !!"xlg
+FILE !!"x 
+newrefs !!"xg
+FILE !!"y7 
+postings !!"y7g
+symrefs !!"yOg
+INVCONTROL !!"ye 
+invcontrol !!"yeg
+newinvname !!"z#g
+newinvpost !!"z7g
+traileroffset !!"zKg
+cannotindex !!"z` 
+compare !!"zt 
+s1 !!"zt 
+s2 !!"zt 
+copydata !!"{< 
+copyinverted !!"{O 
+getoldfile !!"{d 
+movefile !!"{y 
+new !!"{y 
+old !!"{y 
+putheader !!"|; 
+dir !!"|; 
+fetch_include_from_dbase !!"|T 
+size_t !!"|T 
+putlist !!"| 
+names !!"| 
+count !!"| 
+BOOL !!"}C 
+samelist !!"}C 
+FILE !!"}C 
+oldrefs !!"}C 
+names !!"}C 
+count !!"}C 
+cannotindex !!"}}$
+fprintf !!"~1` "~$
+stderr !!"~1  "~$
+invertedindex !!"$  "~$
+NO !!"$  "~$
+errorsfound !!"=  "~$
+YES !!"=  "~$
+fprintf !!"W` "~$
+stderr !!"W  "~$
+newinvname !!#!.  "~$
+newinvpost !!#!.  "~$
+unlink !!#!J` "~$
+newinvname !!#!J  "~$
+unlink !!#!d` "~$
+newinvpost !!#!d  "~$
+BOOL !!#"* 
+samelist !!#"7$
+FILE !!#"7  #">
+oldrefs !!#"7  #">
+names !!#"7  #">
+count !!#"7  #">
+oldname !!#"k  #">
+PATHLEN !!#"k  #">
+oldcount !!##*  #">
+i !!##:  #">
+fscanf !!##E` #">
+oldrefs !!##E  #">
+oldcount !!##E  #">
+oldcount !!##y  #">
+count !!##y  #">
+NO !!#$4  #">
+i !!#$B  #">
+count !!#$B  #">
+fscanf !!#$d` #">
+oldrefs !!#$d  #">
+oldname !!#$d  #">
+strnotequal !!#%;` #">
+oldname !!#%;  #">
+names !!#%;  #">
+i !!#%;  #">
+NO !!#%e  #">
+YES !!#%s  #">
+setup_build_filenames !!#&.$
+reffile !!#&.  #&6
+path !!#&U  #&6
+s !!#&c  #&6
+path !!#&o  #&6
+mymalloc !!#&o` #&6
+strlen !!#&o` #&6
+reffile !!#&o  #&6
+strcpy !!#'A` #&6
+path !!#'A  #&6
+reffile !!#'A  #&6
+s !!#'`  #&6
+mybasename !!#'`` #&6
+path !!#'`  #&6
+s !!#(!  #&6
+strcat !!#(3` #&6
+path !!#(3  #&6
+s !!#(N  #&6
+strcpy !!#(Z` #&6
+s !!#(Z  #&6
+mybasename !!#(Z` #&6
+reffile !!#(Z  #&6
+newreffile !!#)&  #&6
+my_strdup !!#)&` #&6
+path !!#)&  #&6
+strcpy !!#)L` #&6
+s !!#)L  #&6
+mybasename !!#)L` #&6
+invname !!#)L  #&6
+newinvname !!#)w  #&6
+my_strdup !!#)w` #&6
+path !!#)w  #&6
+strcpy !!#*>` #&6
+s !!#*>  #&6
+mybasename !!#*>` #&6
+invpost !!#*>  #&6
+newinvpost !!#*i  #&6
+my_strdup !!#*i` #&6
+path !!#*i  #&6
+free !!#+0` #&6
+path !!#+0  #&6
+opendatabase !!#+O$
+symrefs !!#+d  #+V
+vpopen !!#+d` #+V
+reffile !!#+d  #+V
+O_BINARY !!#+d  #+V
+O_RDONLY !!#+d  #+V
+cannotopen !!#,N` #+V
+reffile !!#,N  #+V
+myexit !!#,g` #+V
+blocknumber !!#,z  #+V
+invertedindex !!#-3  #+V
+YES !!#-3  #+V
+invopen !!#-R` #+V
+invcontrol !!#-R  #+V
+invname !!#-R  #+V
+invpost !!#-R  #+V
+INVAVAIL !!#-R  #+V
+askforreturn !!#.3` #+V
+invertedindex !!#.I  #+V
+NO !!#.I  #+V
+rebuild !!#.m$
+close !!#.` #.t
+symrefs !!#.  #.t
+invertedindex !!#/8  #.t
+YES !!#/8  #.t
+invclose !!#/W` #.t
+invcontrol !!#/W  #.t
+nsrcoffset !!#/r  #.t
+npostings !!#0(  #.t
+build !!#0;` #.t
+opendatabase !!#0L` #.t
+refsfound !!#0a  #.t
+NULL !!#0a  #.t
+fclose !!#1!` #.t
+refsfound !!#1!  #.t
+refsfound !!#1<  #.t
+NULL !!#1<  #.t
+build !!#1a$
+i !!#1r  #1h
+FILE !!#1~  #1h
+oldrefs !!#1~  #1h
+time_t !!#25  #1h
+reftime !!#25  #1h
+file !!#2L  #1h
+oldfile !!#2Z  #1h
+newdir !!#2j  #1h
+PATHLEN !!#2j  #1h
+olddir !!#3(  #1h
+PATHLEN !!#3(  #1h
+oldname !!#3E  #1h
+PATHLEN !!#3E  #1h
+oldnum !!#3c  #1h
+stat !!#3s  #1h
+statstruct !!#3s  #1h
+firstfile !!#4)  #1h
+lastfile !!#4:  #1h
+built !!#4J  #1h
+copied !!#4\  #1h
+fileindex !!#4n  #1h
+BOOL !!#5!  #1h
+interactive !!#5!  #1h
+YES !!#5!  #1h
+strcpy !!#5@` #1h
+newdir !!#5@  #1h
+currentdir !!#5@  #1h
+strcmp !!#5b` #1h
+currentdir !!#5b  #1h
+home !!#5b  #1h
+strcpy !!#60` #1h
+newdir !!#60  #1h
+strncmp !!#6P` #1h
+currentdir !!#6P  #1h
+home !!#6P  #1h
+strlen !!#6P` #1h
+sprintf !!#70` #1h
+newdir !!#70  #1h
+currentdir !!#70  #1h
+strlen !!#70` #1h
+home !!#70  #1h
+qsort !!#7p` #1h
+srcfiles !!#7p  #1h
+nsrcfiles !!#7p  #1h
+compare !!#7p  #1h
+oldrefs !!#8E  #1h
+vpfopen !!#8E` #1h
+reffile !!#8E  #1h
+NULL !!#8E  #1h
+unconditional !!#8z  #1h
+NO !!#8z  #1h
+fscanf !!#96` #1h
+oldrefs !!#96  #1h
+PATHLEN_STR !!#96  #1h
+fileversion !!#96  #1h
+olddir !!#96  #1h
+strcmp !!#:+` #1h
+olddir !!#:+  #1h
+currentdir !!#:+  #1h
+strcmp !!#:V` #1h
+olddir !!#:V  #1h
+newdir !!#:V  #1h
+fstat !!#;"` #1h
+fileno !!#;"` #1h
+oldrefs !!#;"  #1h
+statstruct !!#;"  #1h
+reftime !!#;N  #1h
+statstruct !!#;N  #1h
+st_mtime !!#;N  #1h
+fileversion !!#;q  #1h
+BOOL !!#<-  #1h
+oldcompress !!#<-  #1h
+YES !!#<-  #1h
+BOOL !!#<N  #1h
+oldinvertedindex !!#<N  #1h
+NO !!#<N  #1h
+BOOL !!#<p  #1h
+oldtruncate !!#<p  #1h
+NO !!#<p  #1h
+c !!#=/  #1h
+c !!#=:  #1h
+getc !!#=:` #1h
+oldrefs !!#=:  #1h
+c !!#=a  #1h
+ungetc !!#=w` #1h
+c !!#=w  #1h
+oldrefs !!#=w  #1h
+c !!#>6  #1h
+getc !!#>6` #1h
+oldrefs !!#>6  #1h
+oldcompress !!#>V  #1h
+NO !!#>V  #1h
+oldinvertedindex !!#>o  #1h
+YES !!#>o  #1h
+fscanf !!#?,` #1h
+oldrefs !!#?,  #1h
+totalterms !!#?,  #1h
+oldtruncate !!#?X  #1h
+YES !!#?X  #1h
+oldcompress !!#?p  #1h
+compress !!#?p  #1h
+oldtruncate !!#?p  #1h
+trun_syms !!#?p  #1h
+posterr !!#@N` #1h
+force !!#AL  #1h
+oldinvertedindex !!#AY  #1h
+invertedindex !!#AY  #1h
+posterr !!#B!` #1h
+invertedindex !!#Bx  #1h
+NO !!#Bx  #1h
+posterr !!#C7` #1h
+invname !!#Ci  #1h
+invpost !!#Ci  #1h
+unlink !!#D"` #1h
+invname !!#D"  #1h
+unlink !!#D:` #1h
+invpost !!#D:  #1h
+outofdate !!#DR  #1h
+fscanf !!#Dd` #1h
+oldrefs !!#Dd  #1h
+traileroffset !!#Dd  #1h
+fseek !!#E=` #1h
+oldrefs !!#E=  #1h
+traileroffset !!#E=  #1h
+SEEK_SET !!#E=  #1h
+posterr !!#Ev` #1h
+force !!#FZ  #1h
+fileschanged !!#Fg  #1h
+YES !!#Fg  #1h
+outofdate !!#G(  #1h
+samelist !!#G:` #1h
+oldrefs !!#G:  #1h
+srcdirs !!#G:  #1h
+nsrcdirs !!#G:  #1h
+NO !!#G:  #1h
+samelist !!#Gn` #1h
+oldrefs !!#Gn  #1h
+incdirs !!#Gn  #1h
+nincdirs !!#Gn  #1h
+NO !!#Gn  #1h
+fscanf !!#HC` #1h
+oldrefs !!#HC  #1h
+oldnum !!#HC  #1h
+fileversion !!#Ht  #1h
+fscanf !!#Ht` #1h
+oldrefs !!#Ht  #1h
+outofdate !!#IS  #1h
+i !!#Ie  #1h
+nsrcfiles !!#Ie  #1h
+fscanf !!#J+` #1h
+oldrefs !!#J+  #1h
+oldname !!#J+  #1h
+strnotequal !!#J^` #1h
+oldname !!#J^  #1h
+srcfiles !!#J^  #1h
+i !!#J^  #1h
+lstat !!#K+` #1h
+srcfiles !!#K+  #1h
+i !!#K+  #1h
+statstruct !!#K+  #1h
+statstruct !!#K\  #1h
+st_mtime !!#K\  #1h
+reftime !!#K\  #1h
+outofdate !!#L$  #1h
+i !!#L6  #1h
+oldnum !!#L6  #1h
+fgets !!#L6` #1h
+oldname !!#L6  #1h
+oldrefs !!#L6  #1h
+addsrcfile !!#Lw` #1h
+oldname !!#Lw  #1h
+fclose !!#M4` #1h
+oldrefs !!#M4  #1h
+outofdate !!#ML  #1h
+fileversion !!#M]  #1h
+FILEVERSION !!#M]  #1h
+fprintf !!#N$` #1h
+stderr !!#N$  #1h
+force !!#Nq  #1h
+symrefs !!#N~  #1h
+vpopen !!#N~` #1h
+reffile !!#N~  #1h
+O_BINARY !!#N~  #1h
+O_RDONLY !!#N~  #1h
+postfatal !!#Oh` #1h
+reffile !!#Oh  #1h
+blocknumber !!#P=  #1h
+read_block !!#PU` #1h
+scanpast !!#Pk` #1h
+oldfile !!#Q"  #1h
+getoldfile !!#Q"` #1h
+force !!#Q@  #1h
+reftime !!#QL  #1h
+oldfile !!#Q^  #1h
+NULL !!#Q^  #1h
+newrefs !!#Qu  #1h
+myfopen !!#Qu` #1h
+newreffile !!#Qu  #1h
+NULL !!#Qu  #1h
+postfatal !!#RP` #1h
+reffile !!#RP  #1h
+invertedindex !!#S%  #1h
+YES !!#S%  #1h
+postings !!#S%  #1h
+myfopen !!#S%` #1h
+temp1 !!#S%  #1h
+NULL !!#S%  #1h
+cannotwrite !!#St` #1h
+temp1 !!#St  #1h
+cannotindex !!#T/` #1h
+putheader !!#TC` #1h
+newdir !!#TC  #1h
+fileversion !!#T]  #1h
+FILEVERSION !!#T]  #1h
+buildonly !!#T~  #1h
+YES !!#T~  #1h
+verbosemode !!#T~  #1h
+isatty !!#T~` #1h
+interactive !!#Ua  #1h
+NO !!#Ua  #1h
+searchcount !!#Ux  #1h
+dbputc !!#V.` #1h
+firstfile !!#VE  #1h
+lastfile !!#VX  #1h
+nsrcfiles !!#VX  #1h
+invertedindex !!#Vr  #1h
+YES !!#Vr  #1h
+srcoffset !!#W2  #1h
+mymalloc !!#W2` #1h
+nsrcfiles !!#W2  #1h
+progress !!#Wh` #1h
+built !!#Wh  #1h
+lastfile !!#X;  #1h
+linemode !!#XM  #1h
+NO !!#XM  #1h
+refresh !!#Xg` #1h
+fileindex !!#Xy  #1h
+firstfile !!#Xy  #1h
+lastfile !!#Xy  #1h
+interactive !!#YX  #1h
+YES !!#YX  #1h
+fileindex !!#YX  #1h
+progress !!#Z-` #1h
+fileindex !!#Z-  #1h
+lastfile !!#Z-  #1h
+file !!#Zi  #1h
+srcfiles !!#Zi  #1h
+fileindex !!#Zi  #1h
+oldfile !!#[,  #1h
+NULL !!#[,  #1h
+strcmp !!#[,` #1h
+file !!#[,  #1h
+oldfile !!#[g  #1h
+getoldfile !!#[g` #1h
+oldfile !!#\&  #1h
+NULL !!#\&  #1h
+strcmp !!#\&` #1h
+file !!#\&  #1h
+crossref !!#\c` #1h
+file !!#\c  #1h
+built !!#\{  #1h
+lstat !!#]+` #1h
+file !!#]+  #1h
+statstruct !!#]+  #1h
+statstruct !!#]U  #1h
+st_mtime !!#]U  #1h
+reftime !!#]U  #1h
+crossref !!#]}` #1h
+file !!#]}  #1h
+built !!#^6  #1h
+oldfile !!#^E  #1h
+getoldfile !!#^E` #1h
+putfilename !!#^c` #1h
+file !!#^c  #1h
+invertedindex !!#^~  #1h
+YES !!#^~  #1h
+copyinverted !!#_>` #1h
+copydata !!#_S` #1h
+copied !!#_f  #1h
+oldfile !!#_u  #1h
+getoldfile !!#_u` #1h
+lastfile !!#`4  #1h
+nsrcfiles !!#`4  #1h
+firstfile !!#`S  #1h
+lastfile !!#`S  #1h
+lastfile !!#`l  #1h
+nsrcfiles !!#`l  #1h
+invertedindex !!#a'  #1h
+YES !!#a'  #1h
+srcoffset !!#aF  #1h
+myrealloc !!#aF` #1h
+nsrcfiles !!#an  #1h
+qsort !!#b-` #1h
+srcfiles !!#b-  #1h
+firstfile !!#b-  #1h
+lastfile !!#b-  #1h
+compare !!#bg  #1h
+putfilename !!#b}` #1h
+dbputc !!#c6` #1h
+traileroffset !!#cM  #1h
+dboffset !!#cM  #1h
+putlist !!#ck` #1h
+srcdirs !!#ck  #1h
+nsrcdirs !!#ck  #1h
+putlist !!#d/` #1h
+incdirs !!#d/  #1h
+nincdirs !!#d/  #1h
+putlist !!#dR` #1h
+srcfiles !!#dR  #1h
+nsrcfiles !!#dR  #1h
+fflush !!#dw` #1h
+newrefs !!#dw  #1h
+EOF !!#dw  #1h
+cannotwrite !!#e=` #1h
+newreffile !!#e=  #1h
+invertedindex !!#eZ  #1h
+YES !!#eZ  #1h
+sortcommand !!#ey  #1h
+PATHLEN !!#ey  #1h
+fflush !!#f<` #1h
+postings !!#f<  #1h
+EOF !!#f<  #1h
+cannotwrite !!#fb` #1h
+temp1 !!#fb  #1h
+fstat !!#f|` #1h
+fileno !!#f|` #1h
+postings !!#f|  #1h
+statstruct !!#f|  #1h
+fclose !!#gJ` #1h
+postings !!#gJ  #1h
+sprintf !!#gc` #1h
+sortcommand !!#gc  #1h
+tmpdir !!#gc  #1h
+temp1 !!#gc  #1h
+postings !!#hL  #1h
+mypopen !!#hL` #1h
+sortcommand !!#hL  #1h
+NULL !!#hL  #1h
+fprintf !!#i)` #1h
+stderr !!#i)  #1h
+cannotindex !!#im` #1h
+totalterms !!#j"  #1h
+invmake !!#j"` #1h
+newinvname !!#j"  #1h
+newinvpost !!#j"  #1h
+postings !!#j"  #1h
+movefile !!#jj` #1h
+newinvname !!#jj  #1h
+invname !!#jj  #1h
+movefile !!#k1` #1h
+newinvpost !!#k1  #1h
+invpost !!#k1  #1h
+cannotindex !!#kW` #1h
+mypclose !!#kk` #1h
+postings !!#kk  #1h
+sprintf !!#l'` #1h
+sortcommand !!#l'  #1h
+temp1 !!#l'  #1h
+fprintf !!#ls` #1h
+stderr !!#ls  #1h
+sortcommand !!#ls  #1h
+system !!#mJ` #1h
+sortcommand !!#mJ  #1h
+unlink !!#mg` #1h
+temp1 !!#mg  #1h
+free !!#m~` #1h
+srcoffset !!#m~  #1h
+rewind !!#n7` #1h
+newrefs !!#n7  #1h
+putheader !!#nO` #1h
+newdir !!#nO  #1h
+fclose !!#ni` #1h
+newrefs !!#ni  #1h
+symrefs !!#o"  #1h
+close !!#o;` #1h
+symrefs !!#o;  #1h
+oldrefs !!#oS  #1h
+NULL !!#oS  #1h
+fclose !!#oo` #1h
+oldrefs !!#oo  #1h
+movefile !!#p(` #1h
+newreffile !!#p(  #1h
+reffile !!#p(  #1h
+compare !!#pY$
+arg_s1 !!#pY  #p`
+arg_s2 !!#pY  #p`
+s1 !!#q'  #p`
+arg_s1 !!#q'  #p`
+s2 !!#qL  #p`
+arg_s2 !!#qL  #p`
+strcmp !!#qq` #p`
+s1 !!#qq  #p`
+s2 !!#qq  #p`
+seek_to_trailer !!#r>$
+FILE !!#r>  #rE
+f !!#r>  #rE
+fscanf !!#r`` #rE
+f !!#r`  #rE
+traileroffset !!#r`  #rE
+postfatal !!#s5` #rE
+reffile !!#s5  #rE
+fseek !!#sv` #rE
+f !!#sv  #rE
+traileroffset !!#sv  #rE
+SEEK_SET !!#sv  #rE
+postfatal !!#tO` #rE
+reffile !!#tO  #rE
+getoldfile !!#u8$
+file !!#uL  #u?
+PATHLEN !!#uL  #u?
+blockp !!#ui  #u?
+NULL !!#ui  #u?
+blockp !!#v'  #u?
+NEWFILE !!#v'  #u?
+skiprefchar !!#vH` #u?
+fetch_string_from_dbase !!#v]` #u?
+file !!#v]  #u?
+file !!#w+  #u?
+file !!#wG  #u?
+NULL !!#wV  #u?
+scanpast !!#wf` #u?
+NULL !!#wf  #u?
+NULL !!#x)  #u?
+free_newbuildfiles !!#xD$
+free !!#x_` #xL
+newinvname !!#x_  #xL
+free !!#xw` #xL
+newinvpost !!#xw  #xL
+free !!#y0` #xL
+newreffile !!#y0  #xL
+putheader !!#yS$
+dir !!#yS  #yZ
+dboffset !!#yl  #yZ
+fprintf !!#yl` #yZ
+newrefs !!#yl  #yZ
+FILEVERSION !!#yl  #yZ
+dir !!#yl  #yZ
+compress !!#zU  #yZ
+NO !!#zU  #yZ
+dboffset !!#zq  #yZ
+fprintf !!#zq` #yZ
+newrefs !!#zq  #yZ
+invertedindex !!#{>  #yZ
+YES !!#{>  #yZ
+dboffset !!#{]  #yZ
+fprintf !!#{]` #yZ
+newrefs !!#{]  #yZ
+totalterms !!#{]  #yZ
+dboffset !!#|<  #yZ
+fprintf !!#|<` #yZ
+newrefs !!#|<  #yZ
+trun_syms !!#|f  #yZ
+YES !!#|f  #yZ
+dboffset !!#}%  #yZ
+fprintf !!#}%` #yZ
+newrefs !!#}%  #yZ
+dboffset !!#}Q  #yZ
+fprintf !!#}Q` #yZ
+newrefs !!#}Q  #yZ
+traileroffset !!#}Q  #yZ
+PRINTF_RETVAL_BROKEN !!#~1  #yZ
+dboffset !!#~S  #yZ
+ftell !!#~S` #yZ
+newrefs !!#~S  #yZ
+putlist !!#"$
+names !!#"  #)
+count !!#"  #)
+i !!#E  #)
+size !!#E  #)
+fprintf !!#\` #)
+newrefs !!#\  #)
+count !!#\  #)
+names !!$!&  #)
+srcfiles !!$!&  #)
+i !!$!C  #)
+count !!$!C  #)
+size !!$!e  #)
+strlen !!$!e` #)
+names !!$!e  #)
+i !!$!e  #)
+fprintf !!$".` #)
+newrefs !!$".  #)
+size !!$".  #)
+i !!$"W  #)
+count !!$"W  #)
+fputs !!$"y` #)
+names !!$"y  #)
+i !!$"y  #)
+newrefs !!$"y  #)
+EOF !!$"y  #)
+putc !!$#K` #)
+newrefs !!$#K  #)
+EOF !!$#K  #)
+cannotwrite !!$#r` #)
+newreffile !!$#r  #)
+copydata !!$$;$
+symbol !!$$N  $$B
+PATLEN !!$$N  $$B
+cp !!$$k  $$B
+setmark !!$$w` $$B
+cp !!$%.  $$B
+blockp !!$%.  $$B
+cp !!$%C  $$B
+dbputc !!$%Y` $$B
+cp !!$%Y  $$B
+cp !!$%r  $$B
+read_block !!$%r` $$B
+NULL !!$%r  $$B
+dbputc !!$&L` $$B
+cp !!$&c  $$B
+cp !!$'"  $$B
+read_block !!$'"` $$B
+cp !!$'>  $$B
+NULL !!$'>  $$B
+NEWFILE !!$'>  $$B
+cp !!$'h  $$B
+INCLUDE !!$'h  $$B
+blockp !!$(%  $$B
+cp !!$(%  $$B
+fetch_include_from_dbase !!$(:` $$B
+symbol !!$(:  $$B
+writestring !!$(l` $$B
+symbol !!$(l  $$B
+setmark !!$))` $$B
+cp !!$)?  $$B
+blockp !!$)?  $$B
+blockp !!$)T  $$B
+cp !!$)T  $$B
+copyinverted !!$)t$
+cp !!$**  $){
+c !!$*6  $){
+type !!$*A  $){
+symbol !!$*N  $){
+PATLEN !!$*N  $){
+cp !!$*k  $){
+blockp !!$*k  $){
+setmark !!$+!` $){
+cp !!$+7  $){
+dbputc !!$+M` $){
+cp !!$+M  $){
+cp !!$+f  $){
+read_block !!$+f` $){
+NULL !!$+f  $){
+dbputc !!$,@` $){
+cp !!$,W  $){
+cp !!$,u  $){
+read_block !!$,u` $){
+cp !!$-2  $){
+NULL !!$-2  $){
+cp !!$-J  $){
+lineoffset !!$-X  $){
+dboffset !!$-X  $){
+dbputc !!$-y` $){
+blockp !!$.1  $){
+cp !!$.1  $){
+type !!$.F  $){
+getrefchar !!$.F` $){
+type !!$.b  $){
+NEWFILE !!$.q  $){
+INCLUDE !!$/#  $){
+fetch_include_from_dbase !!$/4` $){
+symbol !!$/4  $){
+output !!$/f  $){
+dbputc !!$/u` $){
+type !!$/u  $){
+skiprefchar !!$0.` $){
+fetch_string_from_dbase !!$0C` $){
+symbol !!$0C  $){
+output !!$0t  $){
+c !!$1$  $){
+cp !!$1$  $){
+c !!$15  $){
+c !!$1K  $){
+dichar1 !!$1K  $){
+isalpha !!$1p` $){
+c !!$1p  $){
+blockp !!$2;  $){
+cp !!$2;  $){
+fetch_string_from_dbase !!$2P` $){
+symbol !!$2P  $){
+type !!$3"  $){
+output !!$34  $){
+putposting !!$3B` $){
+symbol !!$3B  $){
+type !!$3B  $){
+writestring !!$3d` $){
+symbol !!$3d  $){
+blockp !!$4!  $){
+NULL !!$4!  $){
+cp !!$4>  $){
+blockp !!$4>  $){
+blockp !!$4S  $){
+cp !!$4S  $){
+movefile !!$4s$
+new !!$4s  $4z
+old !!$4s  $4z
+unlink !!$55` $4z
+old !!$55  $4z
+rename !!$5J` $4z
+new !!$5J  $4z
+old !!$5J  $4z
+myperror !!$5p` $4z
+postfatal !!$6+` $4z
+new !!$6g  $4z
+old !!$6g  $4z
+fetch_include_from_dbase !!$7%$
+s !!$7%  $7,
+size_t !!$7%  $7,
+length !!$7%  $7,
+dbputc !!$7[` $7,
+INCLUDE !!$7[  $7,
+skiprefchar !!$7w` $7,
+fetch_string_from_dbase !!$8-` $7,
+s !!$8-  $7,
+length !!$8-  $7,
+incfile !!$8X` $7,
+s !!$8X  $7,
+CSCOPE_BUILD_H !!$9/ 
+CSCOPE_BUILD_H !!$9J#
+global.h !!$9f~
+invlib.h !!$9y~
+dbputc !!$:-#
+c !!$:-  $:4
+dboffset !!$:-  $:4
+putc !!$:-` $:4
+newrefs !!$:-  $:4
+dbfputs !!$:l#
+s !!$:l  $:s
+dboffset !!$:l  $:s
+strlen !!$:l` $:s
+fputs !!$:l` $:s
+newrefs !!$:l  $:s
+BOOL !!$;T 
+buildonly !!$;T 
+BOOL !!$;k 
+unconditional !!$;k 
+BOOL !!$<% 
+fileschanged !!$<% 
+reffile !!$<? 
+invname !!$<O 
+invpost !!$<_ 
+newreffile !!$<o 
+FILE !!$=" 
+newrefs !!$=" 
+FILE !!$=8 
+postings !!$=8 
+symrefs !!$=O 
+INVCONTROL !!$=_ 
+invcontrol !!$=_ 
+build !!$={ 
+free_newbuildfiles !!$>, 
+opendatabase !!$>E 
+rebuild !!$>Y 
+setup_build_filenames !!$>j 
+reffile !!$>j 
+seek_to_trailer !!$?0 
+FILE !!$?0 
+f !!$?0 
+global.h !!$?b~
+build.h !!$?u~
+alloc.h !!$@(~
+stdlib.h !!$@:~
+defined !!$@M 
+USE_NCURSES !!$@M 
+RENAMED_NCURSES !!$@M 
+ncurses.h !!$A*~
+curses.h !!$A>~
+ctype.h !!$AQ~
+rcsid !!$Abg
+selecting !!$BVg
+curdispline !!$Bfg
+BOOL !!$B 
+caseless !!$Bg
+BOOL !!$C6 
+change !!$C6g
+BOOL !!$CM 
+changing !!$CMg
+newpat !!$Cdg
+PATLEN !!$Cd 
+Pattern !!$D"g
+PATLEN !!$D" 
+appendprompt !!$D?g
+pipeprompt !!$Dig
+readprompt !!$E:g
+toprompt !!$Edg
+BOOL !!$F" 
+changestring !!$F" 
+clearprompt !!$F> 
+mark !!$FR 
+i !!$FR 
+scrollbar !!$Ff 
+MOUSE !!$Ff 
+p !!$Ff 
+BOOL !!$G% 
+command !!$G0$
+commandc !!$G0  $G6
+filename !!$GK  $G6
+PATHLEN !!$GK  $G6
+MOUSE !!$Gi  $G6
+p !!$Gi  $G6
+c !!$G{  $G6
+i !!$G{  $G6
+FILE !!$H+  $G6
+file !!$H+  $G6
+cmd !!$H>  $G6
+curritem !!$H>  $G6
+item !!$H>  $G6
+s !!$H\  $G6
+commandc !!$Hg  $G6
+ctrl !!$Hy` $G6
+caseless !!$I,  $G6
+NO !!$I,  $G6
+caseless !!$IE  $G6
+YES !!$IE  $G6
+postmsg2 !!$IZ` $G6
+caseless !!$J&  $G6
+NO !!$J&  $G6
+postmsg2 !!$J:` $G6
+egrepcaseless !!$Jf` $G6
+caseless !!$Jf  $G6
+NO !!$K#  $G6
+ctrl !!$K0` $G6
+isuptodate !!$KC  $G6
+YES !!$KC  $G6
+postmsg !!$Ka` $G6
+NO !!$LI  $G6
+exitcurses !!$LW` $G6
+freefilelist !!$Ll` $G6
+makefilelist !!$M!` $G6
+rebuild !!$M7` $G6
+errorsfound !!$MI  $G6
+YES !!$MI  $G6
+errorsfound !!$Mh  $G6
+NO !!$Mh  $G6
+askforreturn !!$N"` $G6
+entercurses !!$N8` $G6
+clearmsg !!$NM` $G6
+totallines !!$N`  $G6
+disprefs !!$Nt  $G6
+topline !!$O(  $G6
+nextline !!$O(  $G6
+selecting !!$OD  $G6
+UNIXPC !!$OV  $G6
+ESC !!$Og  $G6
+ctrl !!$Ot` $G6
+p !!$P(  $G6
+getmouseaction !!$P(` $G6
+DUMMYCHAR !!$P(  $G6
+NULL !!$P(  $G6
+NO !!$P_  $G6
+p !!$Pm  $G6
+button !!$Pm  $G6
+scrollbar !!$Q,` $G6
+p !!$Q,  $G6
+p !!$QB  $G6
+x2 !!$QB  $G6
+NO !!$Q\  $G6
+p !!$Qj  $G6
+y1 !!$Qj  $G6
+FLDLINE !!$Qj  $G6
+i !!$R,  $G6
+disprefs !!$R,  $G6
+p !!$RT  $G6
+y1 !!$RT  $G6
+displine !!$RT  $G6
+i !!$RT  $G6
+editref !!$Ry` $G6
+i !!$Ry  $G6
+field !!$S/  $G6
+p !!$S/  $G6
+y1 !!$S/  $G6
+FLDLINE !!$S/  $G6
+field !!$ST  $G6
+FIELDS !!$ST  $G6
+field !!$Sq  $G6
+FIELDS !!$Sq  $G6
+setfield !!$T.` $G6
+resetcmd !!$TA` $G6
+NO !!$TT  $G6
+disprefs !!$Tb  $G6
+selecting !!$Tv  $G6
+selecting !!$U2  $G6
+move !!$UE` $G6
+displine !!$UE  $G6
+curdispline !!$UE  $G6
+refresh !!$Un` $G6
+atfield !!$V!` $G6
+resetcmd !!$V3` $G6
+NO !!$VF  $G6
+KEY_ENTER !!$VT  $G6
+KEY_ENTER !!$Vk  $G6
+selecting !!$V~  $G6
+editref !!$W2` $G6
+curdispline !!$W2  $G6
+YES !!$WO  $G6
+ctrl !!$W^` $G6
+KEY_DOWN !!$Wq  $G6
+KEY_DOWN !!$X(  $G6
+KEY_RIGHT !!$X:  $G6
+KEY_RIGHT !!$XQ  $G6
+selecting !!$Xd  $G6
+curdispline !!$Xw  $G6
+disprefs !!$Xw  $G6
+move !!$Y?` $G6
+displine !!$Y?  $G6
+curdispline !!$Y?  $G6
+refresh !!$Yj` $G6
+field !!$Y|  $G6
+FIELDS !!$Y|  $G6
+setfield !!$ZA` $G6
+atfield !!$ZT` $G6
+resetcmd !!$Zf` $G6
+NO !!$Zy  $G6
+ctrl !!$[(` $G6
+KEY_UP !!$[;  $G6
+KEY_UP !!$[O  $G6
+KEY_LEFT !!$[_  $G6
+KEY_LEFT !!$[u  $G6
+selecting !!$\(  $G6
+curdispline !!$\;  $G6
+move !!$\R` $G6
+displine !!$\R  $G6
+curdispline !!$\R  $G6
+refresh !!$\}` $G6
+field !!$]0  $G6
+FIELDS !!$]0  $G6
+setfield !!$]`` $G6
+atfield !!$]s` $G6
+resetcmd !!$^&` $G6
+NO !!$^9  $G6
+KEY_HOME !!$^G  $G6
+KEY_HOME !!$^]  $G6
+selecting !!$^o  $G6
+curdispline !!$_#  $G6
+move !!$_9` $G6
+REFLINE !!$_9  $G6
+refresh !!$_V` $G6
+field !!$_h  $G6
+setfield !!$_y` $G6
+atfield !!$`-` $G6
+resetcmd !!$`?` $G6
+NO !!$`R  $G6
+KEY_LL !!$``  $G6
+KEY_LL !!$`t  $G6
+selecting !!$a%  $G6
+move !!$a8` $G6
+displine !!$a8  $G6
+disprefs !!$a8  $G6
+refresh !!$ab` $G6
+field !!$at  $G6
+FIELDS !!$at  $G6
+setfield !!$b1` $G6
+atfield !!$bD` $G6
+resetcmd !!$bV` $G6
+NO !!$bi  $G6
+ctrl !!$bw` $G6
+KEY_NPAGE !!$c+  $G6
+KEY_NPAGE !!$cB  $G6
+totallines !!$cU  $G6
+NO !!$co  $G6
+curdispline !!$c}  $G6
+ctrl !!$d4` $G6
+KEY_PPAGE !!$dG  $G6
+KEY_PPAGE !!$d^  $G6
+totallines !!$dq  $G6
+NO !!$e,  $G6
+curdispline !!$e:  $G6
+totallines !!$eP  $G6
+mdisprefs !!$eP  $G6
+nextline !!$eu  $G6
+mdisprefs !!$eu  $G6
+nextline !!$f0  $G6
+mdisprefs !!$f0  $G6
+nextline !!$f[  $G6
+nextline !!$fm  $G6
+mdisprefs !!$fm  $G6
+nextline !!$g(  $G6
+nextline !!$g?  $G6
+totallines !!$g?  $G6
+mdisprefs !!$g?  $G6
+nextline !!$gi  $G6
+nextline !!$h!  $G6
+seekline !!$h3` $G6
+nextline !!$h3  $G6
+totallines !!$hM  $G6
+postmsg !!$hg` $G6
+move !!$i<` $G6
+PRLINE !!$i<  $G6
+addstr !!$iX` $G6
+s !!$iz  $G6
+c !!$j+  $G6
+mygetch !!$j+` $G6
+move !!$jR` $G6
+PRLINE !!$jR  $G6
+addstr !!$jn` $G6
+appendprompt !!$jn  $G6
+c !!$k+  $G6
+s !!$k<  $G6
+c !!$kL  $G6
+mygetline !!$kc` $G6
+newpat !!$kc  $G6
+COLS !!$l!  $G6
+appendprompt !!$l!  $G6
+c !!$l!  $G6
+NO !!$l!  $G6
+shellpath !!$lM` $G6
+filename !!$lM  $G6
+newpat !!$lM  $G6
+file !!$l{  $G6
+myfopen !!$l{` $G6
+filename !!$l{  $G6
+s !!$l{  $G6
+NULL !!$l{  $G6
+cannotopen !!$mR` $G6
+filename !!$mR  $G6
+seekline !!$ml` $G6
+c !!$n!  $G6
+getc !!$n!` $G6
+refsfound !!$n!  $G6
+EOF !!$n!  $G6
+putc !!$nM` $G6
+c !!$nM  $G6
+file !!$nM  $G6
+seekline !!$nh` $G6
+topline !!$nh  $G6
+fclose !!$o#` $G6
+file !!$o#  $G6
+clearprompt !!$o9` $G6
+NO !!$oM  $G6
+move !!$o[` $G6
+PRLINE !!$o[  $G6
+addstr !!$ow` $G6
+readprompt !!$ow  $G6
+mygetline !!$p3` $G6
+newpat !!$p3  $G6
+COLS !!$p3  $G6
+readprompt !!$p3  $G6
+NO !!$pj  $G6
+clearprompt !!$q#` $G6
+shellpath !!$q7` $G6
+filename !!$q7  $G6
+newpat !!$q7  $G6
+readrefs !!$qe` $G6
+filename !!$qe  $G6
+NO !!$qe  $G6
+postmsg2 !!$r,` $G6
+NO !!$rV  $G6
+YES !!$rd  $G6
+clearprompt !!$rs` $G6
+NO !!$s(  $G6
+totallines !!$s6  $G6
+postmsg !!$sP` $G6
+NO !!$t,  $G6
+move !!$t:` $G6
+PRLINE !!$t:  $G6
+addstr !!$tV` $G6
+pipeprompt !!$tV  $G6
+mygetline !!$tq` $G6
+newpat !!$tq  $G6
+COLS !!$tq  $G6
+pipeprompt !!$tq  $G6
+NO !!$tq  $G6
+clearprompt !!$uU` $G6
+NO !!$ui  $G6
+commandc !!$uw  $G6
+strcat !!$v4` $G6
+newpat !!$v4  $G6
+temp2 !!$v4  $G6
+remove !!$v_` $G6
+temp2 !!$v_  $G6
+exitcurses !!$vw` $G6
+file !!$w-  $G6
+mypopen !!$w-` $G6
+newpat !!$w-  $G6
+NULL !!$w-  $G6
+fprintf !!$wa` $G6
+stderr !!$wa  $G6
+newpat !!$wa  $G6
+seekline !!$xG` $G6
+c !!$x[  $G6
+getc !!$x[` $G6
+refsfound !!$x[  $G6
+EOF !!$x[  $G6
+putc !!$y(` $G6
+c !!$y(  $G6
+file !!$y(  $G6
+seekline !!$yC` $G6
+topline !!$yC  $G6
+mypclose !!$y]` $G6
+file !!$y]  $G6
+commandc !!$yu  $G6
+readrefs !!$z2` $G6
+temp2 !!$z2  $G6
+NO !!$z2  $G6
+postmsg !!$zV` $G6
+askforreturn !!${-` $G6
+entercurses !!${C` $G6
+defined !!${X` $G6
+KEY_RESIZE !!${X  $G6
+__DJGPP__ !!${X  $G6
+KEY_RESIZE !!$|1  $G6
+exitcurses !!$|E` $G6
+initscr !!$|Z` $G6
+entercurses !!$|k` $G6
+TERMINFO !!$}!  $G6
+keypad !!$}4` $G6
+stdscr !!$}4  $G6
+TRUE !!$}4  $G6
+HAVE_FIXKEYPAD !!$}T  $G6
+fixkeypad !!$}p` $G6
+UNIXPC !!$~&  $G6
+standend !!$~7` $G6
+dispinit !!$~I` $G6
+setfield !!$~[` $G6
+postmsg !!$~n` $G6
+display !!$$` $G6
+ctrl !!$6` $G6
+KEY_CLEAR !!$I  $G6
+KEY_CLEAR !!$`  $G6
+clearmsg2 !!$s` $G6
+clearok !!%!(` $G6
+curscr !!%!(  $G6
+TRUE !!%!(  $G6
+wrefresh !!%!I` $G6
+curscr !!%!I  $G6
+drawscrollbar !!%!c` $G6
+topline !!%!c  $G6
+bottomline !!%!c  $G6
+NO !!%"-  $G6
+execute !!%";` $G6
+shell !!%";  $G6
+NULL !!%";  $G6
+seekline !!%"b` $G6
+topline !!%"b  $G6
+clear !!%"|` $G6
+help !!%#-` $G6
+clear !!%#=` $G6
+seekline !!%#M` $G6
+topline !!%#M  $G6
+ctrl !!%#g` $G6
+editall !!%#z` $G6
+ctrl !!%$-` $G6
+ctrl !!%$@` $G6
+Pattern !!%$S  $G6
+addstr !!%$n` $G6
+Pattern !!%$n  $G6
+repeat !!%%'  $G6
+ctrl !!%%4` $G6
+ctrl !!%%G` $G6
+selecting !!%%Z  $G6
+NO !!%%k  $G6
+curritem !!%%y  $G6
+currentcmd !!%%y` $G6
+item !!%&:  $G6
+commandc !!%&:  $G6
+ctrl !!%&:` $G6
+nextcmd !!%&:` $G6
+prevcmd !!%&:` $G6
+clearmsg2 !!%&~` $G6
+curritem !!%'3  $G6
+item !!%'3  $G6
+postmsg2 !!%'O` $G6
+item !!%(1  $G6
+field !!%(B  $G6
+item !!%(B  $G6
+setfield !!%(^` $G6
+atfield !!%(q` $G6
+addstr !!%)$` $G6
+item !!%)$  $G6
+text !!%)$  $G6
+strcpy !!%)B` $G6
+Pattern !!%)B  $G6
+item !!%)B  $G6
+text !!%)B  $G6
+c !!%)g  $G6
+mygetch !!%)g` $G6
+repeat !!%*$  $G6
+ctrl !!%*1` $G6
+ctrl !!%*D` $G6
+myungetch !!%*W` $G6
+c !!%*W  $G6
+atfield !!%*o` $G6
+clrtoeol !!%+"` $G6
+myungetch !!%+3` $G6
+c !!%+3  $G6
+mygetline !!%+K` $G6
+Pattern !!%+K  $G6
+newpat !!%+K  $G6
+COLS !!%+K  $G6
+fldcolumn !!%+K  $G6
+caseless !!%+K  $G6
+strcpy !!%,;` $G6
+Pattern !!%,;  $G6
+newpat !!%,;  $G6
+resetcmd !!%,[` $G6
+repeat !!%,n  $G6
+NO !!%,{  $G6
+addch !!%-*` $G6
+commandc !!%-@  $G6
+mygetch !!%-@` $G6
+EOF !!%-@  $G6
+NO !!%-m  $G6
+addstr !!%-{` $G6
+ispat !!%.5  $G6
+postmsg !!%.B` $G6
+atfield !!%.{` $G6
+selecting !!%/.  $G6
+mouse !!%/.  $G6
+c !!%/L  $G6
+c !!%/X  $G6
+strchr !!%/X` $G6
+dispchars !!%/X  $G6
+commandc !!%/X  $G6
+editref !!%0*` $G6
+c !!%0*  $G6
+dispchars !!%0*  $G6
+isprint !!%0K` $G6
+commandc !!%0K  $G6
+ispat !!%0n  $G6
+mygetline !!%0z` $G6
+newpat !!%0z  $G6
+COLS !!%0z  $G6
+fldcolumn !!%0z  $G6
+commandc !!%1S  $G6
+caseless !!%1S  $G6
+strcpy !!%1s` $G6
+Pattern !!%1s  $G6
+newpat !!%1s  $G6
+resetcmd !!%23` $G6
+repeat !!%2F  $G6
+addcmd !!%2R` $G6
+field !!%2R  $G6
+Pattern !!%2R  $G6
+field !!%2s  $G6
+CHANGE !!%2s  $G6
+move !!%31` $G6
+PRLINE !!%31  $G6
+addstr !!%3M` $G6
+toprompt !!%3M  $G6
+mygetline !!%3g` $G6
+newpat !!%3g  $G6
+COLS !!%4%  $G6
+toprompt !!%4%  $G6
+NO !!%4@  $G6
+search !!%4R` $G6
+YES !!%4R  $G6
+curdispline !!%4o  $G6
+selecting !!%5&  $G6
+field !!%56  $G6
+DEFINITION !!%5F  $G6
+FILENAME !!%5Z  $G6
+totallines !!%5l  $G6
+topline !!%6&  $G6
+editref !!%68` $G6
+CHANGE !!%6K  $G6
+changestring !!%6[` $G6
+field !!%6t  $G6
+FILENAME !!%6t  $G6
+access !!%77` $G6
+newpat !!%77  $G6
+READ !!%77  $G6
+edit !!%7^` $G6
+newpat !!%7^  $G6
+NO !!%7y  $G6
+NO !!%8(  $G6
+YES !!%86  $G6
+clearprompt !!%8P$
+move !!%8d` %8W
+PRLINE !!%8d  %8W
+clrtoeol !!%9!` %8W
+BOOL !!%9= 
+readrefs !!%9I$
+filename !!%9I  %9P
+FILE !!%9e  %9P
+file !!%9e  %9P
+c !!%9y  %9P
+file !!%:%  %9P
+myfopen !!%:%` %9P
+filename !!%:%  %9P
+NULL !!%:%  %9P
+cannotopen !!%:\` %9P
+filename !!%:\  %9P
+NO !!%:v  %9P
+c !!%;%  %9P
+getc !!%;%` %9P
+file !!%;%  %9P
+EOF !!%;%  %9P
+NO !!%;N  %9P
+totallines !!%;\  %9P
+disprefs !!%;p  %9P
+nextline !!%<$  %9P
+writerefsfound !!%<6` %9P
+YES !!%<6  %9P
+putc !!%<[` %9P
+c !!%<[  %9P
+refsfound !!%<[  %9P
+c !!%<{  %9P
+getc !!%<{` %9P
+file !!%<{  %9P
+EOF !!%<{  %9P
+putc !!%=C` %9P
+c !!%=C  %9P
+refsfound !!%=C  %9P
+fclose !!%=c` %9P
+file !!%=c  %9P
+fclose !!%=y` %9P
+refsfound !!%=y  %9P
+refsfound !!%>5  %9P
+myfopen !!%>5` %9P
+temp1 !!%>5  %9P
+NULL !!%>5  %9P
+cannotopen !!%>o` %9P
+temp1 !!%>o  %9P
+NO !!%?(  %9P
+countrefs !!%?6` %9P
+YES !!%?J  %9P
+BOOL !!%?d 
+changestring !!%?q$
+newfile !!%@(  %?x
+PATHLEN !!%@(  %?x
+oldfile !!%@F  %?x
+PATHLEN !!%@F  %?x
+linenum !!%@d  %?x
+NUMLEN !!%@d  %?x
+msg !!%A"  %?x
+MSGLEN !!%A"  %?x
+FILE !!%A=  %?x
+script !!%A=  %?x
+BOOL !!%AR  %?x
+anymarked !!%AR  %?x
+NO !!%AR  %?x
+MOUSE !!%Ap  %?x
+p !!%Ap  %?x
+c !!%B$  %?x
+i !!%B/  %?x
+s !!%B;  %?x
+script !!%BG  %?x
+myfopen !!%BG` %?x
+temp2 !!%BG  %?x
+NULL !!%BG  %?x
+cannotopen !!%B|` %?x
+temp2 !!%B|  %?x
+NO !!%C5  %?x
+change !!%CC  %?x
+mycalloc !!%CC` %?x
+totallines !!%CC  %?x
+BOOL !!%CC  %?x
+changing !!%Ct  %?x
+YES !!%Ct  %?x
+mousemenu !!%D,` %?x
+display !!%D@` %?x
+same !!%DR  %?x
+atchange !!%D^` %?x
+c !!%Dq  %?x
+mygetch !!%Dq` %?x
+EOF !!%Dq  %?x
+c !!%E6  %?x
+ctrl !!%E6` %?x
+c !!%EP  %?x
+ctrl !!%EP` %?x
+c !!%Em  %?x
+ctrl !!%Ez` %?x
+KEY_NPAGE !!%F.  %?x
+KEY_NPAGE !!%FE  %?x
+KEY_PPAGE !!%FX  %?x
+KEY_PPAGE !!%Fo  %?x
+command !!%G#` %?x
+c !!%G#  %?x
+ctrl !!%G9` %?x
+KEY_CLEAR !!%GL  %?x
+KEY_CLEAR !!%Gc  %?x
+command !!%Gv` %?x
+c !!%Gv  %?x
+same !!%H-  %?x
+ESC !!%H:  %?x
+UNIXPC !!%HG  %?x
+p !!%HX  %?x
+getmouseaction !!%HX` %?x
+DUMMYCHAR !!%HX  %?x
+NULL !!%HX  %?x
+nochange !!%I0  %?x
+ctrl !!%IA` %?x
+nochange !!%IT  %?x
+i !!%Ie  %?x
+topline !!%Ie  %?x
+nextline !!%Ie  %?x
+mark !!%J3` %?x
+i !!%J3  %?x
+same !!%JF  %?x
+ctrl !!%JS` %?x
+i !!%Jf  %?x
+totallines !!%Jf  %?x
+change !!%K,  %?x
+i !!%K,  %?x
+NO !!%K,  %?x
+change !!%KK  %?x
+i !!%KK  %?x
+YES !!%KK  %?x
+change !!%Kf  %?x
+i !!%Kf  %?x
+NO !!%Kf  %?x
+seekline !!%L!` %?x
+totallines !!%L!  %?x
+ctrl !!%L=` %?x
+p !!%LP  %?x
+getmouseaction !!%LP` %?x
+DUMMYCHAR !!%LP  %?x
+NULL !!%LP  %?x
+same !!%M(  %?x
+p !!%M5  %?x
+button !!%M5  %?x
+scrollbar !!%MS` %?x
+p !!%MS  %?x
+i !!%Mi  %?x
+disprefs !!%Mi  %?x
+p !!%N2  %?x
+y1 !!%N2  %?x
+displine !!%N2  %?x
+i !!%N2  %?x
+mark !!%NW` %?x
+i !!%NW  %?x
+same !!%Nj  %?x
+cc !!%Nw  %?x
+cc !!%O%  %?x
+strchr !!%O%` %?x
+dispchars !!%O%  %?x
+c !!%O%  %?x
+mark !!%OQ` %?x
+cc !!%OQ  %?x
+dispchars !!%OQ  %?x
+same !!%Oq  %?x
+fprintf !!%O~` %?x
+script !!%O~  %?x
+oldfile !!%PG  %?x
+seekline !!%P]` %?x
+i !!%Pq  %?x
+fscanf !!%Q!` %?x
+refsfound !!%Q!  %?x
+PATHLEN_STR !!%Q!  %?x
+NUMLEN_STR !!%Q!  %?x
+newfile !!%Q!  %?x
+linenum !!%Q!  %?x
+i !!%R(  %?x
+change !!%R6  %?x
+i !!%R6  %?x
+YES !!%R6  %?x
+anymarked !!%RV  %?x
+YES !!%RV  %?x
+strcmp !!%Rn` %?x
+newfile !!%Rn  %?x
+oldfile !!%Rn  %?x
+access !!%S;` %?x
+newfile !!%S;  %?x
+WRITE !!%S;  %?x
+sprintf !!%Sg` %?x
+msg !!%Sg  %?x
+newfile !!%Sg  %?x
+postmsg !!%T<` %?x
+msg !!%T<  %?x
+anymarked !!%TT  %?x
+NO !!%TT  %?x
+oldfile !!%Tk  %?x
+fprintf !!%U(` %?x
+script !!%U(  %?x
+strcpy !!%UG` %?x
+oldfile !!%UG  %?x
+newfile !!%UG  %?x
+fprintf !!%Uh` %?x
+script !!%Uh  %?x
+oldfile !!%Uh  %?x
+fprintf !!%V3` %?x
+script !!%V3  %?x
+linenum !!%V3  %?x
+s !!%V\  %?x
+Pattern !!%V\  %?x
+strchr !!%W$` %?x
+s !!%W$  %?x
+NULL !!%W$  %?x
+putc !!%WR` %?x
+script !!%WR  %?x
+caseless !!%Wo  %?x
+YES !!%Wo  %?x
+isalpha !!%Wo` %?x
+s !!%Wo  %?x
+putc !!%XB` %?x
+script !!%XB  %?x
+islower !!%X^` %?x
+s !!%X^  %?x
+putc !!%X}` %?x
+toupper !!%X}` %?x
+s !!%X}  %?x
+script !!%X}  %?x
+putc !!%YJ` %?x
+s !!%YJ  %?x
+script !!%YJ  %?x
+putc !!%Yg` %?x
+s !!%Yg  %?x
+script !!%Yg  %?x
+putc !!%Z%` %?x
+tolower !!%Z%` %?x
+s !!%Z%  %?x
+script !!%Z%  %?x
+putc !!%ZQ` %?x
+script !!%ZQ  %?x
+putc !!%Zm` %?x
+s !!%Zm  %?x
+script !!%Zm  %?x
+putc !!%[+` %?x
+script !!%[+  %?x
+s !!%[G  %?x
+newpat !!%[G  %?x
+strchr !!%[n` %?x
+s !!%[n  %?x
+NULL !!%[n  %?x
+putc !!%\:` %?x
+script !!%\:  %?x
+putc !!%\W` %?x
+s !!%\W  %?x
+script !!%\W  %?x
+fprintf !!%\t` %?x
+script !!%\t  %?x
+fprintf !!%]6` %?x
+script !!%]6  %?x
+fclose !!%][` %?x
+script !!%][  %?x
+anymarked !!%]r  %?x
+YES !!%]r  %?x
+clearprompt !!%^0` %?x
+refresh !!%^D` %?x
+fprintf !!%^V` %?x
+stderr !!%^V  %?x
+execute !!%_$` %?x
+temp2 !!%_$  %?x
+NULL !!%_$  %?x
+askforreturn !!%_Q` %?x
+seekline !!%_g` %?x
+nochange !!%_{  %?x
+clearprompt !!%`,` %?x
+changing !!%`@  %?x
+NO !!%`@  %?x
+mousemenu !!%`V` %?x
+free !!%`j` %?x
+change !!%`j  %?x
+anymarked !!%a!  %?x
+mark !!%a?$
+i !!%a?  %aF
+j !!%aS  %aF
+j !!%a_  %aF
+i !!%a_  %aF
+topline !!%a_  %aF
+j !!%a}  %aF
+totallines !!%a}  %aF
+move !!%b9` %aF
+displine !!%b9  %aF
+i !!%b9  %aF
+change !!%bZ  %aF
+j !!%bZ  %aF
+NO !!%bZ  %aF
+change !!%by  %aF
+j !!%by  %aF
+YES !!%by  %aF
+addch !!%c5` %aF
+change !!%cJ  %aF
+j !!%cJ  %aF
+NO !!%cJ  %aF
+addch !!%cd` %aF
+scrollbar !!%d%$
+MOUSE !!%d%  %d,
+p !!%d%  %d,
+totallines !!%dC  %d,
+p !!%d]  %d,
+percent !!%d]  %d,
+nextline !!%dr  %d,
+mdisprefs !!%dr  %d,
+totallines !!%dr  %d,
+nextline !!%e>  %d,
+totallines !!%e>  %d,
+mdisprefs !!%e>  %d,
+nextline !!%eh  %d,
+topline !!%eh  %d,
+mdisprefs !!%eh  %d,
+nextline !!%f-  %d,
+nextline !!%fD  %d,
+nextline !!%fV  %d,
+topline !!%fV  %d,
+topline !!%fr  %d,
+nextline !!%g*  %d,
+topline !!%g*  %d,
+nextline !!%gF  %d,
+p !!%gF  %d,
+percent !!%gF  %d,
+totallines !!%gF  %d,
+seekline !!%gt` %d,
+nextline !!%gt  %d,
+countrefs !!%h:$
+subsystem !!%hN  %hA
+book !!%ha  %hA
+file !!%hp  %hA
+PATHLEN !!%hp  %hA
+function !!%i-  %hA
+PATLEN !!%i-  %hA
+linenum !!%iK  %hA
+NUMLEN !!%iK  %hA
+i !!%ih  %hA
+subsystemlen !!%is  %hA
+booklen !!%j+  %hA
+filelen !!%j>  %hA
+fcnlen !!%jO  %hA
+numlen !!%j`  %hA
+i !!%jr  %hA
+fscanf !!%jr` %hA
+refsfound !!%jr  %hA
+file !!%jr  %hA
+function !!%kX  %hA
+linenum !!%kX  %hA
+tempstring !!%kX  %hA
+EOF !!%kX  %hA
+i !!%l'  %hA
+isgraph !!%l;` %hA
+file !!%l;  %hA
+isgraph !!%l[` %hA
+function !!%l[  %hA
+isdigit !!%l~` %hA
+linenum !!%l~  %hA
+postmsg !!%mA` %hA
+totallines !!%mv  %hA
+disprefs !!%n+  %hA
+i !!%n>  %hA
+strlen !!%n>` %hA
+pathcomponents !!%n>` %hA
+file !!%n>  %hA
+dispcomponents !!%n>  %hA
+filelen !!%n>  %hA
+filelen !!%o)  %hA
+i !!%o)  %hA
+ogs !!%o<  %hA
+YES !!%o<  %hA
+ogsnames !!%oU` %hA
+file !!%oU  %hA
+subsystem !!%oU  %hA
+book !!%oU  %hA
+i !!%p%  %hA
+strlen !!%p%` %hA
+subsystem !!%p%  %hA
+subsystemlen !!%p%  %hA
+subsystemlen !!%pZ  %hA
+i !!%pZ  %hA
+i !!%ps  %hA
+strlen !!%ps` %hA
+book !!%ps  %hA
+booklen !!%ps  %hA
+booklen !!%qA  %hA
+i !!%qA  %hA
+i !!%qV  %hA
+strlen !!%qV` %hA
+function !!%qV  %hA
+fcnlen !!%qV  %hA
+fcnlen !!%r$  %hA
+i !!%r$  %hA
+i !!%r7  %hA
+strlen !!%r7` %hA
+linenum !!%r7  %hA
+numlen !!%r7  %hA
+numlen !!%rd  %hA
+i !!%rd  %hA
+totallines !!%rx  %hA
+rewind !!%s+` %hA
+refsfound !!%s+  %hA
+i !!%sF  %hA
+COLS !!%sF  %hA
+ogs !!%sc  %hA
+YES !!%sc  %hA
+i !!%s|  %hA
+COLS !!%s|  %hA
+filelen !!%t:  %hA
+i !!%t:  %hA
+filelen !!%t[  %hA
+i !!%t[  %hA
+subsystemlen !!%tn  %hA
+i !!%tn  %hA
+subsystemlen !!%u6  %hA
+i !!%u6  %hA
+booklen !!%uO  %hA
+i !!%uO  %hA
+booklen !!%ur  %hA
+i !!%ur  %hA
+fcnlen !!%v(  %hA
+i !!%v(  %hA
+fcnlen !!%vI  %hA
+i !!%vI  %hA
+rcsid !!%vxg
+global.h !!%wk~
+NULL !!%w~ 
+NULL !!%x0#
+compath !!%xD$
+pathname !!%xD  %xJ
+nextchar !!%x_  %xJ
+lastchar !!%xo  %xJ
+sofar !!%x~  %xJ
+pnend !!%y-  %xJ
+pnlen !!%y:  %xJ
+strchr !!%yF` %xJ
+pathname !!%yF  %xJ
+NULL !!%yF  %xJ
+pathname !!%yo  %xJ
+lastchar !!%z!  %xJ
+pathname !!%z!  %xJ
+lastchar !!%z\  %xJ
+nextchar !!%{3  %xJ
+lastchar !!%{3  %xJ
+lastchar !!%{K  %xJ
+sofar !!%{c  %xJ
+nextchar !!%{c  %xJ
+nextchar !!%{z  %xJ
+lastchar !!%{z  %xJ
+lastchar !!%|D  %xJ
+sofar !!%|D  %xJ
+lastchar !!%|Z  %xJ
+pathname !!%|Z  %xJ
+lastchar !!%}7  %xJ
+lastchar !!%}p  %xJ
+pathname !!%}p  %xJ
+nextchar !!%~N  %xJ
+lastchar !!%~N  %xJ
+sofar !!%~k  %xJ
+nextchar !!%~k  %xJ
+nextchar !!%$  %xJ
+lastchar !!%$  %xJ
+lastchar !!%N  %xJ
+sofar !!%N  %xJ
+lastchar !!%e  %xJ
+pathname !!%e  %xJ
+lastchar !!&!B  %xJ
+pathname !!&!B  %xJ
+lastchar !!&!x  %xJ
+lastchar !!&"U  %xJ
+nextchar !!&#3  %xJ
+lastchar !!&#3  %xJ
+nextchar !!&#P  %xJ
+pathname !!&#P  %xJ
+nextchar !!&#o  %xJ
+nextchar !!&$/  %xJ
+nextchar !!&$@  %xJ
+nextchar !!&$^  %xJ
+nextchar !!&%!  %xJ
+lastchar !!&%_  %xJ
+lastchar !!&%~  %xJ
+lastchar !!&&2  %xJ
+sofar !!&&E  %xJ
+nextchar !!&&E  %xJ
+nextchar !!&&a  %xJ
+lastchar !!&&a  %xJ
+lastchar !!&'-  %xJ
+sofar !!&'-  %xJ
+sofar !!&'D  %xJ
+pathname !!&'D  %xJ
+lastchar !!&'x  %xJ
+pnlen !!&()  %xJ
+strlen !!&()` %xJ
+pathname !!&()  %xJ
+pnend !!&(I  %xJ
+strchr !!&(I` %xJ
+pathname !!&(I  %xJ
+pnlen !!&(u  %xJ
+pnend !!&(u  %xJ
+pnend !!&)=  %xJ
+pnlen !!&)S  %xJ
+pnlen !!&)a  %xJ
+pnend !!&)a  %xJ
+pnend !!&*B  %xJ
+pathname !!&*X  %xJ
+strcpy !!&*s` %xJ
+pathname !!&*s  %xJ
+pathname !!&+5  %xJ
+CSCOPE_CONSTANTS_H !!&+e 
+CSCOPE_CONSTANTS_H !!&,%#
+config.h !!&,E~
+ctrl !!&,X#
+x !!&,X  &,_
+strequal !!&,v#
+s1 !!&,v  &,}
+s2 !!&,v  &,}
+strcmp !!&,v` &,}
+strnotequal !!&-[#
+s1 !!&-[  &-b
+s2 !!&-[  &-b
+strcmp !!&-[` &-b
+setmark !!&.B#
+c !!&.B  &.I
+blockmark !!&.B  &.I
+block !!&.B  &.I
+blocklen !!&.B  &.I
+getrefchar !!&/*#
+blockp !!&/*  &/1
+read_block !!&/e` &/1
+NULL !!&/e  &/1
+blockp !!&/e  &/1
+skiprefchar !!&0<#
+blockp !!&0<  &0C
+read_block !!&0<` &0C
+ESC !!&1"#
+DEL !!&1:#
+DUMMYCHAR !!&1R#
+MSGLEN !!&1m#
+PATLEN !!&1m  &1t
+NUMLEN !!&23#
+PATHLEN !!&2I#
+PATLEN !!&2b#
+TEMPSTRING_LEN !!&2z#
+REFFILE !!&3<#
+NAMEFILE !!&3]#
+INVNAME !!&4!#
+INVPOST !!&4D#
+INVNAME2 !!&4h#
+INVPOST2 !!&5-#
+STMTMAX !!&5R#
+STR2 !!&5m#
+x !!&5m  &5t
+STRINGIZE !!&6'#
+x !!&6'  &6.
+STR2 !!&6'` &6.
+PATLEN_STR !!&6N#
+STRINGIZE !!&6N` &6U
+PATLEN !!&6N  &6U
+PATHLEN_STR !!&6~#
+STRINGIZE !!&6~` &7&
+PATHLEN !!&6~  &7&
+NUMLEN_STR !!&7Q#
+STRINGIZE !!&7Q` &7X
+NUMLEN !!&7Q  &7X
+TEMPSTRING_LEN_STR !!&8"#
+STRINGIZE !!&8"` &8)
+TEMPSTRING_LEN !!&8"  &8)
+FLDLINE !!&8b#
+LINES !!&8b  &8i
+FIELDS !!&8b  &8i
+MSGLINE !!&91#
+PRLINE !!&9H#
+LINES !!&9H  &9O
+REFLINE !!&9j#
+SYMBOL !!&:"#
+DEFINITION !!&:8#
+CALLEDBY !!&:R#
+CALLING !!&:j#
+STRING !!&;"#
+CHANGE !!&;8#
+REGEXP !!&;O#
+FILENAME !!&;f#
+INCLUDES !!&;#
+FIELDS !!&<9#
+BSD !!&<P 
+V9 !!&<P 
+__NetBSD__ !!&<P 
+__FreeBSD__ !!&<P 
+TERMINFO !!&=)#
+TERMINFO !!&=B#
+TERMINFO !!&=[ 
+KEY_BREAK !!&=o 
+KEY_BREAK !!&>'#
+KEY_ENTER !!&>D 
+KEY_ENTER !!&>[#
+KEY_BACKSPACE !!&>x 
+KEY_BACKSPACE !!&?4#
+sun !!&?U 
+cbreak !!&?d#
+crmode !!&?d` &?l
+UNIXPC !!&@& 
+erasechar !!&@7#
+_tty !!&@7  &@?
+c_cc !!&@7  &@?
+VERASE !!&@7  &@?
+killchar !!&@f#
+_tty !!&@f  &@n
+c_cc !!&@f  &@n
+VKILL !!&@f  &@n
+erasechar !!&A5#
+_tty !!&A5  &A=
+sg_erase !!&A5  &A=
+killchar !!&A\#
+_tty !!&A\  &Ad
+sg_kill !!&A\  &Ad
+global.h !!&B6~
+build.h !!&BI~
+scanner.h !!&B[~
+alloc.h !!&Bm~
+stdlib.h !!&B~
+sys/stat.h !!&C3~
+rcsid !!&CGg
+ltobase !!&D<#
+value !!&D<  &DC
+n !!&D<  &DC
+s !!&Da  &DC
+buf !!&Da  &DC
+s !!&E$  &DC
+digits !!&E7  &DC
+n !!&EJ  &DC
+BASE !!&EJ  &DC
+digits !!&Ea  &DC
+i !!&Er  &DC
+n !!&Er  &DC
+n !!&F$  &DC
+BASE !!&F$  &DC
+s !!&F8  &DC
+i !!&F8  &DC
+n !!&F8  &DC
+BASE !!&F8  &DC
+s !!&Fa  &DC
+n !!&Fa  &DC
+SYMBOLINC !!&F}#
+dboffset !!&G8g
+BOOL !!&GJ 
+errorsfound !!&GJg
+lineoffset !!&Gdg
+npostings !!&Gwg
+nsrcoffset !!&H)g
+srcoffset !!&H<g
+symbols !!&HOg
+filename !!&Hag
+fcnoffset !!&Htg
+macrooffset !!&I(g
+msymbols !!&I=g
+SYMBOLINC !!&I= 
+symbol !!&I_s
+type !!&Ipm
+first !!&I~m
+last !!&J.m
+length !!&J<m
+fcn_level !!&JMm
+symbol !!&J_ 
+symbol !!&J_g
+putcrossref !!&Jy 
+savesymbol !!&K0 
+token !!&K0 
+num !!&K0 
+crossref !!&KS$
+srcfile !!&KS  &KY
+i !!&Km  &KY
+length !!&Kx  &KY
+entry_no !!&L(  &KY
+token !!&L8  &KY
+stat !!&LE  &KY
+st !!&LE  &KY
+stat !!&LT` &KY
+srcfile !!&LT  &KY
+st !!&LT  &KY
+S_ISREG !!&L|` &KY
+st !!&L|  &KY
+st_mode !!&L|  &KY
+cannotopen !!&MC` &KY
+srcfile !!&MC  &KY
+errorsfound !!&M\  &KY
+YES !!&M\  &KY
+entry_no !!&Mv  &KY
+yyin !!&N*  &KY
+myfopen !!&N*` &KY
+srcfile !!&N*  &KY
+NULL !!&N*  &KY
+cannotopen !!&N_` &KY
+srcfile !!&N_  &KY
+errorsfound !!&Nx  &KY
+YES !!&Nx  &KY
+filename !!&O3  &KY
+srcfile !!&O3  &KY
+putfilename !!&OL` &KY
+srcfile !!&OL  &KY
+dbputc !!&Oi` &KY
+dbputc !!&P!` &KY
+initscanner !!&P8` &KY
+srcfile !!&P8  &KY
+fcnoffset !!&PR  &KY
+macrooffset !!&PR  &KY
+symbols !!&Pt  &KY
+symbol !!&Q(  &KY
+NULL !!&Q(  &KY
+symbol !!&QD  &KY
+mymalloc !!&QD` &KY
+msymbols !!&QD  &KY
+token !!&Qx  &KY
+yylex !!&Qx` &KY
+length !!&R6  &KY
+last !!&R6  &KY
+first !!&R6  &KY
+trun_syms !!&RS  &KY
+YES !!&RS  &KY
+length !!&RS  &KY
+token !!&S!  &KY
+INCLUDE !!&S!  &KY
+NEWFILE !!&S!  &KY
+length !!&SO  &KY
+last !!&Sa  &KY
+first !!&Sa  &KY
+length !!&Sx  &KY
+savesymbol !!&T1` &KY
+token !!&T1  &KY
+entry_no !!&T1  &KY
+token !!&TV  &KY
+FCNDEF !!&TV  &KY
+entry_no !!&Ts  &KY
+i !!&U%  &KY
+symbols !!&U%  &KY
+length !!&UI  &KY
+symbol !!&UI  &KY
+i !!&UI  &KY
+strncmp !!&Uo` &KY
+my_yytext !!&Uo  &KY
+first !!&Uo  &KY
+my_yytext !!&V6  &KY
+symbol !!&V6  &KY
+i !!&V6  &KY
+first !!&V6  &KY
+length !!&V\  &KY
+entry_no !!&Vo  &KY
+symbol !!&Vo  &KY
+i !!&Vo  &KY
+fcn_level !!&Vo  &KY
+token !!&W9  &KY
+symbol !!&W9  &KY
+i !!&W9  &KY
+type !!&W9  &KY
+i !!&W]  &KY
+symbols !!&W]  &KY
+savesymbol !!&Ww` &KY
+token !!&Ww  &KY
+entry_no !!&Ww  &KY
+NEWLINE !!&X=  &KY
+entry_no !!&XN  &KY
+USING_LEX !!&Xa  &KY
+yyleng !!&Xx  &KY
+putcrossref !!&Y)` &KY
+lineno !!&Y?  &KY
+myylineno !!&Y?  &KY
+USING_LEX !!&YX  &KY
+my_yytext !!&Yo  &KY
+my_yytext !!&Z$  &KY
+my_yyleng !!&Z=  &KY
+LEXEOF !!&ZR  &KY
+symbols !!&Zb  &KY
+putcrossref !!&Zz` &KY
+fclose !!&[1` &KY
+yyin !!&[1  &KY
+dbputc !!&[J` &KY
+savesymbol !!&[l$
+token !!&[l  &[s
+num !!&[l  &[s
+symbols !!&\0  &[s
+msymbols !!&\0  &[s
+msymbols !!&\P  &[s
+SYMBOLINC !!&\P  &[s
+symbol !!&\n  &[s
+myrealloc !!&\n` &[s
+msymbols !!&\n  &[s
+symbol !!&]J  &[s
+symbols !!&]J  &[s
+type !!&]J  &[s
+token !!&]J  &[s
+symbol !!&]q  &[s
+symbols !!&]q  &[s
+first !!&]q  &[s
+symbol !!&^8  &[s
+symbols !!&^8  &[s
+last !!&^8  &[s
+symbol !!&^[  &[s
+symbols !!&^[  &[s
+length !!&^[  &[s
+last !!&^[  &[s
+first !!&^[  &[s
+symbol !!&_+  &[s
+symbols !!&_+  &[s
+fcn_level !!&_+  &[s
+num !!&_+  &[s
+symbols !!&_T  &[s
+putfilename !!&_p$
+srcfile !!&_p  &_w
+putc !!&`/` &_w
+NEWFILE !!&`/  &_w
+newrefs !!&`/  &_w
+EOF !!&`/  &_w
+cannotwrite !!&`^` &_w
+newreffile !!&`^  &_w
+dboffset !!&`{  &_w
+invertedindex !!&a.  &_w
+YES !!&a.  &_w
+srcoffset !!&aM  &_w
+nsrcoffset !!&aM  &_w
+dboffset !!&aM  &_w
+dbfputs !!&aw` &_w
+srcfile !!&aw  &_w
+fcnoffset !!&b2  &_w
+macrooffset !!&b2  &_w
+putcrossref !!&b_$
+i !!&bu  &bf
+j !!&bu  &bf
+c !!&c'  &bf
+BOOL !!&c3  &bf
+blank !!&c3  &bf
+symput !!&cG  &bf
+type !!&c\  &bf
+lineoffset !!&ci  &bf
+dboffset !!&ci  &bf
+dboffset !!&d'  &bf
+fprintf !!&d'` &bf
+newrefs !!&d'  &bf
+lineno !!&d'  &bf
+PRINTF_RETVAL_BROKEN !!&d[  &bf
+dboffset !!&d}  &bf
+ftell !!&d}` &bf
+newrefs !!&d}  &bf
+my_yytext !!&eA  &bf
+my_yyleng !!&eA  &bf
+blank !!&ee  &bf
+NO !!&ee  &bf
+i !!&ey  &bf
+my_yyleng !!&ey  &bf
+c !!&f@  &bf
+my_yytext !!&f@  &bf
+i !!&f@  &bf
+blank !!&fw  &bf
+YES !!&fw  &bf
+symput !!&g-  &bf
+symbols !!&g-  &bf
+i !!&g-  &bf
+symbol !!&g-  &bf
+first !!&g-  &bf
+blank !!&gn  &bf
+YES !!&gn  &bf
+blank !!&h)  &bf
+NO !!&h)  &bf
+dbputc !!&h=` &bf
+dbputc !!&hS` &bf
+type !!&hj  &bf
+symbol !!&hj  &bf
+symput !!&hj  &bf
+IDENT !!&hj  &bf
+dbputc !!&i?` &bf
+dbputc !!&iV` &bf
+type !!&iV  &bf
+type !!&in  &bf
+j !!&j!  &bf
+symbol !!&j!  &bf
+symput !!&j!  &bf
+last !!&j!  &bf
+c !!&jD  &bf
+my_yytext !!&jD  &bf
+j !!&jD  &bf
+my_yytext !!&j`  &bf
+j !!&j`  &bf
+invertedindex !!&j}  &bf
+YES !!&j}  &bf
+putposting !!&k=` &bf
+my_yytext !!&k=  &bf
+i !!&k=  &bf
+type !!&k=  &bf
+writestring !!&kh` &bf
+my_yytext !!&kh  &bf
+i !!&kh  &bf
+dbputc !!&l.` &bf
+my_yytext !!&lE  &bf
+j !!&lE  &bf
+c !!&lE  &bf
+i !!&la  &bf
+j !!&la  &bf
+symput !!&lu  &bf
+compress !!&m'  &bf
+NO !!&m'  &bf
+blank !!&mC  &bf
+YES !!&mC  &bf
+dbputc !!&m]` &bf
+blank !!&ms  &bf
+NO !!&ms  &bf
+j !!&n(  &bf
+i !!&n(  &bf
+strcspn !!&n(` &bf
+my_yytext !!&n(  &bf
+symput !!&nY  &bf
+symbols !!&nY  &bf
+j !!&nu  &bf
+symbol !!&nu  &bf
+symput !!&nu  &bf
+first !!&nu  &bf
+j !!&o=  &bf
+symbol !!&o=  &bf
+symput !!&o=  &bf
+first !!&o=  &bf
+c !!&oa  &bf
+my_yytext !!&oa  &bf
+j !!&oa  &bf
+my_yytext !!&o}  &bf
+j !!&o}  &bf
+writestring !!&p;` &bf
+my_yytext !!&p;  &bf
+i !!&p;  &bf
+my_yytext !!&p`  &bf
+j !!&p`  &bf
+c !!&p`  &bf
+i !!&p|  &bf
+j !!&p|  &bf
+blank !!&q1  &bf
+YES !!&q1  &bf
+dicode2 !!&qK  &bf
+c !!&qK  &bf
+c !!&qe  &bf
+DICODE_COMPRESS !!&qe` &bf
+dbputc !!&r.` &bf
+IS_A_DICODE !!&rD` &bf
+c !!&rD  &bf
+my_yytext !!&rD  &bf
+i !!&rD  &bf
+symput !!&ry  &bf
+symbols !!&ry  &bf
+i !!&s6  &bf
+symbol !!&s6  &bf
+symput !!&s6  &bf
+first !!&s6  &bf
+c !!&sc  &bf
+DICODE_COMPRESS !!&sc` &bf
+my_yytext !!&sc  &bf
+i !!&sc  &bf
+i !!&t<  &bf
+dbputc !!&tH` &bf
+c !!&tH  &bf
+blank !!&ta  &bf
+NO !!&ta  &bf
+c !!&tu  &bf
+i !!&u+  &bf
+j !!&u7  &bf
+my_yytext !!&u7  &bf
+i !!&u7  &bf
+i !!&ul  &bf
+isalpha !!&ux` &bf
+my_yytext !!&ux  &bf
+i !!&ux  &bf
+i !!&vA  &bf
+keyword !!&vM  &bf
+c !!&vM  &bf
+delim !!&vM  &bf
+j !!&vu  &bf
+my_yytext !!&vu  &bf
+i !!&vu  &bf
+i !!&wK  &bf
+keyword !!&wW  &bf
+c !!&wW  &bf
+delim !!&wW  &bf
+my_yytext !!&w{  &bf
+i !!&w{  &bf
+i !!&x>  &bf
+i !!&xJ  &bf
+dbputc !!&xV` &bf
+dbputc !!&xm` &bf
+symput !!&y%  &bf
+symbols !!&y%  &bf
+symbol !!&y%  &bf
+type !!&y%  &bf
+DEFINEEND !!&y%  &bf
+dbputc !!&yk` &bf
+dbputc !!&z#` &bf
+DEFINEEND !!&z#  &bf
+dbputc !!&zA` &bf
+dbputc !!&zX` &bf
+macrooffset !!&zo  &bf
+symbols !!&{&  &bf
+freecrossref !!&{D$
+symbol !!&{X  &{K
+free !!&{i` &{K
+symbol !!&{i  &{K
+symbol !!&{  &{K
+NULL !!&{  &{K
+symbols !!&|7  &{K
+putposting !!&|U$
+term !!&|U  &|\
+type !!&|U  &|\
+i !!&|w  &|\
+n !!&|w  &|\
+s !!&}(  &|\
+digits !!&}4  &|\
+offset !!&}C  &|\
+buf !!&}R  &|\
+offset !!&}c  &|\
+fcnoffset !!&}c  &|\
+macrooffset !!&}}  &|\
+offset !!&~:  &|\
+macrooffset !!&~:  &|\
+type !!&~V  &|\
+DEFINE !!&~e  &|\
+macrooffset !!&~u  &|\
+dboffset !!&~u  &|\
+DEFINEEND !!&4  &|\
+macrooffset !!&G  &|\
+FCNDEF !!&]  &|\
+fcnoffset !!&m  &|\
+dboffset !!&m  &|\
+FCNEND !!'!*  &|\
+fcnoffset !!'!:  &|\
+term !!'!N  &|\
+type !!'!h  &|\
+INCLUDE !!'!h  &|\
+term !!'"&  &|\
+fputs !!'"4` &|\
+term !!'"4  &|\
+postings !!'"4  &|\
+putc !!'"W` &|\
+postings !!'"W  &|\
+ltobase !!'"x` &|\
+lineoffset !!'"x  &|\
+i !!'#5  &|\
+PRECISION !!'#5  &|\
+digits !!'#5  &|\
+putc !!'#f` &|\
+postings !!'#f  &|\
+putc !!'$(` &|\
+s !!'$(  &|\
+postings !!'$(  &|\
+s !!'$J  &|\
+putc !!'$c` &|\
+type !!'$c  &|\
+postings !!'$c  &|\
+offset !!'%'  &|\
+putc !!'%>` &|\
+postings !!'%>  &|\
+ltobase !!'%_` &|\
+offset !!'%_  &|\
+putc !!'%x` &|\
+s !!'%x  &|\
+postings !!'%x  &|\
+s !!'&;  &|\
+putc !!'&T` &|\
+postings !!'&T  &|\
+EOF !!'&T  &|\
+cannotwrite !!'&` &|\
+temp1 !!'&  &|\
+npostings !!'':  &|\
+writestring !!''V$
+s !!''V  '']
+c !!''o  '']
+i !!''{  '']
+compress !!'('  '']
+NO !!'('  '']
+dbfputs !!'(C` '']
+s !!'(C  '']
+i !!'(Y  '']
+c !!'(Y  '']
+s !!'(Y  '']
+IS_A_DICODE !!')(` '']
+c !!')(  '']
+s !!')(  '']
+i !!')(  '']
+c !!')S  '']
+DICODE_COMPRESS !!')S` '']
+s !!')S  '']
+i !!')S  '']
+i !!'*%  '']
+dbputc !!'*1` '']
+c !!'*1  '']
+warning !!'*R$
+text !!'*R  '*Y
+fprintf !!'*j` '*Y
+stderr !!'*j  '*Y
+filename !!'*j  '*Y
+myylineno !!'+S  '*Y
+text !!'+S  '*Y
+errorsfound !!'+k  '*Y
+YES !!'+k  '*Y
+global.h !!',>~
+alloc.h !!',Q~
+vp.h !!',c~
+stdlib.h !!',s~
+sys/types.h !!'-'~
+dirent.h !!'-=~
+sys/stat.h !!'-O~
+rcsid !!'-cg
+DIRSEPS !!'.R#
+DIRINC !!'.m#
+HASHMOD !!'/%#
+SRCINC !!'/?#
+HASHMOD !!'/?  '/F
+currentdir !!'/]g
+PATHLEN !!'/] 
+incdirs !!'/~g
+srcdirs !!'01g
+srcfiles !!'0Cg
+nincdirs !!'0Vg
+nsrcdirs !!'0hg
+nsrcfiles !!'0zg
+msrcfiles !!'1.g
+SRCINC !!'1. 
+incnames !!'1Lg
+mincdirs !!'1`g
+DIRINC !!'1` 
+msrcdirs !!'1~g
+nvpsrcdirs !!'22g
+listitem !!'2Gs
+text !!'2Zm
+listitem !!'2i 
+next !!'2im
+srcnames !!'3"g
+HASHMOD !!'3" 
+BOOL !!'3@ 
+accessible_file !!'3@ 
+file !!'3@ 
+BOOL !!'3e 
+issrcfile !!'3e 
+file !!'3e 
+addsrcdir !!'4& 
+dir !!'4& 
+addincdir !!'4? 
+name !!'4? 
+path !!'4? 
+scan_dir !!'4b 
+dirfile !!'4b 
+BOOL !!'4b 
+recurse !!'4b 
+makevpsrcdirs !!'52 
+makevpsrcdirs !!'5J$
+i !!'5a  '5P
+nsrcdirs !!'5k  '5P
+getcwd !!'6#` '5P
+currentdir !!'6#  '5P
+PATHLEN !!'6#  '5P
+NULL !!'6#  '5P
+fprintf !!'6U` '5P
+stderr !!'6U  '5P
+strcpy !!'7D` '5P
+currentdir !!'7D  '5P
+vpinit !!'7j` '5P
+currentdir !!'7j  '5P
+vpndirs !!'8%  '5P
+nsrcdirs !!'8<  '5P
+vpndirs !!'8<  '5P
+nsrcdirs !!'8U  '5P
+msrcdirs !!'8h  '5P
+nsrcdirs !!'8h  '5P
+DIRINC !!'8h  '5P
+srcdirs !!'9.  '5P
+mymalloc !!'9.` '5P
+msrcdirs !!'9.  '5P
+srcdirs !!'9\  '5P
+i !!'9q  '5P
+vpndirs !!'9q  '5P
+srcdirs !!':5  '5P
+i !!':5  '5P
+vpdirs !!':5  '5P
+nvpsrcdirs !!':U  '5P
+nsrcdirs !!':U  '5P
+sourcedir !!':|$
+dirlist !!':|  ';$
+path !!';9  ';$
+PATHLEN !!';9  ';$
+dir !!';U  ';$
+i !!';b  ';$
+makevpsrcdirs !!';n` ';$
+dirlist !!'<'  ';$
+my_strdup !!'<'` ';$
+dir !!'<M  ';$
+strtok !!'<M` ';$
+dirlist !!'<M  ';$
+DIRSEPS !!'<M  ';$
+dir !!'<w  ';$
+NULL !!'<w  ';$
+dir_len !!'=/  ';$
+strlen !!'=/` ';$
+dir !!'=/  ';$
+addsrcdir !!'=N` ';$
+dir !!'=N  ';$
+dirlist !!'=f  ';$
+vpndirs !!'=f  ';$
+i !!'>0  ';$
+nvpsrcdirs !!'>0  ';$
+sprintf !!'>V` ';$
+path !!'>V  ';$
+PATHLEN !!'>w  ';$
+dir_len !!'>w  ';$
+srcdirs !!'?6  ';$
+i !!'?6  ';$
+dir !!'?6  ';$
+addsrcdir !!'?P` ';$
+path !!'?P  ';$
+dir !!'?i  ';$
+strtok !!'?i` ';$
+NULL !!'?i  ';$
+DIRSEPS !!'?i  ';$
+free !!'@3` ';$
+dirlist !!'@3  ';$
+addsrcdir !!'@T$
+dir !!'@T  '@[
+stat !!'@m  '@[
+statstruct !!'@m  '@[
+lstat !!'A#` '@[
+compath !!'A#` '@[
+dir !!'A#  '@[
+statstruct !!'A#  '@[
+S_ISDIR !!'AX` '@[
+statstruct !!'AX  '@[
+st_mode !!'AX  '@[
+nsrcdirs !!'A  '@[
+msrcdirs !!'A  '@[
+msrcdirs !!'B?  '@[
+DIRINC !!'B?  '@[
+srcdirs !!'BY  '@[
+myrealloc !!'BY` '@[
+msrcdirs !!'BY  '@[
+srcdirs !!'C/  '@[
+nsrcdirs !!'C/  '@[
+my_strdup !!'C/` '@[
+dir !!'C/  '@[
+freesrclist !!'Ci$
+srcdirs !!'C{  'Cp
+nsrcdirs !!'D.  'Cp
+free !!'D@` 'Cp
+srcdirs !!'D@  'Cp
+nsrcdirs !!'D@  'Cp
+free !!'Db` 'Cp
+srcdirs !!'Db  'Cp
+includedir !!'E$$
+dirlist !!'E$  'E+
+path !!'E@  'E+
+PATHLEN !!'E@  'E+
+dir !!'E\  'E+
+i !!'Ei  'E+
+makevpsrcdirs !!'Eu` 'E+
+dirlist !!'F.  'E+
+my_strdup !!'F.` 'E+
+dir !!'FT  'E+
+strtok !!'FT` 'E+
+dirlist !!'FT  'E+
+DIRSEPS !!'FT  'E+
+dir !!'F~  'E+
+NULL !!'F~  'E+
+size_t !!'G6  'E+
+dir_len !!'G6  'E+
+strlen !!'G6` 'E+
+dir !!'G6  'E+
+addincdir !!'G]` 'E+
+dir !!'G]  'E+
+dirlist !!'Gz  'E+
+vpndirs !!'Gz  'E+
+i !!'HD  'E+
+nvpsrcdirs !!'HD  'E+
+sprintf !!'Hj` 'E+
+path !!'Hj  'E+
+PATHLEN !!'I,  'E+
+dir_len !!'I,  'E+
+srcdirs !!'IJ  'E+
+i !!'IJ  'E+
+dir !!'IJ  'E+
+addincdir !!'Id` 'E+
+dir !!'Id  'E+
+path !!'Id  'E+
+dir !!'J$  'E+
+strtok !!'J$` 'E+
+NULL !!'J$  'E+
+DIRSEPS !!'J$  'E+
+free !!'JM` 'E+
+dirlist !!'JM  'E+
+addincdir !!'Jn$
+name !!'Jn  'Ju
+path !!'Jn  'Ju
+stat !!'K2  'Ju
+statstruct !!'K2  'Ju
+lstat !!'KG` 'Ju
+compath !!'KG` 'Ju
+path !!'KG  'Ju
+statstruct !!'KG  'Ju
+S_ISDIR !!'K}` 'Ju
+statstruct !!'K}  'Ju
+st_mode !!'K}  'Ju
+incdirs !!'LE  'Ju
+NULL !!'LE  'Ju
+incdirs !!'La  'Ju
+mymalloc !!'La` 'Ju
+mincdirs !!'La  'Ju
+incnames !!'M0  'Ju
+mymalloc !!'M0` 'Ju
+mincdirs !!'M0  'Ju
+nincdirs !!'M_  'Ju
+mincdirs !!'M_  'Ju
+mincdirs !!'N"  'Ju
+DIRINC !!'N"  'Ju
+incdirs !!'N<  'Ju
+myrealloc !!'N<` 'Ju
+mincdirs !!'N`  'Ju
+incnames !!'Nx  'Ju
+myrealloc !!'Nx` 'Ju
+mincdirs !!'O?  'Ju
+incdirs !!'OW  'Ju
+nincdirs !!'OW  'Ju
+my_strdup !!'OW` 'Ju
+path !!'OW  'Ju
+incnames !!'P&  'Ju
+nincdirs !!'P&  'Ju
+my_strdup !!'P&` 'Ju
+name !!'P&  'Ju
+freeinclist !!'Pb$
+incdirs !!'Pt  'Pi
+nincdirs !!'Q'  'Pi
+free !!'Q;` 'Pi
+incdirs !!'Q;  'Pi
+nincdirs !!'Q;  'Pi
+free !!'Q]` 'Pi
+incnames !!'Q]  'Pi
+nincdirs !!'Q]  'Pi
+free !!'Q~` 'Pi
+incdirs !!'Q~  'Pi
+free !!'R5` 'Pi
+incnames !!'R5  'Pi
+makefilelist !!'RW$
+BOOL !!'Rm  'R^
+firstbuild !!'Rm  'R^
+YES !!'Rm  'R^
+FILE !!'S.  'R^
+names !!'S.  'R^
+dir !!'SC  'R^
+PATHLEN !!'SC  'R^
+path !!'S^  'R^
+PATHLEN !!'S^  'R^
+line !!'Sz  'R^
+PATHLEN !!'Sz  'R^
+file !!'T8  'R^
+s !!'TF  'R^
+i !!'TR  'R^
+makevpsrcdirs !!'T^` 'R^
+namefile !!'Tv  'R^
+NULL !!'Tv  'R^
+fileargc !!'Tv  'R^
+i !!'UD  'R^
+fileargc !!'UD  'R^
+file !!'Uh  'R^
+fileargv !!'Uh  'R^
+i !!'Uh  'R^
+infilelist !!'V%` 'R^
+file !!'V%  'R^
+NO !!'V%  'R^
+s !!'VH  'R^
+inviewpath !!'VH` 'R^
+file !!'VH  'R^
+NULL !!'VH  'R^
+addsrcfile !!'Vv` 'R^
+s !!'Vv  'R^
+fprintf !!'W/` 'R^
+stderr !!'W/  'R^
+file !!'Wg  'R^
+errorsfound !!'Wt  'R^
+YES !!'Wt  'R^
+namefile !!'X/  'R^
+NULL !!'X/  'R^
+vpaccess !!'X/` 'R^
+NAMEFILE !!'X/  'R^
+READ !!'X/  'R^
+namefile !!'Xs  'R^
+NAMEFILE !!'Xs  'R^
+namefile !!'Y0  'R^
+NULL !!'Y0  'R^
+i !!'YM  'R^
+nsrcdirs !!'YM  'R^
+scan_dir !!'Yq` 'R^
+srcdirs !!'Yq  'R^
+i !!'Yq  'R^
+recurse_dir !!'Yq  'R^
+strcmp !!'Z=` 'R^
+namefile !!'Z=  'R^
+names !!'Zd  'R^
+stdin !!'Zd  'R^
+names !!'Zy  'R^
+vpfopen !!'Zy` 'R^
+namefile !!'Zy  'R^
+NULL !!'Zy  'R^
+cannotopen !!'[R` 'R^
+namefile !!'[R  'R^
+myexit !!'[l` 'R^
+fgets !!'[` 'R^
+line !!'[  'R^
+PATHLEN !!'[  'R^
+names !!'[  'R^
+NULL !!'[  'R^
+point_in_line !!'\W  'R^
+line !!'\W  'R^
+strlen !!'\W` 'R^
+size_t !!']+  'R^
+length_of_name !!']+  'R^
+unfinished_option !!']M  'R^
+BOOL !!']i  'R^
+done !!']i  'R^
+NO !!']i  'R^
+point_in_line !!'^$  'R^
+point_in_line !!'^C  'R^
+point_in_line !!'^^  'R^
+line !!'^^  'R^
+sscanf !!'^y` 'R^
+point_in_line !!'^y  'R^
+PATHLEN_STR !!'^y  'R^
+path !!'^y  'R^
+length_of_name !!'_^  'R^
+strlen !!'_^` 'R^
+path !!'_^  'R^
+path !!'`%  'R^
+unfinished_option !!'`>  'R^
+fprintf !!'`Z` 'R^
+stderr !!'`Z  'R^
+namefile !!'aV  'R^
+unfinished_option !!'af  'R^
+i !!'b"  'R^
+path !!'b"  'R^
+i !!'b7  'R^
+compress !!'bD  'R^
+NO !!'bD  'R^
+kernelmode !!'b[  'R^
+YES !!'b[  'R^
+invertedindex !!'bt  'R^
+YES !!'bt  'R^
+trun_syms !!'c/  'R^
+YES !!'c/  'R^
+s !!'cH  'R^
+path !!'cH  'R^
+s !!'c^  'R^
+unfinished_option !!'cv  'R^
+i !!'cv  'R^
+HANDLE_OPTION_ARGUMENT !!'d4# 'R^
+i !!'d4  'd<
+s !!'d4  'd<

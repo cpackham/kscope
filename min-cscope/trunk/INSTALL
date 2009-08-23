@@ -1,0 +1,61 @@
+Prerequisites
+=============
+
+- A supported build toolchain (GCC and MinGW tested)
+- Flex and Bison
+- The GNU regex library
+- CMake version 2.6
+- Curses-compatible library (optional)
+
+Generating a Makefile
+=====================
+
+1. Create a directory for building the application, e.g., "obj"
+2. In the build directory, run "cmake" as follows:
+   
+   cmake /path/to/min-cscope/root/dir
+
+3. Optional useful parameters for cmake:
+   
+   -DCMAKE_BUILD_TYPE=Debug (debugging-enabled build)
+   -DUSE_SORTLIB=1          (build the internal sorting library)
+   -G "MinGW Makefiles"     (for building under Windows with MinGW)
+   -DWITH_REGEX_INC_PATH    (where to find regex.h)
+   -DWITH_REGEX_LIB_PATH    (where to find libregex.so/regex.dll)
+   -DWITH_REGEX_PATH        (alternative to the two directives above, pointing
+                             at the root directory of the regex installation)
+
+Linux example:
+
+   $ cd min-cscope
+   $ mkdir build
+   $ cd build
+   $ cmake -DUSE_SORTLIB=1 ..
+
+Windows/MinGW example:
+
+   > cd min-cscope
+   > mkdir build
+   > cd build
+   > cmake -G "MinGW Makefiles" -DUSE_SORTLIB=1 -DWITH_REGEX_PATH=c:/gnuwin32 ..
+ 
+Building
+========
+
+Run the appropriate make program in the build directory.
+
+Linux example:
+
+   $ cd min-cscope/build
+   $ make
+
+Windows/MinGW example:
+
+   > cd min-cscope\build
+   > mingw32-make
+
+Installing
+==========
+
+Copy the min-cscope executable created under the "src" subdirectory of the build
+directory into a location of your choice.

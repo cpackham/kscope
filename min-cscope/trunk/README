@@ -1,0 +1,11 @@
+This is min-cscope, an enhanced version of the veteran Cscope, originally from 
+Bell Labs.
+The program offers all of the functionality, as well as the appearance, of 
+Cscope, with the following modifications:
+ - CMake-based makefile generation system
+ - Built-in sorting capabilities used for creating the inverted index
+ - The curses interface is optional, enabling min-cscope to be easily built on i
+   platforms that do not have a curses-compatible library (e.g., Windows)
+
+The program is distributed under the terms of the GNU General Public License, i
+version 3.

@@ -1,0 +1,44 @@
+/*******************************************************************************
+ * Copyright (C) 2009 Elad Lahav
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+#cmakedefine HAVE_NCURSES
+#cmakedefine HAVE_CURSES
+
+#if defined(HAVE_NCURSES) || defined(HAVE_CURSES)
+#define WITH_CURSES
+#endif /* defined(HAVE_NCURSES) || defined(HAVE_CURSES) */
+
+#cmakedefine HAVE_FCNTL_H
+#cmakedefine HAVE_WAIT_H
+#cmakedefine HAVE_REGEX_H
+
+#cmakedefine HAVE_LSTAT
+#cmakedefine HAVE_STRERROR
+#cmakedefine HAVE_SIGSETJMP
+
+#cmakedefine HAVE_SIGQUIT
+#cmakedefine HAVE_SIGHUP
+#cmakedefine HAVE_SIGPIPE
+#cmakedefine HAVE_SIGSTP
+#cmakedefine HAVE_SIGWINCH
+
+#cmakedefine HAVE_F_DUPFD
+
+#endif /* __CONFIG_H__ */
