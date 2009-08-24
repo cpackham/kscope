@@ -42,6 +42,7 @@
 #include "scanner.h"
 #include "alloc.h"
 #include "sort.h"
+#include "version.h"
 
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -90,6 +91,137 @@ static struct symbol *symbol;
 
 static void putcrossref(void);
 static void savesymbol(int token, int num);
+
+/*
+ * The following code replaces the dbputc and dbputs macros previously defined
+ * in build.h. The purpose is to prevent repeated system calls by invoking
+ * putc() for every character written to the cross-reference database. 
+ * TODO: Replace with thread-safe versions.
+ */
+#define DBBUF_SIZE 1024
+static char dbbuf[DBBUF_SIZE];
+static int dbbufpos = 0;
+
+static int dbflush_internal()
+{
+    if (fwrite(dbbuf, dbbufpos, 1, newrefs) < 1)
+        return -1;
+
+    dbbufpos = 0;
+    return 0;
+}
+
+int dbputc(char c)
+{
+    dbbuf[dbbufpos++] = c;
+    if (dbbufpos == DBBUF_SIZE) {
+        if (dbflush_internal() < 0)
+            return -1;
+    }
+
+    dboffset++;
+    return 0;
+}
+
+int dbfputs(char* s)
+{
+    int len;
+
+    len = strlen(s);
+    if (dbbufpos > 0) {
+        if (dbflush_internal() < 0)
+            return -1;
+    }
+
+    if (fwrite(s, len, 1, newrefs) < 1)
+        return -1;
+
+    return 0;
+}
+
+int dbputn(int n)
+{
+    int len;
+
+    /*
+     * The longest number that can be represented by an int is 10 digits
+     * long. Checking that we have at least 16 means that there is no need to
+     * check for a possible flush after writing the number.
+     */
+    if (DBBUF_SIZE - dbbufpos < 16) {
+        if (dbflush() < 0)
+            return -1;
+    }
+
+    len = snprintf(&dbbuf[dbbufpos], 16, "%d", n);
+    dbbufpos += len;
+    return 0;
+}
+
+int dbflush()
+{
+    if (dbbufpos > 0)
+        return dbflush_internal();
+
+    return 0;
+}
+
+/* output the cscope version, current directory, database format options, and
+   the database trailer offset */
+void dbputheader(char *dir, long traileroffset)
+{
+    dbflush();
+    dboffset = fprintf(newrefs, "cscope %d %s", FILEVERSION, dir);
+    if (compress == NO) {
+        dboffset += fprintf(newrefs, " -c");
+    }
+    if (invertedindex == YES) {
+        dboffset += fprintf(newrefs, " -q %.10ld", totalterms);
+    } else {    
+        /* leave space so if the header is overwritten without -q
+         * because writing the inverted index failed, the header
+         * is the same length */
+        dboffset += fprintf(newrefs, "              ");
+    }
+    if (trun_syms == YES) {
+        dboffset += fprintf(newrefs, " -T");
+    }
+
+    dboffset += fprintf(newrefs, " %.10ld\n", traileroffset);
+#ifdef PRINTF_RETVAL_BROKEN
+    dboffset = ftell(newrefs); 
+#endif
+}
+
+/* put the name list into the cross-reference file */
+void dbputlist(char **names, int count)
+{
+    int i, size = 0;
+
+    dbflush();
+    fprintf(newrefs, "%d\n", count);
+    if (names == srcfiles) {
+
+        /* calculate the string space needed */
+        for (i = 0; i < count; ++i) {
+            size += strlen(names[i]) + 1;
+        }
+        fprintf(newrefs, "%d\n", size);
+    }
+    for (i = 0; i < count; ++i) {
+        if (fputs(names[i], newrefs) == EOF ||
+            putc('\n', newrefs) == EOF) {
+            cannotwrite(newreffile);
+            /* NOTREACHED */
+        }
+    }
+}
+
+#if 0
+/* database output macros that update its offset */
+#define	dbputc(c)	(++dboffset, (void) putc(c, newrefs))
+#define	dbfputs(s)	(dboffset += strlen(s), fputs(s, newrefs))
+#endif
 
 void crossref(char *srcfile)
 {
@@ -210,12 +342,11 @@ static void savesymbol(int token, int num)
 void putfilename(char *srcfile)
 {
     /* check for file system out of space */
-    /* note: dbputc is not used to avoid lint complaint */
-    if (putc(NEWFILE, newrefs) == EOF) {
+    if (dbputc(NEWFILE) < 0) {
         cannotwrite(newreffile);
         /* NOTREACHED */
     }
-    ++dboffset;
+
     if (invertedindex == YES) {
         srcoffset[nsrcoffset++] = dboffset;
     }
@@ -232,13 +363,12 @@ static void putcrossref(void)
     BOOL blank;                 /* blank indicator */
     unsigned int symput = 0;    /* symbols output */
     int type;
-
+    char numbuf;
+    
     /* output the source line */
     lineoffset = dboffset;
-    dboffset += fprintf(newrefs, "%d ", lineno);
-#ifdef PRINTF_RETVAL_BROKEN
-    dboffset = ftell(newrefs);  /* fprintf doesn't return chars written */
-#endif
+    dbputn(lineno);
+    dbputc(' ');
 
     /* HBB 20010425: added this line: */
     my_yytext[my_yyleng] = '\0';

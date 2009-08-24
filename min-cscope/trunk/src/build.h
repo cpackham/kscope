@@ -41,10 +41,6 @@
 
 /* types and macros of build.c to be used by other modules */
 
-/* database output macros that update its offset */
-#define	dbputc(c)	(++dboffset, (void) putc(c, newrefs))
-#define	dbfputs(s)	(dboffset += strlen(s), fputs(s, newrefs))
-
 /* declarations for globals defined in build.c */
 
 extern	BOOL	buildonly;	/* only build the database */

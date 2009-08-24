@@ -94,11 +94,13 @@ static	void	copydata(void);
 static	void	copyinverted(void);
 static	char	*getoldfile(void);
 static	void	movefile(char *new, char *old);
-static	void	putheader(char *dir);
 static	void	fetch_include_from_dbase(char *, size_t);
-static	void	putlist(char **names, int count);
 static	BOOL	samelist(FILE *oldrefs, char **names, int count);
 
+/* Defined in crossref.c */
+int dbputc(char c);
+void dbputheader(char *dir, long traileroffset);
+void dbputlist(char **names, int count);
 
 /* Error handling routine if inverted index creation fails */
 static void
@@ -374,7 +376,7 @@ cscope: converting to new symbol database file format\n");
 	cannotindex();
     }
 #endif /* defined(USE_SORTLIB) */
-    putheader(newdir);
+    dbputheader(newdir, traileroffset);
     fileversion = FILEVERSION;
     if (buildonly == YES && verbosemode != YES && !isatty(0)) {
 	interactive = NO;
@@ -466,9 +468,9 @@ cscope: converting to new symbol database file format\n");
     traileroffset = dboffset;
 	
     /* output the source and include directory and file lists */
-    putlist(srcdirs, nsrcdirs);
-    putlist(incdirs, nincdirs);
-    putlist(srcfiles, nsrcfiles);
+    dbputlist(srcdirs, nsrcdirs);
+    dbputlist(incdirs, nincdirs);
+    dbputlist(srcfiles, nsrcfiles);
     if (fflush(newrefs) == EOF) {
 	/* rewind doesn't check for write failure */
 	cannotwrite(newreffile);
@@ -538,8 +540,9 @@ cscope: converting to new symbol database file format\n");
 #endif /* !defined(NSTATS) */
     }
     /* rewrite the header with the trailer offset and final option list */
+    dbflush();
     rewind(newrefs);
-    putheader(newdir);
+    dbputheader(newdir, traileroffset);
     fclose(newrefs);
 	
     /* close the old database file */
@@ -609,60 +612,6 @@ void free_newbuildfiles(void)
     free(newinvpost);
     free(newreffile);
 }	
-
-
-/* output the cscope version, current directory, database format options, and
-   the database trailer offset */
-static void
-putheader(char *dir)
-{
-    dboffset = fprintf(newrefs, "cscope %d %s", FILEVERSION, dir);
-    if (compress == NO) {
-	dboffset += fprintf(newrefs, " -c");
-    }
-    if (invertedindex == YES) {
-	dboffset += fprintf(newrefs, " -q %.10ld", totalterms);
-    } else {	
-	/* leave space so if the header is overwritten without -q
-	 * because writing the inverted index failed, the header
-	 * is the same length */
-	dboffset += fprintf(newrefs, "              ");
-    }
-    if (trun_syms == YES) {
-	dboffset += fprintf(newrefs, " -T");
-    }
-
-    dboffset += fprintf(newrefs, " %.10ld\n", traileroffset);
-#ifdef PRINTF_RETVAL_BROKEN
-    dboffset = ftell(newrefs); 
-#endif
-}
-
-
-/* put the name list into the cross-reference file */
-static void
-putlist(char **names, int count)
-{
-    int	i, size = 0;
-	
-    fprintf(newrefs, "%d\n", count);
-    if (names == srcfiles) {
-
-	/* calculate the string space needed */
-	for (i = 0; i < count; ++i) {
-	    size += strlen(names[i]) + 1;
-	}
-	fprintf(newrefs, "%d\n", size);
-    }
-    for (i = 0; i < count; ++i) {
-	if (fputs(names[i], newrefs) == EOF ||
-	    putc('\n', newrefs) == EOF) {
-	    cannotwrite(newreffile);
-	    /* NOTREACHED */
-	}
-    }
-}
-
 
 /* copy this file's symbol data */
 static void
