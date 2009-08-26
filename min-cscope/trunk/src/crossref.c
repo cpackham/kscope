@@ -136,6 +136,7 @@ int dbfputs(char* s)
     if (fwrite(s, len, 1, newrefs) < 1)
         return -1;
 
+    dboffset += len;
     return 0;
 }
 
@@ -155,6 +156,7 @@ int dbputn(int n)
 
     len = snprintf(&dbbuf[dbbufpos], 16, "%d", n);
     dbbufpos += len;
+    dboffset += len;
     return 0;
 }
 
