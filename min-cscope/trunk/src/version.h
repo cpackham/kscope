@@ -43,6 +43,6 @@
 
 #define APPNAME         "min-cscope"
 #define	FILEVERSION	16
-#define	FIXVERSION	".1.0"
+#define	FIXVERSION	".1.1"
 
 #endif /* CSCOPE_VERSION_H */
