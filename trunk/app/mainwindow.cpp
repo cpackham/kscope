@@ -70,13 +70,13 @@ MainWindow::MainWindow() : QMainWindow(), actions_(this)
 	// Create a status bar.
 	statusBar();
 
+	// Apply saved window settings.
+	readSettings();
+
 	// Initialise actions.
 	// The order is important: make sure the child widgets are created BEFORE
 	// calling setup().
 	actions_.setup();
-
-	// Apply saved window settings.
-	readSettings();
 
 	// Perform actions when a project is opened or closed.
 	connect(ProjectManager::signalProxy(), SIGNAL(hasProject(bool)), this,
@@ -461,6 +461,7 @@ void MainWindow::writeSettings()
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
 	settings.setValue("state", saveState());
+	settings.setValue("viewMode", editCont_->viewMode());
 	settings.endGroup();
 }
 
@@ -469,12 +470,17 @@ void MainWindow::writeSettings()
  */
 void MainWindow::readSettings()
 {
+	QMdiArea::ViewMode viewMode;
+
 	// Restore main window position and size.
 	Settings& settings = Application::settings();
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(1000, 600)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	restoreState(settings.value("state").toByteArray());
+	viewMode = static_cast<QMdiArea::ViewMode>(settings.value("viewMode", 0).toUInt());
+	editCont_->setViewMode(viewMode);
+
 	settings.endGroup();
 }
 
