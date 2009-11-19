@@ -51,7 +51,7 @@ FORMS += querydialog.ui \
     configenginesdialog.ui \
     openprojectdialog.ui
 INCLUDEPATH += .. \
-    $${QSCI_ROOT_PATH}/include/Qsci \
+    $${QSCI_HEADER_PATH}/Qsci \
     .
 LIBS += -L../core \
     -lkscope_core \

@@ -10,7 +10,38 @@ INSTALL_PATH = /usr/local
 # The root path of the QScintilla installation.
 # KScope expects to find QScintilla's include files under 
 # QSCI_ROOT_PATH/include/Qsci and the library under QSCI_ROOT_PATH/lib.
-QSCI_ROOT_PATH = /usr
+QSCI_LIB_CANDIDATES = /usr/lib /usr/local/lib /usr/lib/qt4
+QSCI_LIB = libqscintilla2.so
+win32 {
+	qscintilla2.dll
+}
+
+for(candidate, QSCI_LIB_CANDIDATES) {
+	exists( $${candidate}/$${QSCI_LIB} ) {
+		QSCI_LIB_PATH = $${candidate}
+	}
+}
+
+isEmpty( QSCI_LIB_PATH ) {
+	error( "QScintilla2 library not found in $${QSCI_LIB_CANDIDATES}" )
+} else {
+	message( "Found QScintilla2 in $${QSCI_LIB_PATH}/" )
+}
+
+QSCI_HEADER_CANDIDATES = /usr/include /usr/local/include /usr/include/qt4
+QSCI_HEADER = qsciscintilla.h
+
+for(candidate, QSCI_HEADER_CANDIDATES) {
+	exists( $${candidate}/Qsci/$${QSCI_HEADER} ) {
+		QSCI_HEADER_PATH = $${candidate}
+	}
+}
+
+isEmpty( QSCI_HEADER_PATH ) {
+	error( "QScintilla2 headers not found in $${QSCI_HEADER_CANDIDATES}" )
+} else {
+	message( "Found QScintilla2 headers in $${QSCI_HEADER_PATH}/" )
+}
 
 # --------------------------- END: EDIT ME ------------------------------------
 
@@ -19,3 +50,5 @@ CONFIG += debug_and_release \
     warn_all 
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 QT += xml
+
+

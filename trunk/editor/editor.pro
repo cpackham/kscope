@@ -24,11 +24,11 @@ SOURCES += viscintilla.cpp \
     configdialog.cpp \
     findtextdialog.cpp
 INCLUDEPATH += .. \
-    $${QSCI_ROOT_PATH}/include/Qsci \
+    $${QSCI_HEADER_PATH}/Qsci \
     .
 LIBS += -L../core \
     -lkscope_core \
-    -L$${QSCI_ROOT_PATH}/lib \
+    -L$${QSCI_LIB_PATH} \
     -lqscintilla2
 target.path = $${INSTALL_PATH}/lib
 INSTALLS += target
