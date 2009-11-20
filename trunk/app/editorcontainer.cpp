@@ -479,6 +479,48 @@ void EditorContainer::closeAll()
 }
 
 /**
+ * Closes all editor windows except for the current one.
+ */
+void EditorContainer::closeOthers()
+{
+	// Prompt the user for unsaved changes.
+	if (!canClose())
+		return;
+
+	// Do not handle changes to the active editor while closing.
+	blockWindowActivation(true);
+
+	// Delete all editor windows.
+	foreach (QMdiSubWindow* window, fileMap_) {
+		if (window != currentSubWindow()) {
+			window->close();
+			delete window;
+		}
+	}
+
+	// Re-enable handling of changes to active windows.
+	blockWindowActivation(false);
+}
+
+/**
+ * Closes current editor window.
+ */
+void EditorContainer::closeCurrent()
+{
+	QMdiSubWindow* window = currentSubWindow();
+
+	// Prompt the user for unsaved changes.
+	if (!currentEditor())
+		return;
+
+	if (currentEditor()->canClose()) {
+		window->close();
+		delete window;
+	}
+}
+
+
+/**
  * Common handler for the file names in the "Window" menu.
  * Activates the window corresponding to the chosen file.
  * @param  action  The triggered action

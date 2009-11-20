@@ -75,6 +75,8 @@ public slots:
 	void showLocalTags();
 	void browseHistory();
 	void closeAll();
+	void closeOthers();
+	void closeCurrent();
 
 signals:
 	void hasActiveEditor(bool has);

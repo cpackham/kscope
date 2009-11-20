@@ -387,8 +387,28 @@ void Actions::query(QAction* action)
  */
 void Actions::showWindowMenu()
 {
+	QAction* action;
+
 	wndMenu_->clear();
 	mainWnd()->editCont_->populateWindowMenu(wndMenu_);
+
+	wndMenu_->addSeparator();
+
+	action = new QAction(tr("&Close"), this);
+	action->setStatusTip(tr("Close the current window"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_, SLOT(closeCurrent()));
+	wndMenu_->addAction(action);
+
+	action = new QAction(tr("Close &Others"), this);
+	action->setStatusTip(tr("Close all windows except the current one"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_, SLOT(closeOthers()));
+	wndMenu_->addAction(action);
+
+	action = new QAction(tr("Close &All"), this);
+	action->setStatusTip(tr("Close all open files"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+			SLOT(closeAll()));
+	wndMenu_->addAction(action);
 }
 
 /**
