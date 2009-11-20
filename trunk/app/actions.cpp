@@ -318,16 +318,11 @@ void Actions::setup()
 	menu->addAction(action);
 
 	// Show local tags.
-	action = new QAction(tr("Local &Tags"), this);
-	action->setShortcut(tr("Ctrl+T"));
+	action = new QAction(tr("Local &Tags"), queryGroup);
 	action->setStatusTip(tr("List tags in the current file"));
-	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
-	        SLOT(showLocalTags()));
-	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
-	        SLOT(setEnabled(bool)));
-	action->setEnabled(false);
+	action->setShortcut(tr("Ctrl+T"));
+	action->setData(Core::Query::LocalTags);
 	menu->addAction(action);
-	projectGroup->addAction(action);
 
 	menu->addSeparator();
 

@@ -101,21 +101,36 @@ MainWindow::~MainWindow()
  */
 void MainWindow::promptQuery(Core::Query::Type type)
 {
+	QString symbol = "";
+	QString path = "";
+	QString pattern;
+
 	queryDlg_->setWindowTitle(tr("Query"));
 
 	// Get the default pattern from the text under the cursor on the active
 	// editor (if any).
 	Editor::Editor* editor = editCont_->currentEditor();
-	if (editor)
-		queryDlg_->setPattern(editor->currentSymbol());
+	if (editor) {
+		symbol = editor->currentSymbol();
+		path = editor->path();
+	}
 
-	// Prompt the user.
-	if (queryDlg_->exec(type) != QDialog::Accepted)
-		return;
+	// Don't prompt the user when querying tags.
+	if (type != Core::Query::LocalTags)  {
+		queryDlg_->setPattern(symbol);
+
+		if (queryDlg_->exec(type) != QDialog::Accepted)
+			return;
+
+		type = queryDlg_->type();
+		pattern = queryDlg_->pattern();
+	} else {
+		pattern = path;
+	}
 
 	// Start a query with results shown in a view inside the query dock.
-	queryDock_->query(Core::Query(queryDlg_->type(), queryDlg_->pattern()),
-	                  false);
+	queryDock_->query(Core::Query(type, pattern), false);
+
 }
 
 /**

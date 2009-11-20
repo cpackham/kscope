@@ -264,42 +264,6 @@ void EditorContainer::gotoPrevLocation()
 }
 
 /**
- * Shows a list of tags defined in the file of currently-active editor.
- */
-void EditorContainer::showLocalTags()
-{
-	if (!currentEditor())
-		return;
-
-	// Create a query view dialogue.
-	QueryResultDialog* dlg = new QueryResultDialog(this);
-	dlg->setModal(true);
-
-	// Go to selected locations.
-	Core::QueryView* view = dlg->view();
-	connect(view, SIGNAL(locationRequested(const Core::Location&)),
-	        this, SLOT(gotoLocation(const Core::Location&)));
-
-	dlg->setWindowTitle(tr("Local Tags"));
-	dlg->show();
-
-	try {
-		// Run the query.
-		Core::LocationModel* model = view->locationModel();
-		model->setRootPath(ProjectManager::project()->rootPath());
-		model->setColumns(ProjectManager::engine()
-		                  .queryFields(Core::Query::LocalTags));
-		ProjectManager::engine().query(view,
-		                               Core::Query(Core::Query::LocalTags,
-		                                           currentEditor()->path()));
-	}
-	catch (Core::Exception* e) {
-		e->showMessage();
-		delete e;
-	}
-}
-
-/**
  * Shows a dialogue with the list of recently visited locations.
  */
 void EditorContainer::browseHistory()

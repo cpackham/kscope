@@ -72,7 +72,6 @@ public slots:
 	void gotoLocation(const Core::Location&);
 	void gotoNextLocation();
 	void gotoPrevLocation();
-	void showLocalTags();
 	void browseHistory();
 	void closeAll();
 	void closeOthers();
