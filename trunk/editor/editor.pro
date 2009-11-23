@@ -1,7 +1,7 @@
 include(../config)
 TEMPLATE = lib
 TARGET = kscope_editor
-DEPENDPATH += ". ../core"
+DEPENDPATH += ". ../core ../icons"
 CONFIG += dll
 
 # Input
@@ -28,6 +28,8 @@ INCLUDEPATH += .. \
     .
 LIBS += -L../core \
     -lkscope_core \
+    -L../icons \
+    -lkscope_icons \
     -L$${QSCI_LIB_PATH} \
     -lqscintilla2
 target.path = $${INSTALL_PATH}/lib

@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QDebug>
+#include <icons/qticonloader.h>
 #include "actions.h"
 
 namespace KScope
@@ -42,6 +43,7 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 
 	// Save document.
 	actSave_ = new QAction(tr("&Save"), this);
+	actSave_ ->setIcon(QtIconLoader::icon("document-save"));
 	actSave_->setShortcut(QKeySequence("Ctrl+S"));
 	actSave_->setStatusTip(tr("Save the document"));
 	connect(actSave_, SIGNAL(triggered()), this, SLOT(save()));
@@ -49,6 +51,7 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 
 	// Copy selected text.
 	actCopy_ = new QAction(tr("&Copy"), this);
+	actCopy_->setIcon(QtIconLoader::icon("edit-copy"));
 	actCopy_->setShortcut(QKeySequence("Ctrl+C"));
 	actCopy_->setStatusTip(tr("Copy selected text"));
 	connect(actCopy_, SIGNAL(triggered()), this, SLOT(copy()));
@@ -56,6 +59,7 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 
 	// Cut selected text.
 	actCut_ = new QAction(tr("Cu&t"), this);
+	actCut_->setIcon(QtIconLoader::icon("edit-cut"));
 	actCut_->setShortcut(QKeySequence("Ctrl+X"));
 	actCut_->setStatusTip(tr("Cut selected text"));
 	connect(actCut_, SIGNAL(triggered()), this, SLOT(cut()));
@@ -63,6 +67,7 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 
 	// Patse clipboard contents.
 	actPaste_ = new QAction(tr("&Paste"), this);
+	actPaste_->setIcon(QtIconLoader::icon("edit-paste"));
 	actPaste_->setShortcut(QKeySequence("Ctrl+V"));
 	actPaste_->setStatusTip(tr("Paste clipboard contents"));
 	connect(actPaste_, SIGNAL(triggered()), this, SLOT(paste()));
@@ -70,6 +75,7 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 
 	// Undo last action.
 	actUndo_ = new QAction(tr("&Undo"), this);
+	actUndo_->setIcon(QtIconLoader::icon("edit-undo"));
 	actUndo_->setShortcut(QKeySequence("Ctrl+Z"));
 	actUndo_->setStatusTip(tr("Undo last action"));
 	connect(actUndo_, SIGNAL(triggered()), this, SLOT(undo()));
@@ -77,6 +83,7 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 
 	// Repeat undone action.
 	actRedo_ = new QAction(tr("&Redo"), this);
+	actRedo_->setIcon(QtIconLoader::icon("edit-redo"));
 	actRedo_->setShortcut(QKeySequence("Ctrl+Y"));
 	actRedo_->setStatusTip(tr("Repeat undone action"));
 	connect(actRedo_, SIGNAL(triggered()), this, SLOT(redo()));
@@ -84,6 +91,7 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 
 	// Search text in file.
 	actFind_ = new QAction(tr("&Find..."), this);
+	actFind_->setIcon(QtIconLoader::icon("edit-find"));
 	actFind_->setShortcut(QKeySequence("Ctrl+F"));
 	actFind_->setStatusTip(tr("Search text in file"));
 	connect(actFind_, SIGNAL(triggered()), this, SLOT(find()));

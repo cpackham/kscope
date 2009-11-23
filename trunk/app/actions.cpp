@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QMenuBar>
+#include <icons/qticonloader.h>
 #include <editor/actions.h>
 #include "actions.h"
 #include "mainwindow.h"
@@ -60,6 +61,7 @@ void Actions::setup()
 
 	// Create a new file.
 	action = new QAction(tr("&New"), this);
+	action->setIcon(QtIconLoader::icon("document-new"));
 	action->setShortcut(tr("Ctrl+N"));
 	action->setStatusTip(tr("New file"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
@@ -68,6 +70,7 @@ void Actions::setup()
 
 	// Open an existing file.
 	action = new QAction(tr("&Open"), this);
+	action->setIcon(QtIconLoader::icon("document-open"));
 	action->setShortcut(tr("Ctrl+O"));
 	action->setStatusTip(tr("Open existing file"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
@@ -80,6 +83,7 @@ void Actions::setup()
 
 	// Save all open files.
 	action = new QAction(tr("Save All"), this);
+	action->setIcon(QtIconLoader::icon("document-save"));
 	action->setStatusTip(tr("Save all open files"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
 			SLOT(saveAll()));
@@ -102,6 +106,7 @@ void Actions::setup()
 
 	// Exit the application.
 	action = new QAction(tr("&Quit"), this);
+	action->setIcon(QtIconLoader::icon("window-close"));
 	action->setShortcut(tr("Alt+F4"));
 	action->setStatusTip(tr("Exit the application"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(close()));
@@ -157,6 +162,7 @@ void Actions::setup()
 
 	// Go to the next location in the navigation history.
 	action = new QAction(tr("Next &Location"), this);
+	action->setIcon(QtIconLoader::icon("go-next"));
 	action->setShortcut(tr("Alt+Right"));
 	action->setStatusTip(tr("Next location in navigation history"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
@@ -166,6 +172,7 @@ void Actions::setup()
 
 	// Go to the previous location in the navigation history.
 	action = new QAction(tr("Previous L&ocation"), this);
+	action->setIcon(QtIconLoader::icon("go-previous"));
 	action->setShortcut(tr("Alt+Left"));
 	action->setStatusTip(tr("Previous location in navigation history"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
@@ -175,6 +182,7 @@ void Actions::setup()
 
 	// Select the next query result.
 	action = new QAction(tr("Next &Result"), this);
+	action->setIcon(QtIconLoader::icon("go-down"));
 	action->setShortcut(tr("Alt+Down"));
 	action->setStatusTip(tr("Select the next query result"));
 	connect(action, SIGNAL(triggered()), mainWnd()->queryDock_,
@@ -184,6 +192,7 @@ void Actions::setup()
 
 	// Select the previous query result.
 	action = new QAction(tr("Previous R&esult"), this);
+	action->setIcon(QtIconLoader::icon("go-up"));
 	action->setShortcut(tr("Alt+Up"));
 	action->setStatusTip(tr("Select the previous query result"));
 	connect(action, SIGNAL(triggered()), mainWnd()->queryDock_,
@@ -196,7 +205,7 @@ void Actions::setup()
 	// Browse location history.
 	action = new QAction(tr("&History"), this);
 	action->setShortcut(tr("Ctrl+H"));
-	action->setStatusTip(tr("rowse location history"));
+	action->setStatusTip(tr("Browse location history"));
 	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
 	        SLOT(browseHistory()));
 	menu->addAction(action);
@@ -207,12 +216,14 @@ void Actions::setup()
 
 	// Create a new project.
 	action = new QAction(tr("&New..."), this);
+	action->setIcon(QtIconLoader::icon("document-new"));
 	action->setStatusTip(tr("New project"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(newProject()));
 	menu->addAction(action);
 
 	// Open an existing project.
 	action = new QAction(tr("&Open..."), this);
+	action->setIcon(QtIconLoader::icon("document-open"));
 	action->setShortcut(tr("Ctrl+P"));
 	action->setStatusTip(tr("Open project"));
 	connect(action, SIGNAL(triggered()), mainWnd(), SLOT(openProject()));
@@ -369,6 +380,7 @@ void Actions::setup()
 	menu = mainWnd()->menuBar()->addMenu(tr("&Help"));
 
 	action = new QAction(tr("&About..."), this);
+	action->setIcon(QtIconLoader::icon("help-about"));
 	action->setStatusTip(tr("Show application information"));
 	connect(action, SIGNAL(triggered()), qApp, SLOT(about()));
 	menu->addAction(action);

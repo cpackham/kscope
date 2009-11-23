@@ -1,7 +1,7 @@
 include(../config)
 TEMPLATE = app
 TARGET = kscopeapp
-DEPENDPATH += ". ../core ../cscope ../editor"
+DEPENDPATH += ". ../core ../cscope ../icons ../editor"
 
 # Input
 SOURCES += openprojectdialog.cpp \
@@ -58,7 +58,10 @@ LIBS += -L../core \
     -L../cscope \
     -lkscope_cscope \
     -L../editor \
-    -lkscope_editor
+    -lkscope_editor \
+    -L../icons \
+    -lkscope_icons
+
 RESOURCES = app.qrc
 target.path = $${INSTALL_PATH}/bin
 INSTALLS += target

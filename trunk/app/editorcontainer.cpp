@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QStatusBar>
 #include <QDebug>
+#include <icons/qticonloader.h>
 #include <editor/configdialog.h>
 #include "application.h"
 #include "editorcontainer.h"
@@ -77,7 +78,7 @@ void EditorContainer::populateWindowMenu(QMenu* wndMenu) const
 	// Add an entry for each open sub-window.
 	QMap<QString, QMdiSubWindow*>::ConstIterator itr;
 	for (itr = fileMap_.begin(); itr != fileMap_.end(); ++itr)
-		wndMenu->addAction(itr.key());
+		wndMenu->addAction(QtIconLoader::icon("text-x-generic"), itr.key());
 
 	// Activate a sub-window when its menu entry is selected.
 	connect(wndMenu, SIGNAL(triggered(QAction*)), this,
