@@ -68,6 +68,7 @@ public:
 public slots:
 	void newFile();
 	void openFile();
+	void saveAll();
 	void configEditor();
 	void gotoLocation(const Core::Location&);
 	void gotoNextLocation();

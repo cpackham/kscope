@@ -192,6 +192,13 @@ void EditorContainer::openFile()
 		(void)gotoLocationInternal(Core::Location(path));
 }
 
+void EditorContainer::saveAll()
+{
+	foreach (QMdiSubWindow* window, fileMap_) {
+		editorFromWindow (window)->save();
+	}
+}
+
 /**
  * Displays the editor configuration dialogue.
  * Any changes to the configuration are then applied to all open editor windows.

@@ -77,6 +77,17 @@ void Actions::setup()
 	// Add editor-specific actions.
 	mainWnd()->editCont_->actions().setupFileMenu(menu);
 
+
+	// Save all open files.
+	action = new QAction(tr("Save All"), this);
+	action->setStatusTip(tr("Save all open files"));
+	connect(action, SIGNAL(triggered()), mainWnd()->editCont_,
+			SLOT(saveAll()));
+	action->setEnabled(false);
+	connect(mainWnd()->editCont_, SIGNAL(hasActiveEditor(bool)), action,
+	        SLOT(setEnabled(bool)));
+	menu->addAction(action);
+
 	// Close all open files.
 	action = new QAction(tr("Close &All"), this);
 	action->setStatusTip(tr("Close all open files"));
