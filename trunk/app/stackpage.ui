@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>StackPage</class>
- <widget class="QWidget" name="StackPage" >
-  <property name="geometry" >
+ <widget class="QWidget" name="StackPage">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,53 +10,50 @@
     <height>662</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="spacing" >
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin" >
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <widget class="Line" name="line" >
-     <property name="orientation" >
+    <widget class="Line" name="line">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label_" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font" >
+      <widget class="QToolButton" name="label_">
+       <property name="font">
         <font>
          <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
-       <property name="text" >
-        <string>TextLabel</string>
+       <property name="text">
+        <string>PushButton</string>
        </property>
-       <property name="textFormat" >
-        <enum>Qt::PlainText</enum>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -64,44 +62,44 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="showButton_" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+      <widget class="QToolButton" name="showButton_">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Show page</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Show</string>
        </property>
-       <property name="icon" >
-        <iconset resource="ide.qrc" >
+       <property name="icon">
+        <iconset resource="app.qrc">
          <normaloff>:/images/show.png</normaloff>:/images/show.png</iconset>
        </property>
-       <property name="autoRaise" >
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="closeButton_" >
-       <property name="toolTip" >
+      <widget class="QToolButton" name="closeButton_">
+       <property name="toolTip">
         <string>Close page</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>X</string>
        </property>
-       <property name="icon" >
-        <iconset resource="ide.qrc" >
+       <property name="icon">
+        <iconset resource="app.qrc">
          <normaloff>:/images/close.png</normaloff>:/images/close.png</iconset>
        </property>
-       <property name="toolButtonStyle" >
+       <property name="toolButtonStyle">
         <enum>Qt::ToolButtonIconOnly</enum>
        </property>
-       <property name="autoRaise" >
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
@@ -111,7 +109,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="ide.qrc" />
+  <include location="app.qrc"/>
  </resources>
  <connections/>
 </ui>

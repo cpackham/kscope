@@ -44,6 +44,7 @@ StackPage::StackPage(QWidget* widget, QWidget* parent)
 
 	// Handle title bar button clicks.
 	connect(showButton_, SIGNAL(clicked()), this, SLOT(showWidget()));
+	connect(label_, SIGNAL(clicked()), this, SLOT(showWidget()));
 	connect(closeButton_, SIGNAL(clicked()), this, SLOT(remove()));
 }
 
