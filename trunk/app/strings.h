@@ -106,7 +106,9 @@ public:
 			return QObject::tr("Files #including '%1'").arg(query.pattern_);
 
 		case Core::Query::LocalTags:
-			return QObject::tr("Symbols in '%1'").arg(query.pattern_);
+			QStringList parts = query.pattern_.split("/");
+			QString filename = parts.at(parts.size()-1);
+			return QObject::tr("Symbols in '%1'").arg(filename);
 		}
 
 		return QString();
