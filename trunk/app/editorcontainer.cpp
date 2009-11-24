@@ -393,10 +393,13 @@ Editor::Editor* EditorContainer::createEditor(const QString& path)
 	        static_cast<QMainWindow*>(parent())->statusBar(),
 	        SLOT(showMessage(const QString&, int)));
 
+	connect (editor, SIGNAL(modificationChanged(bool)), SLOT(fileModified(bool)));
+
 	// Create a new sub window for the editor.
 	QMdiSubWindow* window = addSubWindow(editor);
 	window->setAttribute(Qt::WA_DeleteOnClose);
-	window->setWindowTitle(editor->title());
+	window->setWindowTitle(editor->title()+"[*]");
+	window->setWindowModified(false);
 	window->show();
 	fileMap_[editor->title()] = window;
 
@@ -646,6 +649,14 @@ void EditorContainer::showEditMode(Editor::ViScintilla::EditMode mode)
 		editModeLabel_->setText(tr("N/A"));
 		break;
 	}
+}
+
+/**
+ * Highlights modified files by adding an asterisk to their titles.
+ */
+void  EditorContainer::fileModified(bool modified)
+{
+	currentSubWindow()->setWindowModified(modified);
 }
 
 } // namespace App
