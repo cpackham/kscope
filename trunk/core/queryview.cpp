@@ -116,6 +116,13 @@ void QueryView::fromXML(const QDomElement& viewElem)
 	query_.pattern_ = queryElem.childNodes().at(0).toCDATASection().data();
 
 	LocationView::fromXML(viewElem);
+
+	// Re-run the tags query to get the cross refrences right. Could be extented to all 
+	// queries but that would add more over overhead. For now just applying this to the 
+	// LocalTags because this needs to get re-run for the cross references to work.
+	if (query_.type_ == Core::Query::LocalTags) {
+		requery();
+	}
 }
 
 /**
