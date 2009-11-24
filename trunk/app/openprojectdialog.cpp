@@ -152,6 +152,17 @@ void OpenProjectDialog::removeProject()
 	delete item;
 }
 
+/**
+ * Called when an item in the "Recent Projects" list is double clicked.
+ * This will cause the project to be opened as if it had been selected 
+ * then the open button clicked.
+ */
+void OpenProjectDialog::recentProjectActivated(QListWidgetItem* item)
+{
+	pathEdit_->setText(item->data(Qt::UserRole).toString());
+	accept();
+}
+
 } // namespace App
 
 } // namespace KScope

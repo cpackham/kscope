@@ -69,6 +69,7 @@ private slots:
 	void newProject();
 	void pathChanged(const QString&);
 	void recentProjectSelected();
+	void recentProjectActivated(QListWidgetItem*);
 	void removeProject();
 };
 
