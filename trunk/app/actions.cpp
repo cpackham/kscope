@@ -408,6 +408,21 @@ void Actions::showWindowMenu()
 	QAction* action;
 
 	wndMenu_->clear();
+
+	if (mainWnd()->editCont_->viewMode() == QMdiArea::SubWindowView) {
+		action = new QAction(tr("Tile"), this);
+		action->setStatusTip(tr("Arrange windows as tiles"));
+		connect(action, SIGNAL(triggered()), mainWnd()->editCont_, SLOT(tileSubWindows()));
+		wndMenu_->addAction(action);
+
+		action = new QAction(tr("Cascade"), this);
+		action->setStatusTip(tr("Arrange windows as a cascade"));
+		connect(action, SIGNAL(triggered()), mainWnd()->editCont_, SLOT(cascadeSubWindows()));
+		wndMenu_->addAction(action);
+	
+		wndMenu_->addSeparator();
+	}
+
 	mainWnd()->editCont_->populateWindowMenu(wndMenu_);
 
 	wndMenu_->addSeparator();
