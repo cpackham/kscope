@@ -76,9 +76,12 @@ EditorContainer::~EditorContainer()
 void EditorContainer::populateWindowMenu(QMenu* wndMenu) const
 {
 	// Add an entry for each open sub-window.
-	QMap<QString, QMdiSubWindow*>::ConstIterator itr;
-	for (itr = fileMap_.begin(); itr != fileMap_.end(); ++itr)
-		wndMenu->addAction(QtIconLoader::icon("text-x-generic"), itr.key());
+	foreach (QMdiSubWindow* window, subWindowList()){
+		QString title = window->windowTitle();
+
+		title.replace ("[*]", window->isWindowModified() ? "*" : "");		
+		wndMenu->addAction(QtIconLoader::icon("text-x-generic"), title );
+	}
 
 	// Activate a sub-window when its menu entry is selected.
 	connect(wndMenu, SIGNAL(triggered(QAction*)), this,
@@ -502,7 +505,9 @@ void EditorContainer::closeCurrent()
  */
 void EditorContainer::handleWindowAction(QAction* action)
 {
-	(void)gotoLocationInternal(Core::Location(action->text()));
+	QString text = action->text();
+	text.replace("*", "");
+	(void)gotoLocationInternal(Core::Location(text));
 }
 
 /**
