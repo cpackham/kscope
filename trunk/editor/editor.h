@@ -99,6 +99,7 @@ public slots:
 	void searchNext();
 	void gotoLine();
 	void gotoBlockBegin();
+	void gotoBlockEnd();
 
 signals:
 	/**

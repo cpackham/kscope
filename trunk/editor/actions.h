@@ -104,6 +104,16 @@ public slots:
 	 */
 	void gotoBlockBegin() { editor_->gotoBlockBegin(); }
 
+	/**
+	 * Moves the cursor to the end of the current block.
+	 */
+	void gotoBlockEnd() { editor_->gotoBlockEnd(); }
+
+	/**
+	 * Moves the cursor to the matching brace.
+	 */
+	void gotoMatchingBrace() { editor_->moveToMatchingBrace(); }
+
 signals:
 	/**
 	 * Emitted when a new editor is set.
@@ -164,6 +174,8 @@ private:
 	QAction* actGotoLine_;
 
 	QAction* actBlockBegin_;
+	QAction* actBlockEnd_;
+	QAction* actMatchBrace_;
 
 	/**
 	 * Allows all actions to be enabled when the editor pointer is valid, and

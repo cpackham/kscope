@@ -361,6 +361,15 @@ void Editor::gotoBlockBegin()
 	setCursorPosition(newline, 0);
 }
 
+void Editor::gotoBlockEnd()
+{
+	int line, column, newline, level;
+	getCursorPosition(&line, &column);
+	level = SendScintilla(QsciScintillaBase::SCI_GETFOLDLEVEL, line);
+	newline = SendScintilla(QsciScintillaBase::SCI_GETLASTCHILD, line, level);
+	setCursorPosition(newline, 0);
+}
+
 /**
  * Called before the editor window is closed.
  * Checks whether the editor can be closed, and if so, accepts the event.

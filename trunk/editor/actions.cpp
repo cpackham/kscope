@@ -117,6 +117,20 @@ Actions::Actions(QObject* parent) : QObject(parent), editor_(NULL)
 	                                "block"));
 	connect(actBlockBegin_, SIGNAL(triggered()), this, SLOT(gotoBlockBegin()));
 	editorGroup_->addAction(actBlockBegin_);
+
+	actBlockEnd_ = new QAction(tr("Block End"), this);
+	actBlockEnd_->setShortcut(QKeySequence("Ctrl+}"));
+	actBlockEnd_->setStatusTip(tr("Go to the end of the current "
+	                                "block"));
+	connect(actBlockEnd_, SIGNAL(triggered()), this, SLOT(gotoBlockEnd()));
+	editorGroup_->addAction(actBlockEnd_);
+
+	actMatchBrace_ = new QAction(tr("Matching Brace"), this);
+	actMatchBrace_->setShortcut(QKeySequence("Ctrl+%"));
+	actMatchBrace_->setStatusTip(tr("Go to the matching brace"));
+	connect(actMatchBrace_, SIGNAL(triggered()), this, SLOT(gotoMatchingBrace()));
+	editorGroup_->addAction(actMatchBrace_);
+
 }
 
 /**
@@ -159,6 +173,8 @@ void Actions::setupEditMenu(QMenu* menu) const
 
 	menu->addAction(actGotoLine_);
 	menu->addAction(actBlockBegin_);
+	menu->addAction(actBlockEnd_);
+	menu->addAction(actMatchBrace_);
 }
 
 /**
