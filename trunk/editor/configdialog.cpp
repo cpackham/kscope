@@ -50,6 +50,8 @@ ConfigDialog::ConfigDialog(const Config& config, QWidget* parent)
 	eolMarkerSpin_->setValue(config.eolMarkerColumn_);
 	indentTabsCheck_->setChecked(config.indentTabs_);
 	tabWidthSpin_->setValue(config.tabWidth_);
+	indentGuidesCheck_->setChecked(config.indentationGuides_);
+	matchBracesCheck_->setChecked(config.matchBraces_);
 
 	// We use a copy of the style model managed by the Config object, so that
 	// changes to the model do not persist in case the dialogue is cancelled.
@@ -115,6 +117,8 @@ void ConfigDialog::getConfig(Config& config)
 		= eolMarkerCheck_->isChecked() ? eolMarkerSpin_->value() : 0;
 	config.indentTabs_ = indentTabsCheck_->isChecked();
 	config.tabWidth_ = tabWidthSpin_->value();
+	config.indentationGuides_ = indentGuidesCheck_->isChecked();
+	config.matchBraces_ = matchBracesCheck_->isChecked();
 
 	int modeIndex = viModeCombo_->currentIndex();
 	config.viDefaultMode_

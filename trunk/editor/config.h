@@ -84,6 +84,11 @@ private:
 	bool indentTabs_;
 
 	/**
+	 * Display visual indentation guides.
+	 */
+	bool indentationGuides_;
+
+	/**
 	 * The tab width, in characters.
 	 */
 	int tabWidth_;
@@ -92,6 +97,11 @@ private:
 	 * The Vi mode in which editors should be started.
 	 */
 	ViScintilla::EditMode viDefaultMode_;
+
+	/**
+	 * Highlight matching braces
+	 */
+	bool matchBraces_;
 
 	/**
 	 * The common defaults lexers.
