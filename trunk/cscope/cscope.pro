@@ -11,7 +11,8 @@ HEADERS += engineconfigwidget.h \
     managedproject.h \
     crossref.h \
     cscope.h \
-    files.h
+    files.h \
+    grep.h
 FORMS += configwidget.ui \
     engineconfigwidget.ui
 SOURCES += engineconfigwidget.cpp \
@@ -20,7 +21,8 @@ SOURCES += engineconfigwidget.cpp \
     managedproject.cpp \
     crossref.cpp \
     cscope.cpp \
-    files.cpp
+    files.cpp \
+    grep.cpp
 INCLUDEPATH += .. \
     .
 LIBS += -L../core -lkscope_core

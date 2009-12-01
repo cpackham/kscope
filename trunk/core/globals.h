@@ -209,7 +209,9 @@ struct Query
 		/** Search for files including a given file name */
 		IncludingFiles,
 		/** List all tags in the given file */
-		LocalTags
+		LocalTags,
+		/** Search in muliple files */
+		SearchFiles
 	};
 
 	/**

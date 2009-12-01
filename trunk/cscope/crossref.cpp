@@ -21,8 +21,10 @@
 #include <QDir>
 #include <QFileInfo>
 #include <core/exception.h>
+#include "app/projectmanager.h"
 #include "crossref.h"
 #include "ctags.h"
+#include "grep.h"
 
 namespace KScope
 {
@@ -145,6 +147,12 @@ Crossref::queryFields(Core::Query::Type type) const
 		          << Core::Location::TagType;
 		break;
 
+	case Core::Query::SearchFiles:
+		fieldList << Core::Location::File
+		          << Core::Location::Line
+		          << Core::Location::Text;
+		break;
+
 	default:
 		;
 	}
@@ -202,6 +210,18 @@ void Crossref::query(Core::Engine::Connection* conn,
 			Ctags* ctags = new Ctags();
 			ctags->setDeleteOnExit();
 			ctags->query(conn, query.pattern_);
+			return;
+		}
+
+	case Core::Query::SearchFiles:
+		{
+			Grep* grep = new Grep();
+			QString path = KScope::App::ProjectManager::project()->rootPath();
+
+			if (path == 0)
+				path = ".";
+			grep->setDeleteOnExit();
+			grep->query(conn, query.pattern_, path);
 			return;
 		}
 

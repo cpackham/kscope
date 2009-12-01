@@ -66,7 +66,8 @@ int QueryDialog::exec(Core::Query::Type defType, const TypeList& typeList)
 		typeList << Core::Query::Text << Core::Query::References
 		         << Core::Query::Definition << Core::Query::CalledFunctions
 		         << Core::Query::CallingFunctions << Core::Query::FindFile
-		         << Core::Query::IncludingFiles;
+		         << Core::Query::IncludingFiles
+			 << Core::Query::SearchFiles;
 
 		foreach (Core::Query::Type type, typeList)
 			typeCombo_->addItem(Strings::toString(type), type);

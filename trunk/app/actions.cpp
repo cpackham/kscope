@@ -346,6 +346,13 @@ void Actions::setup()
 	action->setData(Core::Query::LocalTags);
 	menu->addAction(action);
 
+	// Search using grep
+	action = new QAction(tr("&Grep Pattern"), queryGroup);
+	action->setStatusTip(tr("Search for a pattern in multiple files"));
+	action->setShortcut(tr("Ctrl+Shift+G"));
+	action->setData(Core::Query::SearchFiles);
+	menu->addAction(action);
+
 	menu->addSeparator();
 
 	// Call tree.

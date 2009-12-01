@@ -69,6 +69,9 @@ public:
 
 		case Core::Query::LocalTags:
 			return QObject::tr("Symbols in This File");
+
+		case Core::Query::SearchFiles:
+			return QObject::tr("Search Using Grep ");
 		}
 
 		return QString();
@@ -106,9 +109,14 @@ public:
 			return QObject::tr("Files #including '%1'").arg(query.pattern_);
 
 		case Core::Query::LocalTags:
-			QStringList parts = query.pattern_.split("/");
-			QString filename = parts.at(parts.size()-1);
-			return QObject::tr("Symbols in '%1'").arg(filename);
+			{
+				QStringList parts = query.pattern_.split("/");
+				QString filename = parts.at(parts.size()-1);
+				return QObject::tr("Symbols in '%1'").arg(filename);
+			}
+
+		case Core::Query::SearchFiles:
+			return QObject::tr("Search for '%1'").arg(query.pattern_);
 		}
 
 		return QString();
